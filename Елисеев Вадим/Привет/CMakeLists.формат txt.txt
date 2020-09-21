@@ -1,0 +1,5 @@
+cmake_minimum_required( версия 3.4.0 )
+
+проект(Hello)
+
+add_executable(Hello Hello.СРР)
