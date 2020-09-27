@@ -1,31 +1,41 @@
 #include <iostream>
 using namespace std;
 int main() {
-    int zp;
-    cout << "Enter the amount (penny) that you are ready to invest:" << endl;
-    cin >> zp;
-    int startkap;
+    long long int startkap;
     cout << "Enter the starting capital (penny):" << endl;
     cin >> startkap;
     int periodIP;
-    cout << "Enter the term of the mortgage (months):" << endl;
+    cout << "Enter the period Ipoteka (years):" << endl;
     cin >> periodIP;
-    int cost;
+    long long int cost;
     cout << "Enter the cost of the apartment (penny):" << endl;
     cin >> cost;
+    cost=cost-startkap;
     int procIP;
     cout << "Enter your mortgage percentage:" << endl;
     cin >> procIP;
-    procIP=procIP/12;
     int procVk;
     cout << "Enter the percentage of the deposit:" << endl;
     cin >> procVk;
+    procVk = procVk / 12;
     int Rost;
     cout << "Enter the rise in the cost of the apartment:" << endl;
     cin >> Rost;
-    int ;
-    for(int i=0; i<=periodIP; i++){
-        
+    int ipoteka;
+    ipoteka =cost*100/(procIP*periodIP);
+    long long int trataIP;
+    trataIP=ipoteka*periodIP;
+    trataIP=-cost-startkap-trataIP+((cost+startkap)*((1+Rost/100)^periodIP));
+    cout << trataIP << endl;
+    long long int plusVK=startkap;
+    for (int i; i<=periodIP; i++) {
+        plusVK=(plusVK+ipoteka*12)*(1+procVk/100);
     }
+    long long int trataVK;
+    trataVK=plusVK-((cost+startkap)*((1+Rost/100)^periodIP));
+    cout << trataVK << endl;
+    if (trataIP>trataVK) {
+        cout << "More profitable is Ipoteka" << endl;
+    } else cout << "More profitable is Vklad" << endl;
     return 0;
 }
