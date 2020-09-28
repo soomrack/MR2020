@@ -1,0 +1,3 @@
+C:/Users/SERHIO/CLionProjects/ipoteka/cmake-build-debug/CMakeFiles/ipoteka.dir
+C:/Users/SERHIO/CLionProjects/ipoteka/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/SERHIO/CLionProjects/ipoteka/cmake-build-debug/CMakeFiles/rebuild_cache.dir

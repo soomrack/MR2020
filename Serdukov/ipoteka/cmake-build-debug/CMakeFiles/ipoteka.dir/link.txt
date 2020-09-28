@@ -1,0 +1,3 @@
+"C:\Program Files\JetBrains\CLion 2020.2.3\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\ipoteka.dir/objects.a
+C:\MinGW\bin\ar.exe cr CMakeFiles\ipoteka.dir/objects.a @CMakeFiles\ipoteka.dir\objects1.rsp
+C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\ipoteka.dir/objects.a -Wl,--no-whole-archive  -o ipoteka.exe -Wl,--out-implib,libipoteka.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ipoteka.dir\linklibs.rsp
