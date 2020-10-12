@@ -1,0 +1,4 @@
+﻿  Source.cpp
+C:\Users\1\source\repos\Crosses and zeros\Crosses and zeros\Source.cpp(239,1): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
+C:\Users\1\source\repos\Crosses and zeros\Crosses and zeros\Source.cpp(241,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Crosses and zeros.vcxproj -> C:\Users\1\source\repos\Crosses and zeros\Debug\Crosses and zeros.exe
