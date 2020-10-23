@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
-project(untitled C)
+project(TictactoeUpdate)
 
-set(CMAKE_C_STANDARD 99)
-
-add_executable(untitled main.c)
+set(CMAKE_CXX_STANDARD 14)
+link_libraries(ws2_32 wsock32)
+add_executable(TictactoeUpdate main.cpp)
