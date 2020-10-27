@@ -155,5 +155,6 @@ int main() {
   collect_steps_back();
   cout << "This is our way to become rich! MUHAHAH\n";
   print_map(solution_map);
+  system("PAUSE");
   return 0;
 }
