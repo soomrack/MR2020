@@ -5,7 +5,7 @@ using namespace std;
 
 const int cols =7;
 const int rows =7;
-int matrix [cols][rows]={{0, 0, 0, 0, 0, 0, 0},
+int matrix [rows][cols]={{0, 9, 0, 0, 0, 0, 0},
                          {9, 0, 0, 0, 0, 0, 0},
                          {0, 9, 0, 9, 9, 0, 0},
                          {0, 9, 9, 0, 9, 0, 0},
@@ -38,6 +38,7 @@ void fillin(){
     matrix[startpointrow][startpointcol]=1;//Заносим в помеченные точки
     Vn.push_back(make_pair(startpointrow,startpointcol));
     count = 1;
+    int waysout = 0;
     int breakpoint;
 while (breakpoint!=1) {
     for (int i = 0; i < Vn.size(); i++) {
@@ -48,11 +49,16 @@ while (breakpoint!=1) {
                 if (((sosed_k + k) < rows) && ((sosed_k + k) >= 0) && ((sosed_j + j) < cols) && ((sosed_j + j) >= 0) &&
                     matrix[sosed_k + k][sosed_j + j] == 0) {
                     Vnn.emplace_back(sosed_k + k, sosed_j + j);
+                    waysout++;
                     if (((sosed_k + k) != rowgraal) || ((sosed_j + j) != colgraal)) {
                         matrix[sosed_k + k][sosed_j + j] = count;
                     } else breakpoint = 1;
                 }
             }
+        }
+        if (waysout == 0) {
+            cout << "No way(" << endl;
+            exit (7);
         }
     }
     Vn = Vnn;
