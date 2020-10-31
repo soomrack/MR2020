@@ -5,12 +5,12 @@ using namespace std;
 
 const int cols =7;
 const int rows =7;
-int matrix [rows][cols]={{0, 9, 0, 0, 0, 0, 0},
-                         {9, 0, 0, 0, 0, 0, 0},
-                         {0, 9, 0, 9, 9, 0, 0},
-                         {0, 9, 9, 0, 9, 0, 0},
-                         {0, 0, 0, 0, 0, 9, 0},
-                         {0, 0, 0, 0, 0, 0, 0},
+int matrix [rows][cols]={{0, 0, 0, 9, 0, 0, 0},
+                         {0, 0, 0, 9, 0, 0, 0},
+                         {9, 9, 0 ,9, 9, 0, 0},
+                         {9, 9, 0, 9, 9, 0, 0},
+                         {0, 0, 0, 9, 0, 9, 0},
+                         {9, 9, 9, 9, 0, 0, 0},
                          {0, 0, 0, 0, 0, 0, 0}};
 
 int rowgraal = 6;
@@ -38,10 +38,11 @@ void fillin(){
     matrix[startpointrow][startpointcol]=1;//Заносим в помеченные точки
     Vn.push_back(make_pair(startpointrow,startpointcol));
     count = 1;
-    int waysout = 0;
+    int waysout;
     int breakpoint;
 while (breakpoint!=1) {
     for (int i = 0; i < Vn.size(); i++) {
+        waysout = 0;
         int sosed_k = Vn[i].first;
         int sosed_j = Vn[i].second;
         for (int k = -1; k <= 1; k++) {
@@ -56,12 +57,12 @@ while (breakpoint!=1) {
                 }
             }
         }
-        if (waysout == 0) {
-            cout << "No way(" << endl;
-            exit (7);
-        }
     }
     Vn = Vnn;
+    if (waysout == 0) {
+        cout << "No way(" << endl;
+        exit (1);
+    }
     count++;
     }
 }
