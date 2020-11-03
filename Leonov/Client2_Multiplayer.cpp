@@ -56,6 +56,21 @@ int main(int argc, char* argv[]) {
 		recv(Connection, pole, sizeof(pole), NULL);
 
 		void writing();
+        if (pole[0] == 'x' && pole[1] == 'x' && pole[2] == 'x' ||
+			pole[3] == 'x' && pole[4] == 'x' && pole[5] == 'x' ||
+			pole[6] == 'x' && pole[7] == 'x' && pole[8] == 'x' ||
+			pole[0] == 'x' && pole[3] == 'x' && pole[6] == 'x' ||
+			pole[1] == 'x' && pole[4] == 'x' && pole[7] == 'x' ||
+			pole[2] == 'x' && pole[5] == 'x' && pole[8] == 'x' ||
+			pole[0] == 'x' && pole[4] == 'x' && pole[8] == 'x' ||
+			pole[6] == 'x' && pole[4] == 'x' && pole[2] == 'x')
+		{
+			cout << "Игрок победил \n";
+			exit(0);
+		}
+
+		std::cin >> cellnumber;
+		pole[cellnumber - 1] = '0';
 
 		if (pole[0] == 'o' && pole[1] == 'o' && pole[2] == 'o' ||
 			pole[3] == 'o' && pole[4] == 'o' && pole[5] == 'o' ||
@@ -67,22 +82,6 @@ int main(int argc, char* argv[]) {
 			pole[6] == 'o' && pole[4] == 'o' && pole[2] == 'o')
 		{
 			cout << "Компектор победил \n";
-			exit(0);
-		}
-
-		std::cin >> cellnumber;
-		pole[cellnumber - 1] = 'x';
-
-		if (pole[0] == 'x' && pole[1] == 'x' && pole[2] == 'x' ||
-			pole[3] == 'x' && pole[4] == 'x' && pole[5] == 'x' ||
-			pole[6] == 'x' && pole[7] == 'x' && pole[8] == 'x' ||
-			pole[0] == 'x' && pole[3] == 'x' && pole[6] == 'x' ||
-			pole[1] == 'x' && pole[4] == 'x' && pole[7] == 'x' ||
-			pole[2] == 'x' && pole[5] == 'x' && pole[8] == 'x' ||
-			pole[0] == 'x' && pole[4] == 'x' && pole[8] == 'x' ||
-			pole[6] == 'x' && pole[4] == 'x' && pole[2] == 'x')
-		{
-			cout << "Игрок победил \n";
 			exit(0);
 		}
 
