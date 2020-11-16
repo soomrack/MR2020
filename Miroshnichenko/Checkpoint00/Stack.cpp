@@ -19,8 +19,7 @@ private:
 
 int Stack::pop() {
   if (top == nullptr) {
-    std::cout << "ERROR: There is no elements in stack\n";
-    exit(1);
+    return 1234;
   }
   struct Element * pointer;
   int a;
