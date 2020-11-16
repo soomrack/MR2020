@@ -13,14 +13,14 @@ private:
     struct Node
     {
         int content;
-        Node *point;
+        Node *point;        //pointer to previous element
     };
     Node *top;
 };
 
 Stack::Stack() //:top(NULL) 
 {
-    top = NULL;
+    top = NULL;     //initial pointer to nowhere
 }
 
 void Stack::push(const int value)
@@ -33,6 +33,10 @@ void Stack::push(const int value)
 
 int Stack::pop()
 {
+    if (!top)       //emptiness check
+    {
+        return -42;             //magic exit code
+    }
     int temp = top->content;
     Node *nwel = top;
     top = top->point;
@@ -42,7 +46,7 @@ int Stack::pop()
 
 Stack::~Stack()
 {
-    while (top) {
+    while (top) {           //until top = NULL
         Node *nwel = top;
         top = top->point;
         delete nwel;
@@ -56,8 +60,8 @@ int main() {
     Stack makeshiftStack;
     makeshiftStack.push(5);
     makeshiftStack.push(4);
-    makeshiftStack.push(3);
-    makeshiftStack.push(2);
+    //makeshiftStack.push(3);
+    //makeshiftStack.push(2);
     makeshiftStack.pop();
     makeshiftStack.pop();
     int last = makeshiftStack.pop();
