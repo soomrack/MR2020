@@ -13,16 +13,32 @@ public:
 };
 
 
+class Iterator {
+private:
+    Node *current;
+    Node *prev;
+public:
+    Iterator next();
+    int get_value();
+    void set_value(const int value);
+public:
+    void insert(const int value);  // insert new node after current
+    void del();  // delete current node
+public:
+    Iterator();
+    ~Iterator();
+};
+
+
 class List {
 private:
+    friend class Iterator;
     Node *root;
 public:
-    int pop();
-    void push(const int value);
-    void push(const int value, 
+    Iterator begin();
 public:
-    Stack();
-    ~Stack();
+    List();
+    ~List();
 };
 
 
