@@ -1,10 +1,25 @@
 #include <iostream>
 
 
-class Stack {
+class Node {
+public:
+    int value;
+    Node *next;
+public:
+    Node();
+    Node(const int value);
+    Node(const int value, const Node *next);
+    ~Node();
+};
+
+
+class List {
+private:
+    Node *root;
 public:
     int pop();
     void push(const int value);
+    void push(const int value, 
 public:
     Stack();
     ~Stack();
