@@ -64,7 +64,7 @@ bool Tree::add(const int key, const std::string data)
           }
           else current = current->left;
       }
-      else if (current->key = key)
+      else if (current->key == key)
           return false;
   }
     return false;
@@ -100,10 +100,34 @@ bool Tree::del(const int key)
     if (r == nullptr) return 888;
     Node *min = findmin(r); //То, что мы вытаскиваем наверх
     min->left = q; //Левая подветка идет вниз
-    if (prev->left = nullptr) //В этих 3х строчках мы пристраеваем склееное поддерево к тому узлу, к которому был привязан удаляемый
+    if (prev->left == nullptr) //В этих 3х строчках мы пристраеваем склееное поддерево к тому узлу, к которому был привязан удаляемый
         prev->left = min;
     else prev->right = min;
     return true;
+}
+std::string Tree::find(const int key) {
+    Node *current = root;
+    while (current->key != key)
+    {
+        if (current->key < key)
+        {
+            if (current->right == nullptr) {
+                return std::string ("Oops");
+            }
+            else
+                current = current->right;
+        }
+        else if (current->key > key)
+        {
+            if (current->left == nullptr) {
+                return std::string("Ooops");
+            }
+            else current = current->left;
+        }
+        else if (current->key == key)
+            return std::string(current->data);
+    }
+    return ("smth wrng");
 }
 Tree::~Tree() {delete root;}
 Node::~Node() {delete left; delete right;}
