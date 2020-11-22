@@ -23,6 +23,9 @@ Stack::Stack() //:top(NULL)
     top = NULL;     //initial pointer to nowhere
 }
 
+Stack::Stack() :top(NULL) {}
+
+
 void Stack::push(const int value)
 {
     Node *nwel = new Node;

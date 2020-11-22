@@ -1,3 +1,0 @@
-D:/Work/Coding/Repos/MR2020/PanteleevMD/checkpoint00/build/CMakeFiles/stack.dir
-D:/Work/Coding/Repos/MR2020/PanteleevMD/checkpoint00/build/CMakeFiles/edit_cache.dir
-D:/Work/Coding/Repos/MR2020/PanteleevMD/checkpoint00/build/CMakeFiles/rebuild_cache.dir
