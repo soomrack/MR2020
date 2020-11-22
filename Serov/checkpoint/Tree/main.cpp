@@ -7,12 +7,12 @@
 class Node {
 public:
     int key;
-    int *data;
+    std:: string data;
 public:
     Node *left;
     Node *right;
 public:
-    Node(const int key, int* data){
+    Node(const int key, std :: string data){
         this->key = key;
         this->data = data;
         left = nullptr;
@@ -43,7 +43,7 @@ private:
         return nullptr;
     }
 public:
-    bool add(const int key, int *data){
+    bool add(const int key, std:: string data) {
         Node* child = new Node (key,data);
         if (root == nullptr){
             root = child;
