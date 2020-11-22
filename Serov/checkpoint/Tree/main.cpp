@@ -42,6 +42,15 @@ private:
         }
         return nullptr;
     }
+    Node* min(Node* root)
+    {
+        Node* findMin = root;
+        while (findMin->left != nullptr)
+        {
+            findMin = findMin->left;
+        }
+        return findMin;
+    }
 public:
     bool add(const int key, std:: string data) {
         Node* child = new Node (key,data);
@@ -71,6 +80,7 @@ public:
             {
                 parentOfDeletedNode->right = nullptr;
             }
+            return true;
         }
         if (deletedNode->left == nullptr && deletedNode->right != nullptr)
         {
@@ -82,6 +92,7 @@ public:
             {
                 parentOfDeletedNode->right = deletedNode->right;
             }
+            return true;
         }
         if (deletedNode->left != nullptr && deletedNode->right == nullptr)
         {
@@ -93,10 +104,26 @@ public:
             {
                 parentOfDeletedNode->right = deletedNode->left;
             }
+            return true;
         }
-        // немного не понял, как реализовать случай, когда ключ не является крайним
-        // хотя вы вроде и объясняли на паре принцип, но программная реализация оказалась сложной
-        return true;
+        if ((deletedNode->left != nullptr) && (deletedNode->right != nullptr)) // у удаляемого узла два ребенка
+        {
+            Node* temp = min(deletedNode->right);
+            if (temp == deletedNode->right)
+            {
+                deletedNode->key = temp->key;
+                deletedNode->data = temp->data;
+                deletedNode->right = temp->right;
+                delete temp;
+            }
+            else
+            {
+                deletedNode->data = temp->data;
+                deletedNode->key = temp->key;
+                del(temp->key);
+            }
+            return true;
+        }
     }; // false if no key
     std::string find(const int key) {
         if (root == nullptr)
