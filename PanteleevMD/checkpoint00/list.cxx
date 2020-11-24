@@ -10,8 +10,8 @@ public:
     Node *next;
 public:
     Node();
-    Node(const int value);
-    Node(const int value, const Node *next);
+    Node( int value);
+    Node( int value,  Node *next);
     ~Node();
 };
 
@@ -33,15 +33,25 @@ public:
     ~Iterator();
 };
 
-Node::Node(const int value)
+Node::Node()
+{
+    next = nullptr;
+} 
+
+Node::Node(int value)
 {
     this->value = value;
 } 
 
-Node::Node(const int value, const Node *next)
+Node::Node( int value,  Node *next)
 {
     this->value = value;
     this->next = next;
+} 
+
+Node::~Node()
+{
+    delete this;
 } 
 
 class List {
@@ -57,8 +67,7 @@ public:
 
 List::List()
 {
-    root->next = nullptr;
-    root->value = -111111;
+    root = nullptr;
 }
 
 Iterator List::begin()
@@ -78,55 +87,61 @@ List::~List()
 
 Iterator::Iterator()
 {
-    current = master->root;
+    current = nullptr;
 }
 
 void Iterator::insert(const int value)
 {
-    Node* newNodePtr = new Node;
-    newNodePtr->value = value; 
-    newNodePtr->next = master->root; // Initialize all the fields
-
-    master->root = newNodePtr;
-
+    Node* newNodePtr = new Node(value, current);
+    next();
 }
 
 void Iterator::del()
 {
-    if (master->root)       //if the list is not empty
+    if (current && prev)       //if the list is not empty and previous element present
     {
-        Node* newHead = master->root->next;
-        delete master->root;
-        master->root = newHead;
+        prev->next = current->next;     //ties neighbours together
     }
+    else if (current == master->root)
+    {
+        master->root = current->next;   //update head
+    }
+    delete current;
+    next();
 }
 
 int Iterator::get_value()
 {
-    if (current)
+    if (current)        //not null
     {
         return current->value;
     }
+    return -1;
 }
 
 Iterator Iterator::next()
 {
-    Node *temp;
-    temp = master->root;
-    master->root = current->next;   //workaround to fix lack of fileds 
-    Iterator newIt;                 //since root is the only available data in constructor 
-    master->root = temp;            //fix root
+    /*Node *temp;
+    temp = master->root;        //workaround to fix lack of fileds 
+    master->root = current->next; */  //since root is the only available data in constructor 
+    Iterator newIt;                 
+    newIt.current = current->next;
+    newIt.prev = current;
 
     return newIt;
 }
 
+Iterator::~Iterator()
+{
+    delete this;
+}
 
 
 int main() {
     List test;
     Iterator it = test.begin(); 
     it.insert(6);
-    for (it; it.get_value(); it.next())
+    for (; it.get_value(); it.next())
     {
         it.insert(5);
         it.insert(4);
@@ -137,6 +152,4 @@ int main() {
         it.insert(2);
     }
     std::cout << "The end." << std::endl;
-
-
 }
