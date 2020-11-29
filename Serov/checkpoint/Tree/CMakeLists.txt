@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
-project(Tree1)
+project(untitled6)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Tree1 main.cpp)
+add_executable(untitled6 main.cpp)
