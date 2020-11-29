@@ -30,6 +30,7 @@ public:
     void del();  // delete current node
 public:
     Iterator();
+    Iterator(List &master);
     ~Iterator();
 };
 
@@ -51,7 +52,7 @@ Node::Node( int value,  Node *next)
 
 Node::~Node()
 {
-    delete this;
+    //delete this;
 } 
 
 class List {
@@ -72,8 +73,8 @@ List::List()
 
 Iterator List::begin()
 {
-    Iterator fresh = new Iterator();
-    return Iterator();
+    Iterator fresh(*this);
+    return fresh;
 }
 
 List::~List()
@@ -88,13 +89,22 @@ List::~List()
 
 Iterator::Iterator()
 {
-    current = nullptr;
+    current = master->root;
+    prev = nullptr;
+}
+
+Iterator::Iterator(List &masterList)
+{
+    master = &masterList;
+    current = master->root;
+    prev = nullptr;
 }
 
 void Iterator::insert(const int value)
 {
-    Node* newNodePtr = new Node(value, current);
-    next();
+    Node* tempNode = new Node(value, current);
+    current = tempNode;
+    master->root = current;
 }
 
 void Iterator::del()
@@ -102,13 +112,16 @@ void Iterator::del()
     if (current && prev)       //if the list is not empty and previous element present
     {
         prev->next = current->next;     //ties neighbours together
-    }
+        delete current;
+    }                                   //no need in updating head
     else if (current == master->root)
     {
         master->root = current->next;   //update head
+        delete current;
+        current = master->root;
     }
-    delete current;
-    next();
+    
+    //next();
 }
 
 int Iterator::get_value()
@@ -117,40 +130,61 @@ int Iterator::get_value()
     {
         return current->value;
     }
-    return -1;
+    return NULL;
+}
+
+void Iterator::set_value(int value)
+{
+    if (current)        //not null
+    {
+        current->value = value;
+    }
 }
 
 Iterator Iterator::next()
 {
-    /*Node *temp;
-    temp = master->root;        //workaround to fix lack of fileds 
-    master->root = current->next; */  //since root is the only available data in constructor 
-    Iterator newIt;                 
-    newIt.current = current->next;
-    newIt.prev = current;
+    if (!this->current) return *this;       //idk what to retun (no .end())
+    if (this->current->next == nullptr)     
+    {
+        this->prev = this->current;
+        this->current = nullptr;
+        return *this;
+    }
+    
+    this->prev = this->current;
+    this->current = this->current->next;
 
-    return newIt;
+    return *this;
 }
 
 Iterator::~Iterator()
 {
-    delete this;
+    //delete this;
 }
 
 
 int main() {
     List test;
     Iterator it = test.begin(); 
-    it.insert(6);
-    for (; it.get_value(); it.next())
+
+    it.insert(1);
+    it.insert(2);
+    it.insert(3);
+    it.insert(4);
+    it.insert(5);
+
+    for (; it.get_value() != NULL; it.next())
     {
-        it.insert(5);
-        it.insert(4);
-        it.insert(3);
-        it.get_value();
-        it.del();
-        it.get_value();
-        it.insert(2);
+        std::cout << it.get_value()  << '\n';
     }
+
+    std::cout << it.get_value() << '\n';
+    it.del();
+    std::cout << it.get_value() << '\n';
+    it.set_value(71);
+    std::cout << it.get_value() << '\n';
+    it = it.next();
+    std::cout << it.get_value() << '\n';
+
     std::cout << "The end." << std::endl;
 }
