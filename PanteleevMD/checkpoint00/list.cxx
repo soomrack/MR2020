@@ -72,6 +72,7 @@ List::List()
 
 Iterator List::begin()
 {
+    Iterator fresh = new Iterator();
     return Iterator();
 }
 
