@@ -33,6 +33,7 @@ private:
     Node* findMax(Node* p);
 };
 
+
 Node::Node() 
 {
     left = nullptr; 
@@ -40,6 +41,8 @@ Node::Node()
 }
 Node::Node( int key,  std::string data) 
 {
+    left = nullptr; 
+    right = nullptr;
     this->key = key; 
     this->data = data;
 }
@@ -54,8 +57,6 @@ Node::~Node()
 {
     delete left; 
     delete right;
-    //delete data;
-    //delete key;
 }
 
 Tree::Tree()
@@ -78,10 +79,8 @@ Tree::~Tree()
     delete root;
 }
 
-
-bool Tree::add(const int key, std::string data)       //could be recursive
+bool Tree::add(const int key, std::string data)       
 {
-    //std::cout<< "Add initiated" << '\n';
     Node *activeNode = root;
 
     if (root == nullptr) {      //tree is empty
@@ -91,7 +90,7 @@ bool Tree::add(const int key, std::string data)       //could be recursive
         return true;
     }
 
-    while (true)     //iterate until key is found or element added
+    while (true)     //iterate until the key is found or the Node added
     {
         if (key > activeNode->key) 
         {
@@ -122,66 +121,58 @@ bool Tree::del(const int key)
 {
     Node *activeNode = root;
     Node *previousNode = nullptr;
-    //std::cout<< "Del initiated" << '\n';
+
     if (activeNode == nullptr)
         return false;
-    //could be recursive
+
     while (activeNode->key != key) //leaves iteration when the key is found
     {
         if (key > activeNode->key) 
         {
-            if (activeNode->right != nullptr) 
-            {
-                previousNode = activeNode;
-                activeNode = activeNode->right;
-            } 
-            else return false;
+            if (activeNode->right == nullptr) return false;
+            previousNode = activeNode;
+            activeNode = activeNode->right;
+
         }
         if (key < activeNode->key) 
         {
-            if (activeNode->left != nullptr) 
-            {
-                previousNode = activeNode;
-                activeNode = activeNode->left;
-            } 
-            else return false;
+            if (activeNode->left == nullptr) return false;
+            previousNode = activeNode;
+            activeNode = activeNode->left;
+            
         }
     }  //proper key has been found
 
     Node *leftChild = activeNode->left;     
     Node *rightChild = activeNode->right;  
 
-    if (activeNode==root) //root is being deleted
-    {   
-        if (rightChild != nullptr) //right child is present
-        { 
-            findMin(rightChild)->left = leftChild; //retrieve the smallest node from right branch
-            delete activeNode;
-            root = rightChild;           //the root is dead long live the root (rightChild)
-            return true;
-        } 
-        else //there is left branch only
-        { 
-            delete activeNode;
-            root = leftChild;
-            return true;
-        }
-    }
-                //TODO: Merge two blocks using false previous
     if (rightChild != nullptr) 
     { 
-        findMin(rightChild)->left = leftChild; //retrieve the smallest node from right branch
-        Node *prevRight = previousNode->right;
+        findMin(rightChild)->left = leftChild; //retrieve the smallest node from the right branch
 
+        if (activeNode==root){ //root is being deleted      
+            delete activeNode;
+            root = rightChild; //the root is dead long live the root (rightChild)
+            return true; }   
+
+        Node *prevRight = previousNode->right;
         if (prevRight->key == activeNode->key) 
         {
-            previousNode->right = rightChild;
+            previousNode->right = rightChild;       //swap right
         }
         else previousNode->left = rightChild; 
     }
     else 
     { 
-        if (previousNode->left == activeNode)  {previousNode->left = leftChild;}
+        if (activeNode==root){ //root is being deleted
+            delete activeNode;
+            root = leftChild; //the root is dead long live the root (leftChild)
+            return true; }   
+
+        if (previousNode->left == activeNode)  
+        {
+            previousNode->left = leftChild;     //swap left
+        }
         else previousNode->right = leftChild;
     }
     
@@ -224,7 +215,7 @@ int main() {
     std::cout<<testTree.find(10)<<std::endl;
     std::cout<<testTree.find(15)<<std::endl;
     testTree.del(15);
-    std::cout<<testTree.find(20)<<std::endl;
+    std::cout<<testTree.find(15)<<std::endl;
     std::cout << "The end." << std::endl;
 
     return 0;
