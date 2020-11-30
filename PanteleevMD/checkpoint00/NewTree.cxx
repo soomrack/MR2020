@@ -18,17 +18,8 @@ public:
 };
 
 
-class Tree {
-private:
-    Node *root;
-    Node* findMin(Node* p) 
-    {
-        return p->left ? findMin(p->left) : p;      //ternary recursive magic
-    }
-    Node* findMax(Node* p) 
-    {
-        return p->right ? findMax(p->right) : p;      
-    }
+class Tree 
+{
 public:
     bool add(int key,  std::string data);  // false if key already exists
     bool del(int key);  // false if no key
@@ -36,6 +27,10 @@ public:
 public:
     Tree();
     ~Tree();
+private:
+    Node* root;
+    Node* findMin(Node* p);
+    Node* findMax(Node* p);
 };
 
 Node::Node() 
@@ -67,19 +62,24 @@ Tree::Tree()
 {
     root = nullptr;
 }
+
+Node* Tree::findMin(Node* p) 
+{
+    return p->left ? findMin(p->left) : p;      
+}
+
+Node* Tree::findMax(Node* p) 
+{
+    return p->right ? findMax(p->right) : p;      
+}
+
 Tree::~Tree() 
-{   /*      It won't work
-    Node* eraser = findMin(findMax(root));
-    while(eraser != nullptr)        //slow as f*ck
-    {
-        del(eraser->key);
-        //eraser->~Node();
-        eraser = findMin(findMax(root));
-    }*/
+{   
+    delete root;
 }
 
 
-bool Tree::add(int key, std::string data)       //could have been recursive
+bool Tree::add(const int key, std::string data)       //could be recursive
 {
     //std::cout<< "Add initiated" << '\n';
     Node *activeNode = root;
@@ -95,8 +95,8 @@ bool Tree::add(int key, std::string data)       //could have been recursive
     {
         if (key > activeNode->key) 
         {
-            if (activeNode->right == nullptr) 
-            {                                           //if nothing is there
+            if (activeNode->right == nullptr)           //if nothing is there
+            {                                           
                 Node *newNode = new Node(key, data);
                 activeNode->right = newNode;            //attach new node
                 return true;
@@ -113,20 +113,20 @@ bool Tree::add(int key, std::string data)       //could have been recursive
             } 
             activeNode = activeNode->left;
         } 
-        else if (activeNode->key == key)            //duplicate is found
+        else if (activeNode->key == key)            //duplicate was found
             return false;
     }
 }
 
-bool Tree::del(const int key)       //could have been recursive
+bool Tree::del(const int key)       
 {
     Node *activeNode = root;
     Node *previousNode = nullptr;
     //std::cout<< "Del initiated" << '\n';
     if (activeNode == nullptr)
         return false;
-    
-    while (activeNode->key != key) //leaves itearation when the key is found
+    //could be recursive
+    while (activeNode->key != key) //leaves iteration when the key is found
     {
         if (key > activeNode->key) 
         {
@@ -146,7 +146,7 @@ bool Tree::del(const int key)       //could have been recursive
             } 
             else return false;
         }
-    }  //at this point proper key has been found
+    }  //proper key has been found
 
     Node *leftChild = activeNode->left;     
     Node *rightChild = activeNode->right;  
@@ -155,20 +155,22 @@ bool Tree::del(const int key)       //could have been recursive
     {   
         if (rightChild != nullptr) //right child is present
         { 
-            findMin(rightChild)->left = leftChild; //retrieve the smallest node from right subbranch
-            root = rightChild;                  //the root is dead long live the root (rightChild)
+            findMin(rightChild)->left = leftChild; //retrieve the smallest node from right branch
+            delete activeNode;
+            root = rightChild;           //the root is dead long live the root (rightChild)
             return true;
         } 
         else //there is left branch only
         { 
+            delete activeNode;
             root = leftChild;
             return true;
         }
     }
-
+                //TODO: Merge two blocks using false previous
     if (rightChild != nullptr) 
     { 
-        findMin(rightChild)->left = leftChild; //retrieve the smallest node from right subbranch
+        findMin(rightChild)->left = leftChild; //retrieve the smallest node from right branch
         Node *prevRight = previousNode->right;
 
         if (prevRight->key == activeNode->key) 
@@ -179,7 +181,7 @@ bool Tree::del(const int key)       //could have been recursive
     }
     else 
     { 
-        if (previousNode->left == activeNode)  previousNode->left = leftChild;
+        if (previousNode->left == activeNode)  {previousNode->left = leftChild;}
         else previousNode->right = leftChild;
     }
     
@@ -189,7 +191,7 @@ bool Tree::del(const int key)       //could have been recursive
 
 std::string Tree::find(const int key) {
     Node *activeNode = root;
-    std::string errMsg = " ";
+    std::string errMsg = "";
 
     if (activeNode == nullptr)
         return errMsg;
@@ -199,12 +201,12 @@ std::string Tree::find(const int key) {
         if (key > activeNode->key) 
         {
             if (activeNode->right == nullptr) return errMsg;   
-            else activeNode = activeNode->right;
+            activeNode = activeNode->right;
         } 
         else if (key < activeNode->key) 
         {
             if (activeNode->left == nullptr) return errMsg;
-            else activeNode = activeNode->left;
+            activeNode = activeNode->left;
         }
     }
     return activeNode->data;

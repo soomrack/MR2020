@@ -1,5 +1,12 @@
 #include <iostream>
 
+#define POP_ERROR -42;
+
+struct Node
+{
+    int content;
+    Node *point;        //pointer to previous element
+};
 
 class Stack {
 public:
@@ -8,20 +15,9 @@ public:
 public:
     Stack();
     ~Stack();
-
 private:
-    struct Node
-    {
-        int content;
-        Node *point;        //pointer to previous element
-    };
     Node *top;
 };
-
-Stack::Stack() //:top(NULL) 
-{
-    top = NULL;     //initial pointer to nowhere
-}
 
 Stack::Stack() :top(NULL) {}
 
@@ -40,22 +36,22 @@ int Stack::pop()
     {
         return -42;             //magic exit code
     }
-    int temp = top->content;
-    Node *nwel = top;
+    int value = top->content;
+    Node *targetNode = top;
     top = top->point;
-    delete nwel;
-    return temp;
+    delete targetNode;
+
+    return value;
 }
 
 Stack::~Stack()
 {
     while (top) {           //until top = NULL
-        Node *nwel = top;
+        Node *targetNode = top;
         top = top->point;
-        delete nwel;
+        delete targetNode;
     }
 }
-
 
 
 

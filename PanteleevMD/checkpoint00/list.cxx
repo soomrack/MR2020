@@ -34,6 +34,18 @@ public:
     ~Iterator();
 };
 
+class List {
+private:
+    friend class Iterator;
+    Node *root;     //more like head but ok
+public:
+    Iterator begin();
+public:
+    List();
+    ~List();
+};
+
+
 Node::Node()
 {
     next = nullptr;
@@ -55,17 +67,6 @@ Node::~Node()
     //delete this;
 } 
 
-class List {
-private:
-    friend class Iterator;
-    Node *root;     //more like head but ok
-public:
-    Iterator begin();
-public:
-    List();
-    ~List();
-};
-
 List::List()
 {
     root = nullptr;
@@ -80,7 +81,7 @@ Iterator List::begin()
 List::~List()
 {
     Iterator eraser;
-    while(root)
+    while(root)     //deletes elements untill nullptr is reached
     {
         eraser.del();
     }
@@ -102,6 +103,7 @@ Iterator::Iterator(List &masterList)
 
 void Iterator::insert(const int value)
 {
+    //TODO: Middle insertion
     Node* tempNode = new Node(value, current);
     current = tempNode;
     master->root = current;
@@ -144,13 +146,7 @@ void Iterator::set_value(int value)
 
 Iterator Iterator::next()
 {
-    if (!this->current) return *this;       //idk what to retun (no .end())
-    if (this->current->next == nullptr)     
-    {
-        this->prev = this->current;
-        this->current = nullptr;
-        return *this;
-    }
+    if (this->current == nullptr) return *this;       //idk what to retun (no .end())
     
     this->prev = this->current;
     this->current = this->current->next;
