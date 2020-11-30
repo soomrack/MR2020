@@ -43,6 +43,8 @@ public:
     Iterator();
     Iterator (List &head);
 };
+
+
 class List {
 private:
     friend class Iterator;
@@ -52,25 +54,32 @@ public:
 public:
     List();
 };
+
+
 Iterator :: Iterator(){
     current = head->root;
 }
+
 Iterator :: Iterator (List &rooot){
     head = &rooot;
     current = head->root;
     prev = nullptr;
 }
+
 Iterator List :: begin(){
     Iterator remake(*this);
     return (*this);
 }
+
 List ::List() {
     root = nullptr;
 }
+
 void Iterator::insert (const int value){
     current = new Node(value, current);
     head->root = current;
 }
+
 void Iterator::del() {
     if (current != nullptr && prev != nullptr)       
     {
@@ -85,6 +94,7 @@ void Iterator::del() {
         current = head->root;
     }
 }
+
 int main() {
     List list;
 
