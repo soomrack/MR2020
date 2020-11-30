@@ -86,12 +86,14 @@ void Iterator::del() {
         prev->next = current->next;
         delete current;
         current = prev->next;
+	return;
     }
-    else if (prev == nullptr && current != nullptr)
+    if (prev == nullptr && current != nullptr)
     {
         head->root = current->next;
         delete current;
         current = head->root;
+	return;    
     }
 }
 
