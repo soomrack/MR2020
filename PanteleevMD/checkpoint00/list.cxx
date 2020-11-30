@@ -103,8 +103,12 @@ Iterator::Iterator(List &masterList)
 
 void Iterator::insert(const int value)
 {
-    //TODO: Middle insertion
     Node* tempNode = new Node(value, current);
+    if (prev != nullptr)
+    {
+        prev->next = tempNode;
+        return;
+    }
     current = tempNode;
     master->root = current;
 }
@@ -196,10 +200,21 @@ int main() {
     it3.del();
     it3.del();
 
+    for (Iterator it3 = test.begin(); it3.get_value() != NULL; it3.next())
+    {
+        std::cout << it3.get_value()  << '\n';
+    }
+
+    std::cout << "Middle insertion test" << '\n';
+    Iterator it4 = test.begin();
+    it4.next();
+    it4.next();
+    it4.insert(99);
     for (Iterator it4 = test.begin(); it4.get_value() != NULL; it4.next())
     {
         std::cout << it4.get_value()  << '\n';
     }
+
 
     std::cout << "The end." << std::endl;
 }
