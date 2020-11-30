@@ -29,6 +29,7 @@ private:
         else if (root->key > key) return lookForNode(root->left, key);
         else return lookForNode(root->right, key);
     }
+
     Node* findParentWhileAdding  (Node * root, int key) {
         if (root->key <= key) {
             if (root->right == nullptr)
@@ -42,12 +43,14 @@ private:
         }
         return nullptr;
     }
+
     Node* findParentWhileDeliting(Node* root, int key){
         if (root->right->key == key) return root;
         if (root->left->key == key) return root;
         if (root->key<=key) return findParentWhileDeliting(root->right,key);
         return findParentWhileDeliting(root->left,key);
     };
+
     Node* min(Node* root)
     {
         if (root->left == nullptr)
@@ -71,6 +74,8 @@ public:
             parent->right = child;
         return true;
     };  // false if key already exists
+
+
     bool del(const int key){
         Node* deletedNode = lookForNode(root,key);
         Node* parentOfDeletedNode = findParentWhileDeliting(root, key);
@@ -131,6 +136,7 @@ public:
             return true;
         }
     }; // false if no key
+
     std::string find(const int key) {
         Node* node = root;
         if (node == nullptr)
@@ -150,6 +156,7 @@ public:
         }
         return node->data;
     };  // return '' if no key
+
 public:
     Tree(){
         root = nullptr;
