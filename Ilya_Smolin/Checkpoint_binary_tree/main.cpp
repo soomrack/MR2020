@@ -21,7 +21,7 @@ private:
     Node *root;
     Node* findmin(Node* p) // поиск узла с минимальным ключом в дереве p
     {
-        return p->left?findmin(p->left):p;
+        return p->left ? findmin(p->left) : p;
     }
 public:
     bool add(const int key, const std::string data);  // false if key already exists
@@ -31,117 +31,139 @@ public:
     Tree();
     ~Tree();
 };
+
 Node::Node() {left = nullptr; right = nullptr;}
+
 Tree::Tree() {root = nullptr;}
-bool Tree::add(const int key, const std::string data) {
+
+bool Tree::add(const int key, const std::string data)
+{
     Node *current = root;
-    if (current == nullptr) {
+    if (current == nullptr)
+    {
         root = new Node;
         root->key = key;
         root->data = data;
+        return true;
     }
-    else{
-        while (current->key != key)
+    while (true)
+    {
+        if (current->key < key)
         {
-            if (current->key < key) {
-                if (current->right == nullptr) {
-                    current->right = new Node;
-                    Node *newNode = current->right;
-                    newNode->key = key;
-                    newNode->data = data;
-                    return true;
-                } else
-                    current = current->right;
-            } else if (current->key > key) {
-                if (current->left == nullptr) {
-                    current->left = new Node;
-                    Node *newNode = current->left;
-                    newNode->key = key;
-                    newNode->data = data;
-                    return true;
-                } else current = current->left;
-            } else if (current->key == key)
-                return false;
+            if (current->right == nullptr)
+            {
+                current->right = new Node;
+                Node *newNode = current->right;
+                newNode->key = key;
+                newNode->data = data;
+                return true;
+            }
+                current = current->right;
         }
+        if (current->key > key)
+        {
+            if (current->left == nullptr)
+            {
+                current->left = new Node;
+                Node *newNode = current->left;
+                newNode->key = key;
+                newNode->data = data;
+                return true;
+            }
+                current = current->left;
+        }
+        if (current->key == key)
+            return false;
     }
-    return false;
 }
+
 bool Tree::del(const int key)
 {
     Node *current = root;
     Node *prev = nullptr;
     if (current == nullptr)
         return false;
-    else {
-        while (current->key != key) {
-            if (current->key < key) {
-                if (current->right != nullptr) {
-                    prev = current;
-                    current = current->right;
-                } else
-                    return false;
-            }
-            if (current->key > key) {
-                if (current->left != nullptr) {
-                    prev = current;
-                    current = current->left;
-                } else
-                    return false;
-            }
-        }
-    }
-    std::cout<<"To, chto udalayem: ";
-    std::cout<<current->data<<std::endl;
 
-    Node *q = current->left;
-    Node *r = current->right;
-
-    if (current!=root) { //Когда удаляемый элемент не корень дерева
-        if (r != nullptr) { //Удаляемый элемент - не корень, и справа есть узел
-        findmin(r)->left = q; //Левая подветка идет вниз
-            Node *prevright = prev->right;
-            if (prevright->key == current->key) //Если удаляемый элемент был слева у родителя
+    while (current->key != key)
+    {
+        if (current->key < key)
+        {
+            if (current->right != nullptr)
             {
-                prev->right = r;
-            }
-            else
-                prev->left = r; //Если справа
-        } else { //Удаляемый элемент - не корень, и справа пусто
-            if (prev->left == current) //Если удаляемый элемент был слева у родителя
-                prev->left = q;
-            else prev->right = q;
+                prev = current;
+                current = current->right;
+            } else
+                return false;
+        }
+        if (current->key > key) {
+            if (current->left != nullptr)
+            {
+                prev = current;
+                current = current->left;
+            } else
+                return false;
         }
     }
-    else{ //Удаляемый элемент - корень дерева
-        if (r != nullptr) { //Удаляемый элемент - корень, и справа есть узел
-            findmin(r)->left = q; //Левая подветка идет вниз
-            root = r; //Корнем становится правый элемент от от корня
-        } else { //Удаляемый элемент - корень, и справа пусто
-            root = q;
+
+    Node *current_left = current->left;
+    Node *current_right = current->right;
+
+    if (current == root)
+    {
+        if (current_right != nullptr)
+        {
+            findmin(current_right)->left = current_left; //Левая подветка идет вниз
+            root = current_right; //Корнем становится правый элемент от от корня
         }
+        else //Удаляемый элемент - корень, и справа пусто
+        {
+            root = current_left;
+        }
+        delete current;
+        return true;
+    }
+    if (current_right != nullptr)
+    {
+        findmin(current_right)->left = current_left; //Левая подветка идет вниз
+        Node *prevright = prev->right;
+        if (prevright->key == current->key) //Если удаляемый элемент был слева у родителя
+        {
+            prev->right = current_right;
+        }
+        else
+            prev->left = current_right; //Если справа
+    }
+    else
+    {
+        if (prev->left == current) //Если удаляемый элемент был слева у родителя
+            prev->left = current_left;
+        else prev->right = current_left;
     }
     delete current;
     return true;
 }
-std::string Tree::find(const int key) {
+
+std::string Tree::find(const int key)
+{
     Node *current = root;
     if (current == nullptr)
-        return "its empty here";
-    else {
-        while (current->key != key) {
-            if (current->key < key) {
-                if (current->right == nullptr) {
-                    return std::string("Oops");
-                } else
-                    current = current->right;
-            } else if (current->key > key) {
-                if (current->left == nullptr) {
-                    return std::string("Ooops");
-                } else current = current->left;
-            }
+        return "";
+    while (current->key != key)
+    {
+        if (current->key < key)
+        {
+            if (current->right == nullptr)
+                return std::string("");
+            current = current->right;
         }
-        return (current->data);
+        else if (current->key > key)
+        {
+            if (current->left == nullptr)
+                return std::string("");
+            current = current->left;
+        }
     }
+    return (current->data);
 }
 Tree::~Tree() {delete root;}
 Node::~Node() {delete left; delete right;}
