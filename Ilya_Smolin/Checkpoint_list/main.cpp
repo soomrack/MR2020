@@ -34,18 +34,18 @@ class List {
 private:
     friend class Iterator;
     Node *root;
-    int Count;
+    int count;
 public:
     bool isEmpty () {return root == nullptr;}
     Iterator begin();
     void clear();
     void pushBack (int value);//Кладем в конец списка элемент
     void popFront();
-    int getCount ();
 public:
     List();
     ~List();
 };
+
 
 Node::Node(const int value)
 {
@@ -58,8 +58,9 @@ Node::Node(const int value, Node *next)
     this -> value = value;
     this -> next = next;
 }
+
 List::List(){
-    Count = 0; //Количество элементов в списке, обновляем при добавлении или удалении элементов из списка
+    count = 0; //Количество элементов в списке, обновляем при добавлении или удалении элементов из списка
     root = nullptr;
 }
 
@@ -68,35 +69,35 @@ List::~List()
     clear();
 }
 
-void List::pushBack(int value)
+void List::pushBack(int value) //Считается, что  список не зациклен
 {
-    if (root == nullptr) //Если список путс
+    if (root == nullptr)
     {
         root = new Node(value);
+        return;
     }
-    else
+    Node *current = this->root;
+    while (current->next != nullptr) //Идем к концу списка
     {
-        Node *current = this->root;
-        while (current->next != nullptr) //Идем к концу списка
-        {
-            current = current->next;
-        }
-        current->next = new Node (value);
+        current = current->next;
     }
-    Count++;
+    current->next = new Node (value);
+    count++;
 }
 
-Iterator::Iterator(List &list) {
+Iterator::Iterator(List &list)
+{
     current = list.root;
     prev = nullptr;
     this->list = &list;
 }
 
-Iterator Iterator::next() {
+Iterator Iterator::next()
+{
     if (current->next == nullptr)
     {
-        prev = current;
-        current = list->root;//перепрыгиваем из конца в начало
+        prev = nullptr;
+        current = nullptr;
     }
     else
     {
@@ -106,55 +107,73 @@ Iterator Iterator::next() {
     return *this;
 }
 
-int Iterator::get_value() {
-    return current->value;
+int Iterator::get_value()
+{
+    if (current != nullptr)
+        return current->value;
+    return 666;
 }
 
-void Iterator::set_value(const int value) {
-    current->value = value;
+void Iterator::set_value(const int value)
+{
+    if (current != nullptr)
+        current->value = value;
 }
 
-void Iterator::del() {
-    if (current->next == nullptr){ //Удаление последнего
+void Iterator::del()
+{
+    if (current == nullptr) //Проверка
+        return;
+    if (current->next == nullptr) //Удаление последнего
+    {
         prev->next = nullptr;
         delete current;
         current = list->root;
+        return;
     }
-    else if (current == list->root){
+    if (current == list->root){
         list->root = list->root->next;
         delete current;
         current = list->root;
+        return;
     }
-    else
-    {
-      prev->next = current->next;
-        delete current;
-        current = list->root;
-    }
-    list->Count--;
+    prev->next = current->next;
+    delete current;
+    current = list->root;
+    list->count--;
 }
 
-void Iterator::insert(const int value) {
+void Iterator::insert(const int value)
+{
     prev->next = new Node (value, current);
-    list->Count++;
+    list->count++;
 }
-Iterator List::begin() {
+
+Iterator List::begin()
+{
     Iterator tmp(*this);
-    return (*this);
+    return (tmp);
 }
-void List::popFront() {
-    if (Count == 0) return;
+
+void List::popFront()
+{
+    if (count == 0) return;
     Node *ptr = root;
     root = root->next;
     delete ptr;
-    Count--;
+
+    count--;
 }
-void List::clear() {
-    std::cout<<"Cleaning..."<<std::endl;
- while (Count != 0){
-     popFront();
- }
-}int List::getCount() {return Count;}
+
+void List::clear()
+{
+    while (count != 0)
+    {
+        popFront();
+    }
+}
+
+
 int main() {
     List list;
     list.pushBack(1);
@@ -163,12 +182,11 @@ int main() {
     list.pushBack(4);
     list.pushBack(5);
     Iterator itr = list.begin();
-    printf("%d\n",itr.get_value());
     itr.del();
     itr.next();
-    printf("%d\n",itr.get_value());
     itr.next();
-    printf("%d\n",itr.get_value());
     itr.next();
-    printf("%d\n",itr.get_value());
-}
+    list.clear();
+    List list2;
+    list2.pushBack(3);
+    }
