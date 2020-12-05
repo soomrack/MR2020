@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 class Node {
 public:
     int value;
@@ -10,19 +9,34 @@ public:
     Node(const int value, Node *next);
 };
 
+class List;
+
+class Iterator {
+private:
+    Node *current;
+    Node *prev;
+    List *list;
+public:
+    Iterator next();
+    int get_value();
+    void set_value(const int value);
+public:
+    void insert(const int value);  // insert new node after current
+    void del();  // delete current node
+public:
+    Iterator(List &list);
+};
+
 
 class List {
 private:
+    friend class Iterator;
     Node *root;
     int size;
 public:
-    int& operator[](const int index);
-    void push_front(const int value);
+    Iterator begin();
+private:
     void pop_front();
-    void insert(const int value);
-    void insert_index(int value, int index);
-    void del_index(int index);
-
 public:
     List();
     ~List();
@@ -36,8 +50,8 @@ Node::Node(const int value)
 
 Node::Node(const int value, Node *next)
 {
-    this -> value = value;
-    this -> next = next;
+    this->value = value;
+    this->next = next;
 }
 
 List::List()
@@ -52,92 +66,95 @@ List::~List()
         pop_front();
 }
 
-void List::insert(const int value)
-{
-    if (root == nullptr)
-    {
-        root = new Node(value);
-    }
-    else
-    {
-        Node *current = this->root;
-        while (current->next != nullptr)
-        {
-            current = current->next;
-        }
-        current->next = new Node(value);
-    }
-    size++;
-}
-
-int & List::operator[](const int index)
-{
-    int counter = 0;
-    Node *current = this->root;
-    while (current != nullptr)
-    {
-        if (counter == index)
-        {
-            return current->value;
-        }
-        current = current->next;
-        counter++;
-    }
-    exit(101);
-}
-
 void List::pop_front()
 {
+    if (size == 0)
+        return;
     Node *temp = root;
     root = root->next;
     delete temp;
     size--;
 }
 
-void List::push_front(const int value)
+Iterator::Iterator(List &list)
 {
-    root = new Node(value, root);
+    current = list.root;
+    prev = nullptr;
+    this->list = &list;
 }
 
-void List::insert_index(int value, int index)
+Iterator Iterator::next()
 {
-    if (index == 0)
-        {
-            push_front(value);
-        }
-        else
-        {
-            Node *previous = this->root;
-            for (int i = 0; i < index - 1; i++)
-            {
-                previous = previous->next;
-            }
-            Node *newNode = new Node(value, previous->next);
-            previous->next = newNode;
-            size++;
-        }
+    if (current->next == nullptr)
+    {
+        prev = current;
+        current = nullptr;
+        return *this;
+    }
+    prev = current;
+    current = current->next;
+    return *this;
 }
 
-void List::del_index(int index)
+int Iterator::get_value()
 {
-    if (index == 0)
-        {
-            pop_front();
-        }
-        else
-        {
-            Node *previous = this->root;
-            for (int i = 0; i < index - 1; i++)
-            {
-                previous = previous->next;
-            }
-            Node *toDelete = previous->next;
-            previous->next = toDelete->next;
-            delete toDelete;
-            size--;
-        }
+    if (current != nullptr)
+        return current->value;
+    return 101;
 }
 
+void Iterator::set_value(const int value)
+{
+    if (current != nullptr)
+        current->value = value;
+}
+
+void Iterator::del()
+{
+    if (current == nullptr)
+        return;
+    if (current->next == nullptr)
+    {
+        prev->next = nullptr;
+        delete current;
+        current = list->root;
+        list->size--;
+        return;
+    }
+    if (current == list->root)
+    {
+        list->root = list->root->next;
+        delete current;
+        current = list->root;
+        list->size--;
+        return;
+    }
+    prev->next = current->next;
+    delete current;
+    current = list->root;
+    list->size--;
+}
+
+void Iterator::insert(const int value)
+{
+    if (list->size == 0)
+    {
+        list->root = new Node (value);
+        list->size++;
+        current = list->root;
+        prev = nullptr;
+        return;
+    }
+    current = new Node (value);
+    prev->next = current;
+    list->size++;
+}
+
+Iterator List::begin()
+{
+    Iterator tmp(*this);
+    return (tmp);
+}
 
 int main()
 {
