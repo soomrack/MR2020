@@ -98,12 +98,10 @@ Iterator Iterator::next()
     {
         prev = nullptr;
         current = nullptr;
+        return *this;
     }
-    else
-    {
-        prev = current;
-        current = current->next;
-    }
+    prev = current;
+    current = current->next;
     return *this;
 }
 
@@ -186,6 +184,7 @@ int main() {
     itr.next();
     itr.next();
     itr.next();
+    itr.insert(9);
     list.clear();
     List list2;
     list2.pushBack(3);
