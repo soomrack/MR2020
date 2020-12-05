@@ -14,18 +14,16 @@ public:
         ~Node();
 };
 
- Node::Node( int key, const std::string data){
+ Node::Node( int key, const std::string data, Node* left, Node* right){
     this->key = key;
     this->data = data;
-    this->left = nullptr;
-    this->right = nullptr;
+    this->left = left;
+    this->right = right;
     }
 
  Node::~Node(){
-    left = nullptr;
-    right = nullptr;
-    this->key = NULL;
-    this->data = "";
+    delete left;
+    delete right;
  }
 
 
