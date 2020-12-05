@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 
-// Binary search tree
-
 
 class Node {
 public:
@@ -16,12 +14,20 @@ public:
         ~Node();
 };
 
-        Node::Node( int key, const std::string data){
-        this->key = key;
-        this->data = data;
-        left = nullptr;
-        right = nullptr;
+ Node::Node( int key, const std::string data){
+    this->key = key;
+    this->data = data;
+    this->left = nullptr;
+    this->right = nullptr;
     }
+
+ Node::~Node(){
+    left = nullptr;
+    right = nullptr;
+    this->key = NULL;
+    this->data = "";
+ }
+
 
 class Tree {
 private:
@@ -165,36 +171,38 @@ public:
         Tree(){
             root = nullptr;
         };
+        ~Tree(){
+            while(root != nullptr){ del(root->key); 
+        }
 };
 
 int main() {
     Tree tree;
-    tree.add(12, "HelloWorld!");
-    tree.add(5, "Second str");
-    tree.add(15, "3 str");
-    tree.add(3, "4 str");
-    tree.add(1, "5 str");
-    tree.add(7, "str");
+    tree.add(13, "HelloWorld!");
+    tree.add(46, "Second str");
+    tree.add(4, "5 str");
+    tree.add(67, "87 str");
+    tree.add(2, "1 str");
     tree.add(9, "str");
-    tree.add(8, "str");
-    tree.add(11, "str");
-    tree.add(13, "str");
-    tree.add(14, "str");
+    tree.add(12, "str");
+    tree.add(3, "str");
     tree.add(17, "str");
-    tree.add(20, "str");
     tree.add(18, "str");
+    tree.add(21, "str");
+    tree.add(20, "str");
+    tree.add(22, "str");
+    tree.add(19, "str");
 
-    std::string str = tree.find(11);
+    std::string str = tree.find(17);
     std::cout << str << std::endl;
-    str = tree.find(1);
+    str = tree.find(19);
     std::cout << str << std::endl;
-    str = tree.find(6);
+    str = tree.find(14);
     std::cout << str << std::endl;
 
-    tree.del(1);
+    tree.del(19);
     tree.del(17);
-    tree.del(15);
-    tree.del(12);
+    tree.del(13);
 
     std::cout << "The end." << std::endl;
     return 0;
