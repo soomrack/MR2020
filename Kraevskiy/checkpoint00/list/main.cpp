@@ -1,35 +1,64 @@
 #include <iostream>
-using namespace std;
+
+
+class Node {
+public:
+    int value{};
+    Node *next;
+public:
+    Node();
+    Node(const int value);
+    Node(const int value, Node *next);
+};
+
+class List;
+
+class Iterator {
+private:
+    Node *current;
+    Node *prev;
+    List *list; //additional
+public:
+    Iterator next();
+    int get_value();
+    void set_value(const int value);
+public:
+    void insert(const int value);   // insert new node after current
+    void del();                     // delete current node
+public:
+    Iterator(List & list);
+};
+
 
 class List {
+private:
+    friend class Iterator;
+    Node *root;
+    int list_size;   //added
+public:
+    Iterator begin();
+    void pop_first();
 public:
     List();
     ~List();
-    int list_size;
-    void Pop_first();           //удаление первого элемента в списке
-    int Get_size()              // получить количество елементов в списке
-    {
-        return list_size;
-    }
-    int get_value(int index);               //получение значение списка
-    void set_value(int index, int value);   //вставка значение
-    void del_value(int index);              //удаление элемента
-
-private:
-    class Node
-    {
-    public:
-        Node *next;                             //указатель на следующий узел
-        int value;
-        //конструктор для узла
-        Node(int value, Node *next = nullptr)   //параметр по умолчанию для добавления в конец списка
-        {
-            this->value = value;
-            this->next = next;
-        }
-    };
-    Node *root;                                 //указатель на первый элемент списка
 };
+
+Node::Node()
+{
+    next = nullptr;
+}
+
+Node::Node(const int value)
+{
+    this->value = value;
+    this->next = nullptr;
+}
+
+Node::Node(const int value, Node *next)
+{
+    this->value = value;
+    this->next = next;
+}
 
 List::List()
 {
@@ -39,99 +68,106 @@ List::List()
 
 List::~List()
 {
-    while (list_size)   // пока size не станет равным нулю
+    while (list_size)   //Пока list_size не станет равным нулю
     {
-        Pop_first();
+        pop_first();
     }
 }
 
-void List::Pop_first()
+void List::pop_first()
 {
-    Node *temp = root;  //временный узел, для хранения адреса первого элемента
-    root = root->next;  //адресс следующиего элемента за головой (второй элемент)
-    delete temp;        //удаление первого узла
+    Node *temp = root;  //Временный узел, для хранения адреса первого элемента
+    root = root->next;  //Адресс следующиего элемента за головой (второй элемент)
+    delete temp;        //Удаление первого узла
     list_size--;
 }
 
-void List::del_value(int index)
+Iterator::Iterator(List &list)
 {
-    Node *prev = this->root;                    //адрес предыдущего элемент
-    if (index == 0)                             //если удаляем первый элемент
+    current = list.root;
+    prev = nullptr;
+    this->list = &list;
+}
+
+Iterator List::begin()
+{
+    Iterator tmp(*this);
+    return (tmp);
+}
+
+Iterator Iterator::next()
+{
+    if (current->next != nullptr)
     {
-        Pop_first();
-    } else
-    {
-        for (int i = 0; i < index - 1; i++)     //ищем предыдущий
-        {
-            prev = prev->next;
-        }
-        Node *del = prev->next;                 //адрес удаляемого элемента
-        prev->next = del->next;                 //новый адрес предыдущего
-        delete del;
-        list_size--;
+        this->prev = this->current;
+        this->current = this->current->next;
+        return *this;
     }
 }
 
-void List::set_value(int index, int value)
+int Iterator::get_value()
 {
-    if (index == 0)                         //если добавляем первый элемент
-    {
-        root = new Node(value, root);
-    } else
-    {
-        Node *prev = this->root;            //адрес предыдущего элемент
-        for (int i = 0; i < index - 1; i++) //ищем предыдущий
-        {
-            prev = prev->next;              //указатель на элемент, до добавляемого
-        }
-        if (prev->next == nullptr)          //если добавляем в конец списка
-        {
-            Node *newNode = new Node (value);
-            prev->next = newNode;
-        } else
-        {
-            Node *newNode = new Node (value, prev->next);   //вставляем элемент с адресом на следующий
-            prev->next = newNode;                           //присваиваем предыдущему адресс добавленного
-        }
-    }
-    list_size++;
+    if (current != nullptr)
+        return current->value;
 }
 
-int List::get_value(int index)
+void Iterator::set_value(const int value)
 {
-    int counter = 0;                //счетчик для индекса элемента по списку
-    Node *current = this->root;     //временный указатель на начало списка
-    while (current != nullptr)      //цикл до конца списка
-    {
-        if (counter == index)
-        {
-            return current->value;  //возвращаем данные из текущего узла
-        }
-        current = current->next;    //временный адресс ссылается на следующий элемент
-        counter++;
-    }
+    if (current != nullptr)
+        current->value = value;
 }
+
+void Iterator::del()
+{
+    if (current == list->root)      //Если удаляем первый узел
+    {
+        list->root = list->root->next;
+        delete current;
+        current = list->root;
+        list->list_size--;
+        return;
+    }
+    if (current->next == nullptr)   //Если удаляем последний узел
+    {
+        prev->next = nullptr;
+        delete current;
+        current = list->root;
+        list->list_size--;
+        return;
+    }                               //Тогда удаляем промежуточный
+    prev->next = current->next;
+    delete current;
+    current = prev->next;
+    list->list_size--;
+}
+
+void Iterator::insert(const int value)
+{
+    Node* tmp = new Node(value, current);
+    if (prev != nullptr)
+    {       //Если добавляем не в начало
+        prev->next = tmp;
+        prev = tmp;
+        list->list_size++;
+        return;
+    }       //Тогда добавляем в начало
+    current = tmp;
+    list->root = current;
+    list->list_size++;
+}
+
+
 
 int main() {
-    List lst;
-    lst.set_value(0,1);
-    lst.set_value(1,7);
-    lst.set_value(2,555);
-    lst.set_value(0,11111);
-    lst.set_value(2,2222);
-
-    for (int i = 0; i < lst.Get_size(); i++)
-    {
-        cout << lst.get_value(i) << endl;
-    }
-
-    cout << endl << "del_value 2" << endl << endl;
-    lst.del_value(2);
-
-    for (int i = 0; i < lst.Get_size(); i++)
-    {
-        cout << lst.get_value(i) << endl;
-    }
-    
-    cout << endl << "The end." << endl;
+    List debug;
+    Iterator iter = debug.begin();
+    iter.insert(12);
+    iter.insert(13);
+    iter.del();
+    iter.insert(9);
+    iter.insert(22);
+    iter.next();
+    iter.insert(11);
+    iter.del();
+    return 0;
 }
