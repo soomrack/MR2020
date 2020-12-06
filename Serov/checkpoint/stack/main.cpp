@@ -8,40 +8,48 @@ private:
     };
     struct Node* top;
 public:
-    int pop(){
-        struct Node* temp;
-        temp = new Node;
-        if (!top) {
-            printf("Please push some elements in stack");
-            exit(1);
-        }
-        int end = top->value;
-        temp = top;
-        top = top->link;
-        temp->link = NULL;
-        free (temp);
-        return end;
-    }
-    void push(const int value){
-        struct Node* temp;
-        temp = new Node();
-        temp->value = value;
-        temp->link = top;
-        top = temp;
-    };
+    int pop();
+    void push(const int value);
 public:
-    Stack(){
-        top = NULL;
-    };
-    ~Stack(){
+    Stack();
+    ~Stack();
+};
+
+int Stack ::pop() {
+    struct Node* temp;
+    temp = new Node;
+    if (!top) {
+        return 2147483647;
+    }
+    int end = top->value;
+    temp = top;
+    top = top->link;
+    temp->link = nullptr;
+    free (temp);
+    return end;
+}
+
+void Stack  ::push(const int value) {
+    struct Node* temp;
+    temp = new Node();
+    temp->value = value;
+    temp->link = top;
+    top = temp;
+}
+
+Stack ::Stack() {
+    top = nullptr;
+}
+
+Stack ::~Stack() {
+    {
         while (top) {
             Node *half = top;
             top = top ->link;
             free (half);
         }
-    };
-};
-
+    }
+}
 
 
 int main() {
