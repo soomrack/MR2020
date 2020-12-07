@@ -12,161 +12,207 @@ public:
     Node *left;
     Node *right;
 public:
+    Node(const int key, const std::string data);
+    Node(const int key, const std::string data, Node *left, Node *right);
     Node();
     ~Node();
 };
 
+
 class Tree {
 private:
     Node *root;
-    Node* findmin(Node* p) // поиск узла с минимальным ключом в дереве p
-    {
-        return p->left ? findmin(p->left) : p;
-    }
+    Node* findmin(Node* p) {return p->left ? findmin(p->left) : p;}
 public:
     bool add(const int key, const std::string data);  // false if key already exists
     bool del(const int key);  // false if no key
+    Node *search (int key);
+    Node *searchprev (int key);
     std::string find(const int key);  // return '' if no key
 public:
     Tree();
     ~Tree();
 };
 
+
 Node::Node() {left = nullptr; right = nullptr;}
+
 
 Tree::Tree() {root = nullptr;}
 
+
+
+Node *Tree::search(int key)
+{
+    Node *iterator = root;
+    if (iterator == nullptr)
+        return iterator;
+    while (iterator->key != key)
+    {
+        if (iterator->key < key)
+        {
+            if (iterator->right == nullptr)
+                return nullptr;
+            iterator = iterator->right;
+        }
+        if (iterator->key > key)
+        {
+            if (iterator->left == nullptr)
+                return nullptr;
+            iterator = iterator->left;
+        }
+    }
+    return iterator;
+}
+
+
+Node *Tree::searchprev(int key)
+{
+    if (root == nullptr)
+        return nullptr;
+
+    Node *iterator = root;
+    Node *prev = nullptr;
+    while (iterator->key != key)
+    {
+        if (iterator->key < key)
+        {
+            if (iterator->right != nullptr)
+            {
+                prev = iterator;
+                iterator = iterator->right;
+            } else
+                return nullptr;
+        }
+        if (iterator->key > key) {
+            if (iterator->left != nullptr)
+            {
+                prev = iterator;
+                iterator = iterator->left;
+            } else
+                return nullptr;
+        }
+    }
+    return prev;
+}
+
+
+
+Node::Node(const int key, const std::string data)
+{
+    this->key = key;
+    this->data = data;
+    this->left = nullptr;
+    this->right = nullptr;
+}
+
+
+Node::Node(const int key, const std::string data, Node *left, Node *right)
+{
+    this->key = key;
+    this->data = data;
+    this->left = left;
+    this->right = right;
+}
+
+
+
 bool Tree::add(const int key, const std::string data)
 {
-    Node *current = root;
-    if (current == nullptr)
+    if (root == nullptr)
     {
-        root = new Node;
-        root->key = key;
-        root->data = data;
+        root = new Node(key, data);
         return true;
     }
+    Node *iterator = root;
     while (true)
     {
-        if (current->key < key)
+        if (iterator->key < key)
         {
-            if (current->right == nullptr)
+            if (iterator->right == nullptr)
             {
-                current->right = new Node;
-                Node *newNode = current->right;
-                newNode->key = key;
-                newNode->data = data;
+                iterator->right = new Node (key, data);
                 return true;
             }
-                current = current->right;
+            iterator = iterator->right;
         }
-        if (current->key > key)
+        if (iterator->key > key)
         {
-            if (current->left == nullptr)
+            if (iterator->left == nullptr)
             {
-                current->left = new Node;
-                Node *newNode = current->left;
-                newNode->key = key;
-                newNode->data = data;
+                iterator->left = new Node(key, data);
                 return true;
             }
-                current = current->left;
+            iterator = iterator->left;
         }
-        if (current->key == key)
+        if (iterator->key == key)
             return false;
     }
 }
 
+
 bool Tree::del(const int key)
 {
-    Node *current = root;
-    Node *prev = nullptr;
-    if (current == nullptr)
+    Node *nodetodelete = search(key);
+    if (nodetodelete == nullptr)
         return false;
+    Node *prev = searchprev(key);
 
-    while (current->key != key)
-    {
-        if (current->key < key)
-        {
-            if (current->right != nullptr)
-            {
-                prev = current;
-                current = current->right;
-            } else
-                return false;
-        }
-        if (current->key > key) {
-            if (current->left != nullptr)
-            {
-                prev = current;
-                current = current->left;
-            } else
-                return false;
-        }
-    }
+    Node *nodetodelete_left = nodetodelete->left;
+    Node *nodetodelete_right = nodetodelete->right;
 
-    Node *current_left = current->left;
-    Node *current_right = current->right;
-
-    if (current == root)
+    if (nodetodelete == root)
     {
-        if (current_right != nullptr)
+        if (nodetodelete_right != nullptr)
         {
-            findmin(current_right)->left = current_left; //Левая подветка идет вниз
-            root = current_right; //Корнем становится правый элемент от от корня
-        }
-        else //Удаляемый элемент - корень, и справа пусто
-        {
-            root = current_left;
-        }
-        delete current;
-        return true;
-    }
-    if (current_right != nullptr)
-    {
-        findmin(current_right)->left = current_left; //Левая подветка идет вниз
-        Node *prevright = prev->right;
-        if (prevright->key == current->key) //Если удаляемый элемент был слева у родителя
-        {
-            prev->right = current_right;
+            findmin(nodetodelete_right)->left = nodetodelete_left;
+            root = nodetodelete_right;
         }
         else
-            prev->left = current_right; //Если справа
+        {
+            root = nodetodelete_left;
+        }
+        delete nodetodelete;
+        return true;
+    }
+    if (nodetodelete_right != nullptr)
+    {
+        findmin(nodetodelete_right)->left = nodetodelete_left;
+        Node *prevright = prev->right;
+        if (prevright->key == nodetodelete->key)
+        {
+            prev->right = nodetodelete_right;
+        }
+        else
+            prev->left = nodetodelete_right;
     }
     else
     {
-        if (prev->left == current) //Если удаляемый элемент был слева у родителя
-            prev->left = current_left;
-        else prev->right = current_left;
+        if (prev->left == nodetodelete)
+            prev->left = nodetodelete_left;
+        else prev->right = nodetodelete_left;
     }
-    delete current;
+    delete nodetodelete;
     return true;
 }
 
+
 std::string Tree::find(const int key)
 {
-    Node *current = root;
-    if (current == nullptr)
+    Node *element = search(key);
+    if (element == nullptr)
         return "";
-    while (current->key != key)
-    {
-        if (current->key < key)
-        {
-            if (current->right == nullptr)
-                return std::string("");
-            current = current->right;
-        }
-        else if (current->key > key)
-        {
-            if (current->left == nullptr)
-                return std::string("");
-            current = current->left;
-        }
-    }
-    return (current->data);
+    return (element->data);
 }
+
+
 Tree::~Tree() {delete root;}
+
+
+
 Node::~Node() {delete left; delete right;}
+
+
 int main()
 {
     Tree mytree;
