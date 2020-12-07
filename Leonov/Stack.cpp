@@ -7,7 +7,7 @@ class Stack {
 private:  //Структура элемента массива.
     struct Array
     {
-        Array *prevElement; //Указатель на пердыдущий элеммент массива.
+        Array *prevElement; //Указатель на пердыдущий элеммент.
         int value;
         Array() {}
         Array(const int  val)
@@ -18,7 +18,7 @@ private:  //Структура элемента массива.
     };
 
     Array* topElement = new Array();
-    int size;   //Обозначение размера массива 
+    int size;   //Обозначение размера стека. 
 public:
     int pop()
     {
@@ -54,7 +54,10 @@ public:
     {
         size = 0; //Изначальный размер стека.
     };
-    ~Stack() {};
+    ~Stack() {
+        while (size != 0);
+            pop();
+    };
 };
 
 
