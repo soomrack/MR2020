@@ -1,5 +1,6 @@
 #include <iostream>
 
+int const errorcode = -666;
 
 class Stack {
 public:
@@ -8,41 +9,65 @@ public:
 public:
     Stack();
     ~Stack();
-private:
-    struct Elem
-    {
-        int c;
-        struct Elem* next;
-    };
-    struct Elem *Top;
 };
 
-int Stack::pop() {
-    if (Top == nullptr){      //Проверка, что в стеке что-то есть
-        return -666;
-    }
+
+struct Elem
+{
+    int value;
+    struct Elem* next;
+};
+
+struct Elem *Top;
+
+
+int Stack::pop()
+{
+    if (Top == nullptr)
+        return (errorcode);
     struct Elem *pointer;
-    int a;
-    pointer = Top; //указатель будет ссылаться на адрес вершины стека
-    a=pointer->c; //а присвоим то, что было на вершине стека
-    Top = pointer->next; //элемент, следующий за вершиной стал вершиной стека
+    int answer;
+    pointer = Top;
+    answer = pointer->value;
+    Top = pointer->next;
     delete pointer;
-    return a; //возвращаем вершину стека
+    return answer;
 }
-void Stack::push(const int value) {
+
+
+void Stack::push(const int value)
+{
     struct Elem *pointer;
     pointer= new struct Elem;
-    pointer->c = value;
+    pointer->value = value;
     pointer->next = Top;
     Top = pointer;
 }
-Stack::Stack() {
+
+
+Stack::Stack()
+{
     Top = nullptr;
 }
-Stack::~Stack() {
+
+
+Stack::~Stack()
+{
     while(Top != nullptr)
         pop();
 }
+
+
 int main() {
-    std::cout << "The end." << std::endl;
+    Stack mystack;
+    mystack.push(22);
+    mystack.push(5);
+    mystack.push(8);
+    int top = mystack.pop();
+    printf("%d\n",top);
+    top = mystack.pop();
+    printf("%d\n",top);
+    top = mystack.pop();
+    printf("%d\n",top);
+    printf("%d\n",mystack.pop());
 }
