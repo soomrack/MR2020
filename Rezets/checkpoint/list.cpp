@@ -1,5 +1,7 @@
 #include <iostream>
 
+#define ERROR_CODE 101
+
 class Node {
 public:
     int value;
@@ -68,7 +70,7 @@ List::~List()
 
 void List::pop_front()
 {
-    if (size == 0)
+    if (root == nullptr)
         return;
     Node *temp = root;
     root = root->next;
@@ -85,6 +87,11 @@ Iterator::Iterator(List &list)
 
 Iterator Iterator::next()
 {
+    if (current == nullptr)
+    {
+        prev = nullptr;
+        return *this;
+    }
     if (current->next == nullptr)
     {
         prev = current;
@@ -100,7 +107,7 @@ int Iterator::get_value()
 {
     if (current != nullptr)
         return current->value;
-    return 101;
+    return ERROR_CODE;
 }
 
 void Iterator::set_value(const int value)
@@ -113,17 +120,17 @@ void Iterator::del()
 {
     if (current == nullptr)
         return;
-    if (current->next == nullptr)
+    if (current == list->root)
     {
-        prev->next = nullptr;
+        list->root = list->root->next;
         delete current;
         current = list->root;
         list->size--;
         return;
     }
-    if (current == list->root)
+    if (current->next == nullptr)
     {
-        list->root = list->root->next;
+        prev->next = nullptr;
         delete current;
         current = list->root;
         list->size--;
@@ -137,7 +144,7 @@ void Iterator::del()
 
 void Iterator::insert(const int value)
 {
-    if (list->size == 0)
+    if (list->root == nullptr)
     {
         list->root = new Node (value);
         list->size++;
@@ -145,9 +152,12 @@ void Iterator::insert(const int value)
         prev = nullptr;
         return;
     }
-    current = new Node (value);
-    prev->next = current;
-    list->size++;
+    if ((current == nullptr) && (prev != nullptr))
+    {
+        current = new Node (value);
+        prev->next = current;
+        list->size++;
+    }
 }
 
 Iterator List::begin()

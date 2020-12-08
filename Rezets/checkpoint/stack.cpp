@@ -1,6 +1,7 @@
 #include <iostream>
 
 #define STACK_MAX_SIZE 1000
+#define ERROR_EMPTY_STACK 101
 
 class Stack
 {
@@ -18,7 +19,7 @@ private:
 int Stack::pop()
 {
     if (size == 0)
-        return -101;
+        return ERROR_EMPTY_STACK;
     size--;
     return data[size];
 }
@@ -36,8 +37,7 @@ Stack::Stack()
 
 Stack::~Stack()
 {
-    while (size)
-    pop();
+    size = 0;
 }
 
 int main()
