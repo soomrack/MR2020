@@ -1,5 +1,6 @@
 #include <iostream>
 
+const int error = 12345;
 
 class Node {
 public:
@@ -17,7 +18,7 @@ class Iterator {
 private:
     Node *current;
     Node *prev;
-    List *list; //additional
+    List *list;
 public:
     Iterator next();
     int get_value();
@@ -34,7 +35,7 @@ class List {
 private:
     friend class Iterator;
     Node *root;
-    int list_size;   //added
+    int list_size;
 public:
     Iterator begin();
     void pop_first();
@@ -68,17 +69,14 @@ List::List()
 
 List::~List()
 {
-    while (list_size)   //Пока list_size не станет равным нулю
-    {
-        pop_first();
-    }
+    while (list_size) { pop_first(); }
 }
 
 void List::pop_first()
 {
-    Node *temp = root;  //Временный узел, для хранения адреса первого элемента
-    root = root->next;  //Адресс следующиего элемента за головой (второй элемент)
-    delete temp;        //Удаление первого узла
+    Node *temp = root;
+    root = root->next;
+    delete temp;
     list_size--;
 }
 
@@ -97,7 +95,7 @@ Iterator List::begin()
 
 Iterator Iterator::next()
 {
-    if (current->next != nullptr)
+    if ( current != nullptr && current->next != nullptr )
     {
         this->prev = this->current;
         this->current = this->current->next;
@@ -109,6 +107,7 @@ int Iterator::get_value()
 {
     if (current != nullptr)
         return current->value;
+    return error;
 }
 
 void Iterator::set_value(const int value)
@@ -119,7 +118,9 @@ void Iterator::set_value(const int value)
 
 void Iterator::del()
 {
-    if (current == list->root)      //Если удаляем первый узел
+    if (current == nullptr)
+        return;
+    if (current == list->root)
     {
         list->root = list->root->next;
         delete current;
@@ -127,14 +128,14 @@ void Iterator::del()
         list->list_size--;
         return;
     }
-    if (current->next == nullptr)   //Если удаляем последний узел
+    if (current->next == nullptr)
     {
         prev->next = nullptr;
         delete current;
         current = list->root;
         list->list_size--;
         return;
-    }                               //Тогда удаляем промежуточный
+    }
     prev->next = current->next;
     delete current;
     current = prev->next;
@@ -142,6 +143,27 @@ void Iterator::del()
 }
 
 void Iterator::insert(const int value)
+{
+    if (list->root == nullptr)
+    {
+        list->root = new Node (value);
+        list->list_size++;
+        current = list->root;
+        prev = nullptr;
+        return;
+    }
+    if (current != nullptr)
+    {
+        if (current->next != nullptr)
+            current->next = new Node(value, current->next);
+        else
+            current->next = new Node(value);
+        list->list_size++;
+    }
+
+}
+
+/*void Iterator::insert(const int value)
 {
     Node* tmp = new Node(value, current);
     if (prev != nullptr)
@@ -151,10 +173,11 @@ void Iterator::insert(const int value)
         list->list_size++;
         return;
     }       //Тогда добавляем в начало
-    current = tmp;
+    current->next = tmp;
     list->root = current;
     list->list_size++;
-}
+}*/
+
 
 
 
