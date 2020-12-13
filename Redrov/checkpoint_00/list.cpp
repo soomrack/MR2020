@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include <string>
 
@@ -8,7 +10,7 @@ public:
     Node *next;
 public:
     Node(int value = 0, Node *next = nullptr);
-    
+
 };
 
 Node::Node(int value, Node* next)
@@ -30,21 +32,18 @@ public:
     int get_value();
     void set_value(const int value);
 public:
-    void insert(const int value);
-    void del();
+    void insert(const int value); 
+    void del();  
 public:
     Iterator(List & lst);
 };
 
-
-
-
-
 class List {
 private:
+
     friend class Iterator;
     Node *root;
-    int Size;
+    int size;
 
 public:
     Iterator begin();
@@ -54,20 +53,14 @@ public:
     void popFront();
 	void popBack();
 	void clear();
-    int& operator[] (int);
+    // int& operator[] (int);
     void pushBack(int value);
     int getSize() const;
 };
 
 
-
-
-
-
-
-
 List::List(){
-    Size = 0;
+    size = 0;
     root = nullptr;
 }
 
@@ -78,16 +71,16 @@ List::~List()
 
 void List::clear()
 {
-	while (Size) popFront();
+	while (root!=nullptr) popFront();
 }
 
 void List::popFront()
 {
-	if (Size <= 0) return;
+	if (root == nullptr) return;
 	Node* temp = root;
 	root = root->next;
 	delete temp;
-	Size--;
+	size--;
 }
 
 void List::pushBack(int value)
@@ -96,41 +89,21 @@ void List::pushBack(int value)
 		root = new Node(value);
 	else
 	{
-		for (Node* current = root; ; current = current->next)
-			if (current->next == nullptr)
+        Node* current = root;
+		while (current->next == nullptr)
 			{
 				current->next = new Node(value);
 				break;
 			}
 	}
-	Size++;
+	size++;
 }
-
-
 
 
 int List::getSize() const
 {
-	return Size;
+	return size;
 }
-
-
-int& List::operator[](int index)
-{
-	if (index > Size - 1 || index < 0)
-	{
-		std::string message = "Недопустимый индекс ";
-		message.append(std::to_string(index));
-		throw std::out_of_range(message);
-	}
-	Node* current = root;
-	for (int i = 0; i < index; i++)
-		current = current->next;
-	return current->value;
-}
-
-
-
 
 
 Iterator List::begin(){
@@ -140,14 +113,11 @@ Iterator List::begin(){
 }
 
 
-
-
 Iterator::Iterator(List & lst){
     current = lst.root;
     prev = nullptr;
     list = &lst;
 }
-
 
 
 Iterator Iterator::next(){
@@ -169,13 +139,16 @@ int Iterator::get_value(){
 }
 
 void Iterator::set_value(const int value){
-    current->value = value;
+    if (current != nullptr){
+        current->value = value;
+    }
+    
 }
 
 void Iterator::insert(const int value){
     Node* previous = current;
 	previous->next = new Node(value, previous->next);
-	list->Size++;
+	list->size++;
 }
 
 void Iterator::del(){
@@ -191,28 +164,36 @@ void Iterator::del(){
     }
 
     delete temp;
-    list->Size--;
+    list->size--;
 } 
 
 
-
-
-
-
-
-
-
-
-void show(List& list)
-{
-	std::cout << "size = " << list.getSize() << std::endl;
-	for (int i = 0; i < list.getSize(); i++) std::cout << list[i] << "  ";
-	std::cout << std::endl;
-}
-
-
-
-
 int main() {
+    //Потестим
+    Node nd;
+    
+    List list;
+    list.pushBack(1);
+    list.pushBack(2);
+    list.pushBack(3);
+    list.pushBack(4);
+  
+    Iterator it = list.begin();
+    it.next();
+    it.next();
+    it.next();
+    it.next();
+    it.next();
+    int a = it.get_value();
+    it.set_value(100);
+    int b = it.get_value();
+    
+    it.next();
+    it.insert(10);
+    it.del();
+    it.del();
+
+
+ 
     return 0;
 }
