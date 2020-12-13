@@ -15,29 +15,29 @@ public:
 };
 
 Node ::Node(int key, std :: string data){
-        this->data = data;
-        this->key = key;
-        left = nullptr;
-        right = nullptr;
+    this->data = data;
+    this->key = key;
+    left = nullptr;
+    right = nullptr;
 
 }
 
 Node ::~Node() {
-        key = 0;
-        data = nullptr;
-        left = nullptr;
-        right = nullptr;
+    key = 0;
+    data = nullptr;
+    left = nullptr;
+    right = nullptr;
 }
 
 
 class Tree
 {
 private:
-    Node* parent_search_for_new_node(int key, Node* root);
+    Node* parent_search(int key, Node* root);
     Node* find_element(int key, Node* root);
     Node* min_left(Node* root);
     Node* parent_node_search(int key, Node* root);
-    void delete_root(void);
+    void delete_root_if_not_2_childs(void);
 public:
     Node* root;
     Tree();
@@ -51,18 +51,17 @@ Tree ::Tree() {
     root = nullptr;
 }
 
-Node* Tree::parent_search_for_new_node(int key, Node* root)
+Node* Tree::parent_search(int key, Node* root)
 {
+    if (root == nullptr)
+        return root;
     if (key < root->key)
     {
         if (root->left == nullptr) return(root);
-        return(parent_search_for_new_node(key, root->left));
+        return(parent_search(key, root->left));
     }
-    else
-    {
         if (root->right == nullptr) return(root);
-        return(parent_search_for_new_node(key, root->right));
-    }
+        return(parent_search(key, root->right));
 }
 
 bool Tree::add(int key, std ::  string data)
@@ -74,7 +73,7 @@ bool Tree::add(int key, std ::  string data)
         return false;
     }
 
-    Node* parent = parent_search_for_new_node(key, root);
+    Node* parent = parent_search(key, root);
 
     if (key < parent->key) parent->left = child;
     else parent->right = child;
@@ -85,18 +84,19 @@ Node* Tree::find_element(int key, Node* root)
 {
     if (root == nullptr) return nullptr;
     if (key == root->key) return root;
-    if (key < root->key) find_element(key, root->left);
-    else find_element(key, root->right);
+    if (key < root->key) return find_element(key, root->left);
+    return find_element(key, root->right);
 }
 
 Node* Tree::parent_node_search(int key, Node* root)
 {
+    if (root == nullptr)
+        return root;
     if (root->key == key) return nullptr;
     if (root->left!= nullptr) if (key == root->left->key) return root;
     if (root->right!= nullptr) if (key == root->right->key) return root;
-
-    if (key < root->key) parent_node_search(key, root->left);
-    else parent_node_search(key, root->right);
+    if (key < root->key) return parent_node_search(key, root->left);
+    return parent_node_search(key, root->right);
 }
 
 Node* Tree::min_left(Node* root)
@@ -137,7 +137,7 @@ bool Tree::del(int key)
     Node* parent_delete_node = parent_node_search(key, root);
     if (parent_delete_node == nullptr)
     {
-        delete_root();
+        delete_root_if_not_2_childs();
         return true;
     }
 
@@ -167,7 +167,7 @@ bool Tree::del(int key)
     }
 }
 
-void Tree::delete_root(void)
+void Tree::delete_root_if_not_2_childs(void)
 {
     if ((root->left == nullptr) && (root->right == nullptr))
     {
@@ -197,18 +197,19 @@ std::string Tree::find(const int key) {
         if (key > node->key)
         {
             if (node->right == nullptr)
-                return " ";
+                return "";
             node = node->right;
         }
         if (key < node->key)
         {
             if (node->left == nullptr)
-                return " ";
+                return "";
             node = node->left;
         }
     }
     return node->data;
 }
+
 int main() {
     std::cout << "The end." << std::endl;
 }
