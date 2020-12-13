@@ -2,10 +2,8 @@
 
 class Stack {
 private:
-    struct Node {
-        int value;
-        struct Node* link;
-    };
+    const int error = 2147483647;
+    struct Node;
     struct Node* top;
 public:
     int pop();
@@ -15,38 +13,44 @@ public:
     ~Stack();
 };
 
-int Stack ::pop() {
+
+struct Stack::Node {
+    int value;
+    struct Node* next;
+};
+
+int Stack::pop() {
     struct Node* temp;
     temp = new Node;
     if (!top) {
-        return 2147483647;
+        return error;
     }
     int end = top->value;
     temp = top;
-    top = top->link;
-    temp->link = nullptr;
-    free (temp);
+    top = top->next;
+    temp->next = nullptr;
+    delete (temp);
     return end;
 }
 
-void Stack  ::push(const int value) {
+void Stack::push(const int value) {
     struct Node* temp;
     temp = new Node();
     temp->value = value;
-    temp->link = top;
+    temp->next = top;
     top = temp;
 }
 
-Stack ::Stack() {
+Stack::Stack() {
     top = nullptr;
 }
 
-Stack ::~Stack() {
+Stack::~Stack() {
     {
         while (top) {
-            Node *half = top;
-            top = top ->link;
-            free (half);
+            Node *delTop = top;
+            top = top ->next;
+            delete (delTop);
         }
     }
 }
