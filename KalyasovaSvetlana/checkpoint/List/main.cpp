@@ -1,6 +1,7 @@
 #include <iostream>
 
 class List;
+const int err = 666666666;
 
 class Node {
 public:
@@ -11,12 +12,12 @@ public:
     Node(int value, Node *next);
 };
 
-Node :: Node(int value){
+Node::Node(int value){
     this->value = value;
     next = nullptr;
 }
 
-Node ::Node(int value, Node *next) {
+Node::Node(int value, Node *next) {
     this-> value = value;
     this-> next = next;
 }
@@ -40,11 +41,13 @@ public:
 };
 
 
-void Iterator ::set_value(const int value) {
+void Iterator::set_value(const int value){
+    if (!current)
+        return;
     current->value = value;
 }
 
-Iterator Iterator ::next() {
+Iterator Iterator::next() {
     if (current != nullptr){
         prev = current;
         current = current->next;
@@ -64,35 +67,39 @@ public:
     ~List();
 };
 
-Iterator :: Iterator (List &first){
+Iterator::Iterator (List &first){
     first_element = &first;
     current = first_element->root;
     prev = nullptr;
 }
 
 
-Iterator :: Iterator(){
+Iterator::Iterator(){
     current = first_element->root;
 }
 
-Iterator List :: begin(){
+Iterator List::begin(){
     Iterator foo(*this);
     return (*this);
 }
 
-List ::List() {
+List::List() {
     root = nullptr;
 }
 
-List :: ~List() {
+List::~List() {
     Iterator Destruct;
     while (root)
         Destruct.del();
 }
 
 void Iterator::insert (const int value){
-    current = new Node(value, current);
-    first_element->root = current;
+    if (!current){
+        current = new Node(value, current);
+        first_element->root = current;
+        return;
+    }
+    current->next = new Node(value, current->next);
 }
 
 void Iterator::del() {
@@ -112,7 +119,9 @@ void Iterator::del() {
     }
 }
 
-int Iterator  :: get_value() {
+int Iterator::get_value() {
+    if (!current)
+        return err;
     return current->value;
 }
 
@@ -124,6 +133,7 @@ int main() {
     iterator.insert(1);
     std::cout << iterator.get_value() << '\n';
     iterator.insert(3);
+    iterator.next();
     std::cout << iterator.get_value() << '\n';
     iterator.del();
     std::cout << iterator.get_value() << '\n';
