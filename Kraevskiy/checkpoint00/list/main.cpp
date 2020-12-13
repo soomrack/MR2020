@@ -160,25 +160,7 @@ void Iterator::insert(const int value)
             current->next = new Node(value);
         list->list_size++;
     }
-
 }
-
-/*void Iterator::insert(const int value)
-{
-    Node* tmp = new Node(value, current);
-    if (prev != nullptr)
-    {       //Если добавляем не в начало
-        prev->next = tmp;
-        prev = tmp;
-        list->list_size++;
-        return;
-    }       //Тогда добавляем в начало
-    current->next = tmp;
-    list->root = current;
-    list->list_size++;
-}*/
-
-
 
 
 int main() {
