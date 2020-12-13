@@ -10,33 +10,32 @@ public:
     bool isEmpty();
 
 private:
-    struct node {
-        int d;
-        node *p;
-    };
+    struct node;
     node *top;
 };
 
-Stack::Stack() :top(NULL) {}
+struct Stack::node {
+    int data;
+    node *pointer;
+};
+
+Stack::Stack() : top(NULL) {}
 
 void Stack::push(const int value)
 {
-    node *pv = new node;
-    pv->d = value;
-    pv->p = top;
-    top = pv;
+    node *previous = new node;
+    previous->data = value;
+    previous->pointer = top;
+    top = previous;
 }
 
 int Stack::pop()
 {
-    if (isEmpty())
-    {
-        return -1;
-    }
-    int temp = top->d;
-    node *pv = top;
-    top = top->p;
-    delete pv;
+    if (isEmpty()) { return -1; }
+    int temp = top->data;
+    node *previous = top;
+    top = top->pointer;
+    delete previous;
     return temp;
 }
 
@@ -50,13 +49,12 @@ Stack::~Stack()
 {
     while (top)
     {
-        node *pv = top;
-        top = top->p;
-        delete pv;
+        node *previous = top;
+        top = top->pointer;
+        delete previous;
     }
 }
 
-void emptyStack(Stack & stack);
 
 int main()
 {
