@@ -1,6 +1,7 @@
 #include <iostream>
 
 class List;
+const int error = 2147483647;
 
 class Node {
 public:
@@ -22,7 +23,8 @@ public:
     int get_value();
     void set_value(const int value);
 public:
-    void insert(const int value);
+    void insert_before(const int value);
+    void insert_after (const int value);
     void del();
 public:
     Iterator();
@@ -41,44 +43,47 @@ public:
     ~List();
 };
 
-Node :: Node(int value){
+
+
+Node::Node(int value){
     this->value = value;
     next = nullptr;
 }
 
-Node ::Node(int value, Node *next) {
+Node::Node(int value, Node *next) {
     this-> value = value;
     this-> next = next;
 }
 
-Iterator :: Iterator(){
-    current = head->root;
-}
 
-Iterator :: Iterator (List &rooot){
-    head = &rooot;
+Iterator::Iterator(){
     current = head->root;
     prev = nullptr;
 }
 
-Iterator List :: begin(){
-    Iterator remake(*this);
-    return (*this);
+Iterator::Iterator (List &root){
+    head = &root;
+    current = head->root;
+    prev = nullptr;
 }
 
-List ::List() {
-    root = nullptr;
+void Iterator::insert_before (const int value){
+    if (prev == nullptr && current == nullptr) {
+        current = new Node (value, current);
+        head->root = current;
+        return;
+    }
+    prev->next = new Node (value, current);
+    current = prev->next;
 }
 
-List :: ~List() {
-    Iterator toDelete;
-    while (root != nullptr)
-        toDelete.del();
-}
-
-void Iterator::insert (const int value){
-    current = new Node(value, current);
-    head->root = current;
+void Iterator::insert_after (const int value) {
+    if (current == nullptr){
+        current = new Node (value, current);
+        head->root = current;
+        return;
+    }
+    current->next = new Node (value, current->next);
 }
 
 void Iterator::del() {
@@ -89,6 +94,7 @@ void Iterator::del() {
         current = prev->next;
         return;
     }
+
     if (prev == nullptr && current != nullptr)
     {
         head->root = current->next;
@@ -98,15 +104,18 @@ void Iterator::del() {
     }
 }
 
-int Iterator  :: get_value() {
+int Iterator::get_value() {
+    if (current == nullptr)
+        return error;
     return current->value;
 }
 
-void Iterator ::set_value(const int value) {
+void Iterator::set_value(const int value) {
+    if (current == nullptr) return;
     current->value = value;
 }
 
-Iterator Iterator ::next() {
+Iterator Iterator::next() {
     if (current != nullptr){
         prev = current;
         current = current->next;
@@ -115,15 +124,42 @@ Iterator Iterator ::next() {
 }
 
 
+Iterator List::begin(){
+    Iterator begin(*this);
+    return begin;
+}
+
+List::List() {
+    root = nullptr;
+}
+
+List::~List() {
+    Iterator toDelete;
+    while (root != nullptr)
+        toDelete.del();
+}
+
+
 int main() {
     List list;
     Iterator iterator = list.begin();
-    iterator.insert(1);
-    iterator.insert(2);
-    std::cout << iterator.get_value() << '\n';
+    iterator.insert_after(1);
+    iterator.insert_after(2);
+    iterator.insert_after(3);
+    iterator.next();
     iterator.del();
     std::cout << iterator.get_value() << '\n';
-    iterator.set_value(25);
+    iterator.set_value(5);
     std::cout << iterator.get_value() << '\n';
+    iterator.insert_before(4);
+    Iterator iterator2 = list.begin();
+    std::cout << iterator2.get_value() << '\n';
+    iterator2.next();
+    std::cout << iterator2.get_value() << '\n';
+    iterator2.next();
+    std::cout << iterator2.get_value() << '\n';
+    iterator2.next();
+    std::cout << iterator2.get_value() << '\n';
+    iterator2.next();
     std::cout << "The end." << std::endl;
 }
