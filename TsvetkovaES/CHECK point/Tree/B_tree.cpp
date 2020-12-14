@@ -30,16 +30,16 @@ Tree::~Tree() {
     delete root;
 }
 
-bool Tree::insert(Node ** new_node, const int key, const std::string data) {
-    if(!*new_node) {
-        *new_node = new Node(key,data); // нашли свободное местечко - создали node
+bool Tree::insert(Node *& new_node, const int key, const std::string data) {
+    if(new_node == nullptr) {
+        new_node = new Node(key,data); // нашли свободное местечко - создали node
         return true;
     }
-    if(key > (*new_node)->key) {
-        insert(&((*new_node)->right), key, data); // ищем справа
+    if(key > new_node->key) {
+        return insert(new_node->right, key, data); // ищем справа
     }
-    else if(key < (*new_node)->key) {
-        insert(&((*new_node)->left), key, data); // ищем слева
+    else if(key < new_node->key) {
+        return insert(new_node->left, key, data); // ищем слева
     }
     else { // Hи больше, ни меньше, значит равно...
         printf("The key %d is already in the tree!\n",key);
@@ -49,11 +49,11 @@ bool Tree::insert(Node ** new_node, const int key, const std::string data) {
 }
 
 bool Tree::add(const int key, const std::string data) {
-    if(!root) {
+    if(root == nullptr) {
         root = new Node (key, data); // если дерево пусто
         return true;
     }
-    return insert(&root,key,data);
+    return insert(root,key,data);
 }
 
 bool Tree::search(const int key, Node *&root, Node *&new_node, Node *&parent) {
@@ -69,11 +69,11 @@ bool Tree::search(const int key, Node *&root, Node *&new_node, Node *&parent) {
     }
     else if(key > root->key) {
         parent = root;
-        search(key, root->right, new_node, parent); // ищем в сторону больших
+        return search(key, root->right, new_node, parent); // ищем в сторону больших
     }
     else {
         parent = root;
-        search(key, root->left, new_node, parent); // ищем в сторону меньших
+        return search(key, root->left, new_node, parent); // ищем в сторону меньших
     }
 }
 
@@ -150,6 +150,7 @@ bool Tree::del(const int key) {
         // вместо node_to_del ставим данные successor
         node_to_del->key = key_of_del;
         node_to_del->data = data_of_del;
+        return true;
     }
 }
 void Tree::Print_tree (Node* node, int h) { // нач. усл.: node = root, h=0

@@ -25,7 +25,7 @@ private:
     Node *root;
 public:
     bool add(const int key, const std::string data);  // false if key already exists
-    bool insert(Node ** new_node,const int key, const std::string data);
+    bool insert(Node *& new_node, const int key, const std::string data);
     bool del(const int key);  // false if no key
     std::string find(const int key);  // return '' if no key
     bool search(const int key, Node * &root, Node * &new_node, Node * &parent);
