@@ -66,7 +66,7 @@ List::List()
 
 List::~List()
 {
-  while (size != 0) {
+  while (root!=nullptr) {
     Node* temp = root;
     root = root->next;
     delete temp;
@@ -131,7 +131,7 @@ void Iterator::del()
 
 void Iterator::insert(const int value)
 {
-  if (list->size == 0)
+  if (list->root == nullptr)
   {
     list->root = new Node(value);
     list->size++;
