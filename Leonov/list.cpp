@@ -60,7 +60,6 @@ Node::Node(const int value, Node* next)
 
 List::List()
 {
-    Count = 0; //количество элементов в списке
     root = nullptr;
 }
 
@@ -74,17 +73,14 @@ void List::push_end(int value)
     if (root == nullptr)
     {
         root = new Node(value);
-    }
-    else 
+        return;
+    } 
+    Node* current = this->root;
+    while (current->next != nullptr)
     {
-        Node* current = this->root;
-        while (current->next != nullptr)
-        {
-            current = current->next;
-        }
-        current->next = new Node(value);
+        current = current->next;
     }
-    Count++;
+    current->next = new Node(value);
 }
 
 Iterator::Iterator(List & list)
@@ -97,72 +93,72 @@ Iterator::Iterator(List & list)
 Iterator Iterator::next() {
     if (current->next == nullptr)
     {
-        prev = current;
-        current = list->root; //Идём в начало списка
+        prev = nullptr;
+        current = nullptr;
+        return *this;
     }
-    else
-    {
-        prev = current;
-        current = current->next;
-    }
+    prev = current;
+    current = current->next;
     return *this;
 }
 
-int Iterator::get_value() 
-{
-    return current->value;
-}
-
-void Iterator::set_value(const int value)
-{
-    current->value = value;
-}
-
-void Iterator::del() 
-{
-    if (current->next == nullptr) 
+int Iterator::get_value() {
+    if (current != nullptr)
     {
-        prev->next = nullptr;
-        delete current;
-        current = list->root;
-    }
-    else if (current == list->root) 
+        return current->value;
+    };
+    return 787898; //число показывающие ршибку
+}
+
+void Iterator::set_value(const int value){
+    if (current != nullptr)
+    {
+        current->value = value;
+    };
+}
+
+void Iterator::del() {
+    if (current == nullptr)
+        return;
+    if (current == list->root) 
     {
         list->root = list->root->next;
         delete current;
         current = list->root;
+        return;
     }
-    else
+    if(current ->next == nullptr)
     {
-        prev->next = current->next;
+        prev->next = nullptr;
         delete current;
         current = list->root;
+        return;
     }
-    list->Count--;
+    prev->next = current->next;
+    delete current;
+    current = list->root;
 }
 
-void Iterator::insert(const int value) 
-{
+void Iterator::insert(const int value) {
     prev->next = new Node(value, current);
     list->Count++;
 }
-Iterator List::begin() 
-{
+
+Iterator List::begin() {
     Iterator tmp(*this);
-    return (*this);
+    return (tmp);
 }
-void List::pop_front() 
-{
-    if (Count == 0) return;
+
+void List::pop_front() {
+    if (root == nullptr) 
+        return;
     Node* ptr = root;
     root = root->next;
     delete ptr;
-    Count--;
 }
-void List::clear() 
-{
-    std::cout << "Cleaning..." << std::endl;
-    while (Count != 0) {
+
+void List::clear() {
+    while (root != nullptr) {
         pop_front();
     }
 
@@ -170,20 +166,5 @@ void List::clear()
 
 int main() 
 {
-    List list;
-    list.push_end(6);
-    list.push_end(12);
-    list.push_end(43);
-    list.push_end(15);
-    list.push_end(34);
-    Iterator itr = list.begin();
-    printf("%d\n", itr.get_value());
-    itr.del();
-    itr.next();
-    printf("%d\n", itr.get_value());
-    itr.next();
-    printf("%d\n", itr.get_value());
-    itr.next();
-    printf("%d\n", itr.get_value());
     std::cout << "The end." << std::endl;
 }

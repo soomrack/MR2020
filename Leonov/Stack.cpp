@@ -4,63 +4,50 @@
 using namespace std;
 
 class Stack {
-private:  //Структура элемента массива.
-    struct Array
-    {
-        Array *prevElement; //Указатель на пердыдущий элеммент.
+private:
+    struct element {
         int value;
-        Array() {}
-        Array(const int  val)
-        {
-            value = val;
-            prevElement = NULL;
-        }
+        struct element* next;
     };
-
-    Array* topElement = new Array();
-    int size;   //Обозначение размера стека. 
+    struct element *top;
 public:
-    int pop()
-    {
-        if (size != 0)
-        {
-            Array* temp = topElement;
-            topElement = topElement->prevElement;
-            delete temp;
-            size--;
-        }
-        else 
-        {
-            size = -1;
-            return size;
-        };
-    };
-    void push(const int value) 
-    {
-        Array* newElement = new Array(value);  //Создание указателя на новый элемент.
-        if (size == 0) 
-        {
-            topElement = newElement;
-        }
-        else 
-        {
-            newElement->prevElement = topElement;
-            topElement = newElement;
-        }
-        size++;
-    };
+    int pop();
+    void push(const int value);
 public:
-    Stack()
-    {
-        size = 0; //Изначальный размер стека.
-    };
-    ~Stack() {
-        while (size != 0);
-            pop();
-    };
+    Stack();
+    ~Stack();
 };
 
+int Stack::pop()
+{
+    if (Top == nullptr) {
+        return 787898;
+    };
+    struct element* pointer = top;
+    int number = pointer->value;
+    top = pointer->next;
+    delete pointer;
+    return number;
+};
 
+void Stack::push(const int value)
+{
+    struct element* pointer = new struct element;
+    pointer->value = value;
+    pointre->next = top;
+    top = pointer;
+};
+
+Stack::Stack()
+{
+    top = nullptr;
+};
+
+Stack::~Stack()
+{
+    while (top != nullptr)
+        pop();
+};
 
 int main() {
     cout << "The end." << endl;
