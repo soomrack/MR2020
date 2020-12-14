@@ -67,39 +67,33 @@ Tree::~Tree(){
 bool Tree::add(const int key, const std::string data){
     if (root == nullptr){
         root = new Node(key, data);
-    }
-    else {
-        Node* child = new Node(key, data);
-        Node* parent = find_Node(root, key);
-        if (parent->key == key){
-            return false;
-        }
-        if(parent->key > key){
-            parent->left = child;
-            return true;
-        }
-       
-        parent->right = child;
         return true;
-        
     }
 
+    Node* child = new Node(key, data);
+    Node* parent = find_Node(root, key);
+    if (parent->key == key){
+        return false;
+    }
+    if (parent->key > key){
+        parent->left = child;
+        return true;
+    }
+    
+    parent->right = child;
+    return true;
+
 }
+
 
 Node* Tree::find_Node(Node * root, int key){
         if (root->key == key){
             return root;
         }
         else if (root->key < key) {
-            if (root->right == nullptr)
-                return root;
-            return find_Node(root->right, key);
+            return (root->right == nullptr) ? root: find_Node(root->right, key);
         }
-        else {
-            if (root->left == nullptr)
-                return root;
-            return find_Node(root->left, key);
-        }
+        return (root->left == nullptr) ? root:find_Node(root->left, key);
 }
 
 std::string Tree::find(const int key){
