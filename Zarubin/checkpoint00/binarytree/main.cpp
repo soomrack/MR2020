@@ -4,12 +4,12 @@
 class Node {
 public:
     int key;
-    std:: string data;
+    std::string data;
 public:
     Node *left;
     Node *right;
 public:
-    Node(int key, std :: string data){
+    Node(int key, std::string data){
         this->key = key;
         this->data = data;
         left = nullptr;
@@ -56,7 +56,7 @@ private:
             return min(root->left);
     }
 public:
-    bool add(const int key, std:: string data) {
+    bool add(const int key, std::string data) {
         Node* child = new Node (key,data);
         if (checkNode(root,key)!= nullptr)
             return false;
