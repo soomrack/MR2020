@@ -16,7 +16,7 @@ public:
 public:
     Node();
     Node(const int key, const std::string data);
-    Node(const int key, const std::string data, const Node *left, const Node *right);
+    Node(const int key, const std::string data, Node *left, Node *right);
     ~Node();
 };
 
@@ -28,7 +28,7 @@ public:
     bool insert(Node ** new_node,const int key, const std::string data);
     bool del(const int key);  // false if no key
     std::string find(const int key);  // return '' if no key
-    Node* search(Node * &new_node, const int key, Node * &parent);
+    bool search(const int key, Node * &root, Node * &new_node, Node * &parent);
     Node* search_min(Node* root);
     Node* get_root() {return root;}
     void Print_tree (Node* node, int h);

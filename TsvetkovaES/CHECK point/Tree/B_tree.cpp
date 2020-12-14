@@ -1,3 +1,4 @@
+
 // Created by alena on 29.11.2020.
 #include "B_tree.h"
 
@@ -11,16 +12,16 @@ Node::Node(const int key, const std::string data) {
     this->left = nullptr;
     this->right = nullptr;
 }
-Node::Node(const int key, const std::string data, const Node *left, const Node *right) {
+Node::Node(const int key, const std::string data, Node *left, Node *right) {
     Node* new_node = new Node;
     new_node->key = key;
     new_node->data = data;
-    //new_node->left = left; // ээ
-    //new_node->right = right;
+    new_node->left = left;
+    new_node->right = right;
 }
 Node::~Node() {
-    delete left;
-    delete right;
+    this->left = nullptr;
+    this->right = nullptr;
 }
 Tree::Tree() {
     root = nullptr;
@@ -55,33 +56,37 @@ bool Tree::add(const int key, const std::string data) {
     return insert(&root,key,data);
 }
 
-Node* Tree::search(Node * &new_node, const int key, Node* &parent) { // поиск node по ключу, возвращает этот node
+bool Tree::search(const int key, Node *&root, Node *&new_node, Node *&parent) {
     // Если у node вообще нет ключа, и
     // мы дошли до листа nullptr - возвращаем nullptr
-    if(!new_node) {
-        return new_node;
+    if(root == nullptr) {
+        new_node = nullptr;
+        return false;
     }
-    if(key == new_node->key) {
-        return new_node; // если нашли таки - возвращаем
+    if(key == root->key) {
+        new_node = root;
+        return true; // если нашли таки - возвращаем
     }
-    else if(key > new_node->key) {
-        parent = new_node;
-        search(new_node->right, key, parent); // ищем в сторону больших
+    else if(key > root->key) {
+        parent = root;
+        search(key, root->right, new_node, parent); // ищем в сторону больших
     }
     else {
-        parent = new_node;
-        search(new_node->left, key, parent); // ищем в сторону меньших
+        parent = root;
+        search(key, root->left, new_node, parent); // ищем в сторону меньших
     }
 }
+
 std::string Tree::find(const int key) {
     if (!root) {
         printf("The tree is empty!\n");
         return "";
     }
     Node* parent = nullptr;
-    Node* new_node = search(root, key, parent);
+    Node* new_node;
+    search(key, root, new_node, parent);
     if(new_node) {
-        printf("%s",new_node->data.c_str());
+        //printf("%s",new_node->data.c_str());
         return new_node->data;
     }
     else { // если нам вернули nullptr - ключа не нашлось
@@ -91,14 +96,16 @@ std::string Tree::find(const int key) {
 }
 
 bool Tree::del(const int key) {
-    if (!root) {
+    if (root == nullptr) {
         printf("The tree is empty!\n");
         return false;
     }
     Node* parent = nullptr;
-    Node* node_to_del = search(root, key, parent);
+    //Node* node_to_del = search(root, key, parent);
+    Node* node_to_del;
+    bool in_the_tree = search(key, root, node_to_del, parent);
     // если элемента по ключу не нашлось, нам вернули nullptr:
-    if(!node_to_del) {
+    if(in_the_tree == false) {
         printf("There is no key in the tree!\n");
         return false;
     }
@@ -113,7 +120,7 @@ bool Tree::del(const int key) {
         delete node_to_del;
         return true;
     } else
-    // если один ребёнок:
+        // если один ребёнок:
     if(node_to_del->left == nullptr || node_to_del->right == nullptr) {
         Node* child = (node_to_del->left)? node_to_del->left: node_to_del->right;
         if(node_to_del == root) { // и такое бывает
@@ -130,7 +137,7 @@ bool Tree::del(const int key) {
         delete node_to_del;
         return true;
     }
-    // если два ребёнка:
+        // если два ребёнка:
     else {
         // минимальный элемент справа, ставим его
         Node *successor = search_min(node_to_del->right);

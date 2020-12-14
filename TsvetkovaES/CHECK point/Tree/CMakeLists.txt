@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
-project(untitled)
+project(B_tree)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(untitled main.cpp B_tree.h B_tree.cpp)
+add_executable(B_tree main.cpp B_tree.cpp B_tree.h)
