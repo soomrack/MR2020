@@ -130,8 +130,8 @@ void Iterator::set_value(int value){
 
 Iterator Iterator::next(){
     if (this->current == nullptr){
-        // this->prev = this->current;
-        // this->current = this->list->root;
+        this->prev = this->current;
+        this->current = nullptr;
         return *this;
     }
         prev = current;
