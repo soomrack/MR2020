@@ -98,16 +98,16 @@ bool Tree::del(const int key)
     while (current->key != key) {
       if (current->key < key) {
         if (current->right != nullptr) {
-          prev = current;
           current = current->right;
+          prev = current;
           return true;
         }
         return false;
       }
       if (current->key > key) {
         if (current->left != nullptr) {
-          prev = current;
           current = current->left;
+          prev = current;
           return true;
         }
         return false;
