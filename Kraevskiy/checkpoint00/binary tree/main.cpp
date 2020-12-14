@@ -161,6 +161,7 @@ bool Tree::del_find(Node* iterator, Node* previous, const int key)
                 return false;
         }
     }
+    return true;
 }
 
 bool Tree::del(const int key)
