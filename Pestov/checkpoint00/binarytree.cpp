@@ -188,18 +188,14 @@ Node* Tree::find_Parent(Node * root, int key) {
     if (root->key < key) {
         if (root->right == nullptr)
             return nullptr;
-        if (root->right->key == key){
-            return root;
-        }
-        return find_Parent(root->right, key);
+        
+        return (root->right->key == key) ? root : find_Parent(root->right, key);
     }
     if (root->key > key) {
         if (root->left == nullptr)
             return nullptr;
-        if (root->left->key == key){
-            return root;
-        }
-        return find_Parent(root->left, key);
+        
+        return (root->left->key == key) ? root : find_Parent(root->left, key);
     }
     return nullptr;
 }
