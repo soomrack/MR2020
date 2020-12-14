@@ -1,14 +1,13 @@
 ﻿#include <iostream>
 #include <clocale>
 
+const int error = 787898;
+
 using namespace std;
 
 class Stack {
 private:
-    struct element {
-        int value;
-        struct element* next;
-    };
+    struct element
     struct element *top;
 public:
     int pop();
@@ -18,10 +17,17 @@ public:
     ~Stack();
 };
 
+struct element {
+    int value;
+    struct element* next;
+};
+
+struct element* top;
+
 int Stack::pop()
 {
     if (Top == nullptr) {
-        return 787898;
+        return error;
     };
     struct element* pointer = top;
     int number = pointer->value;
