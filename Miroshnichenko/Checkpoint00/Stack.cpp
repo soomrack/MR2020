@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-
+int error = 232;
 
 class Stack {
 public:
@@ -19,8 +19,7 @@ struct Stack::Element{
 };
 int Stack::pop() {
   if (top == nullptr) {
-    std::cout << "ERROR: There is no elements in stack\n";
-    exit(1);
+    return error;
   }
   struct Element * pointer;
   int topElement;
