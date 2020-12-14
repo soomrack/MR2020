@@ -25,12 +25,10 @@ public:
     void add(const int key, const string data, Node* leaf);
     bool del(const int key);                                // false if no key
     string find(const int key);                             // return "" if no key
+    bool del_find (Node* iterator, Node* previous, const int key);
 
     Node* find(int key, Node* leaf);
     Node* find_min(Node* ptr);
-
-    bool add(int key);
-    bool add(int key, Node* leaf);
 
     Tree();
     ~Tree();
@@ -70,13 +68,13 @@ Node* Tree::find_min(Node* ptr) //Поиск узла с минимальным 
     return ptr->left ? find_min(ptr->left) : ptr;
 }
 
-void Tree::del_tree(Node *leaf)
+void Tree::del_tree(Node *node)
 {
-    if(leaf!=nullptr)
+    if(node!=nullptr)
     {
-        del_tree(leaf->left);
-        del_tree(leaf->right);
-        delete leaf;
+        del_tree(node->left);
+        del_tree(node->right);
+        delete node;
     }
 }
 
@@ -84,114 +82,135 @@ bool Tree::add(const int key, const string data)
 {
     if (find(key) != "")
         return false;
-    if (root != nullptr)            //Если дерево не пустое
-        add(key, data, root);       //Рекурсивная функции для добавления элемента
-    else                            //Иначе добавить элемент в корень
+    if (root != nullptr)
+        add(key, data, root);
+    else
         root = new Node(key, data);
     return true;
 
 
 }
 
-void Tree::add(const int key, const string data, Node *leaf)
+void Tree::add(const int key, const string data, Node *node)
 {
-    if (key < leaf->key)
+    if (key < node->key && node->left != nullptr)
     {
-        if (leaf->left != nullptr)
-            add(key, data, leaf->left);         //Добавляем узел, если левый лист последний
-        else
-            leaf->left = new Node(key, data);   //Иначе идем дальше по ветке
+        add(key, data, node->left);
+        return;
     }
-    else if (key >= leaf->key)
+    if (key < node->key && node->left == nullptr)
     {
-        if (leaf->right != nullptr)
-            add(key, data, leaf->right);
-        else
-            leaf->right = new Node(key, data);
+        node->left = new Node(key, data);
+        return;
+    }
+    if (key > node->key && node->right != nullptr)
+    {
+        add(key, data, node->right);
+        return;
+    }
+    if (key > node->key && node->right == nullptr)
+    {
+        node->right = new Node(key, data);
+        return;
     }
 }
 
 
 string Tree::find(const int key)
 {
-    if (find(key, root) == nullptr)
+    Node* temp = find(key, root);
+    if (temp == nullptr)
         return "";
-    return find(key,root)->data;            //Если дерево не пустое, то запускается рекурсиваня функции для поиска
+    return  temp->data;
 }
 
-Node* Tree::find(int key, Node* leaf)
+Node* Tree::find(int key, Node* root)
 {
-    if (leaf != nullptr)
+    if (root != nullptr)
     {
-        if (key == leaf->key)
-            return leaf;
-        if (key < leaf->key)	            //Если искомое ключевое значение меньше ключевого значения узла
-            return find(key, leaf->left);
-        return find(key, leaf->right);      //Тогда искомое значение больше ключевого
+        if (key == root->key)
+            return root;
+        if (key < root->key)
+            return find(key, root->left);
+        return find(key, root->right);
     }
     return nullptr;
 }
 
+
+bool Tree::del_find(Node* iterator, Node* previous, const int key)
+{
+    while (iterator->key != key)
+    {
+        if (iterator->key < key)
+        {
+            if (iterator->right != nullptr)
+            {
+                previous = iterator;
+                iterator = iterator->right;
+            } else
+                return false;
+        }
+        if (iterator->key > key)
+        {
+            if (iterator->left != nullptr)
+            {
+                previous = iterator;
+                iterator = iterator->left;
+            } else
+                return false;
+        }
+    }
+}
+
 bool Tree::del(const int key)
 {
-    Node *curr = root;
+    Node *iterator = root;
     Node *prev = nullptr;
-    if (curr == nullptr)
+    if (iterator == nullptr)
         return false;
-    while (curr->key != key)                    //Поиск удаляемого элемента
+
+    if (!del_find(iterator, prev, key))
     {
-        if (curr->key < key)                    //Ход по правой ветке
-        {
-            if (curr->right != nullptr)
-            {
-                prev = curr;
-                curr = curr->right;
-            } else
-                return false;
-        }
-        if (curr->key > key)                    //Ход по левой ветке
-        {
-            if (curr->left != nullptr)
-            {
-                prev = curr;
-                curr = curr->left;
-            } else
-                return false;
-        }
+        return false;
     }
-    Node *left = curr->left;
-    Node *right = curr->right;
-    if (curr!=root)                             //Если удаляем не корень
+
+    Node *left = iterator->left;
+    Node *right = iterator->right;
+
+    if (iterator != root && right != nullptr)
     {
-        if (right != nullptr)
-        {                                       //Если справа есть ветка
-            find_min(right)->left = left;
-            Node *prevright = prev->right;
-            if (prevright->key == curr->key)    //Если элемент был слева
-            {
-                prev->right = right;
-            }
-            else                                //Тогда был справа
-                prev->left = right;
-        } else {                                //Иначе справа пусто
-            if (prev->left == curr)             //Когда элемент был слева
-            {
-                prev->left = left;
-            } //Иначе он был справа
-            else prev->right = left;
+        find_min(right)->left = left;
+        Node *prevright = prev->right;
+        if (prevright->key == iterator->key)
+        {
+            prev->right = right;
         }
+        else
+            prev->left = right;
     }
-    else{                                       //Иначе удаляем корень
-        if (right != nullptr)                   //Елси справа есть ветка
-            {
-            find_min(right)->left = left;
-            root = right;
-            } else
-                root = left;                    //Если же и спрва пусто
+    if (iterator != root && right == nullptr)
+    {
+        if (prev->left == iterator)
+        {
+            prev->left = left;
+        } //Иначе он был справа
+        else prev->right = left;
     }
-    delete curr;
+    if (iterator == root && prev->left == iterator)
+    {
+        prev->left = left;
+    }
+    if (iterator == root && prev->left != iterator)
+    {
+        prev->right = left;
+    }
+
+    delete iterator;
     return true;
 }
+
+
 
 int main() {
     std::cout << "The end." << std::endl;
