@@ -23,7 +23,7 @@ private:
     {
         if (root == nullptr) return root;
         if (root->key == key) return root;
-        else if (root->key > key) return checkNode(root->left, key);
+        if (root->key > key) return checkNode(root->left, key);
         else return checkNode(root->right, key);
     }
 
