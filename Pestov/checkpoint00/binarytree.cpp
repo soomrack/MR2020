@@ -14,7 +14,7 @@ public:
 public:
     Node();
     Node(const int key, const std::string data);
-    // Node(const int key, const std::string data, const Node *left, const Node *right);
+    Node(const int key, const std::string data, Node *left, Node *right);
     // ~Node();
 };
 
@@ -33,12 +33,12 @@ Node::Node(const int key, const std::string data){
     this->right = nullptr;
 }
 
-// Node::~Node(){
-//     left = nullptr;
-//     right = nullptr;
-//     this->key = NULL;
-//     this->data = "";
-// }
+Node::Node(const int key, const std::string data, Node *left, Node *right){
+    this->key = key;
+    this->data = data;
+    this->left = left;
+    this->right = right;
+}
 
 
 class Tree {
@@ -69,61 +69,60 @@ Tree::~Tree(){
 bool Tree::add(const int key, const std::string data){
     if (root == nullptr){
         root = new Node(key, data);
-    }
-    else {
-        Node* child = new Node(key, data);
-        Node* parent = find_Node(root, key);
-        if (parent->key == key){
-            return false;
-        }
-        if(parent->key > key){
-            parent->left = child;
-            return true;
-        }
-       
-        parent->right = child;
         return true;
-        
     }
+    
+    Node* child = new Node(key, data);
+    Node* parent = find_Node(root, key);
+    if (parent->key == key){
+        return false;
+    }
+    if(parent->key > key){
+        parent->left = child;
+        return true;
+    }
+    
+    parent->right = child;
+    return true;
+    
+    
 
 }
 
 Node* Tree::find_Node(Node * root, int key){
-        if (root->key == key){
-            return root;
-        }
-        else if (root->key < key) {
-            if (root->right == nullptr)
-                return root;
-            return find_Node(root->right, key);
-        }
-        else {
-            if (root->left == nullptr)
-                return root;
-            return find_Node(root->left, key);
-        }
-}
+    if (root == nullptr){
+        return nullptr;
+    }
+    if (root->key == key){
+        return root;
+    }
+    
+    if (root->key < key) {
+        return  (root->right == nullptr) ? root : find_Node(root->right, key);
+    }
+
+    return (root->left == nullptr) ? root : find_Node(root->left, key);
+        
+} 
 
 std::string Tree::find(const int key){
     if (root == nullptr)
         return "";
     Node* node = find_Node(root, key);
-    if (node->key == key){
-        return node->data;
-    }
-    else{
-        return "";
-    }
+   
+    return (node->key == key) ? node->data : "";
+   
 }
 
 
 bool Tree::del(const int key){
-    // алгоритм удаления узла из бинарного дерева я нашел туть https://www.youtube.com/watch?v=gcULXE7ViZw&ab_channel=mycodeschool
-    if (find(key) == ""){
-        return false;
-    }
+    
     Node* node = find_Node(root, key);
     Node* parent = find_Parent(root, key);
+    if ((node == nullptr) || (node->key != key)){
+        return false;
+    }
+
     // case 1: no child 
     if ((node->left == nullptr) && (node->right == nullptr)){
         if (node == root){
@@ -138,8 +137,7 @@ bool Tree::del(const int key){
         delete node;
         return true;
     }
-    // case 2: one child
-    // case 2.1: right child
+    // case 2.1: one right child
     if ((node->left == nullptr)){
         if (node == root){
             root = node->right;
@@ -153,7 +151,7 @@ bool Tree::del(const int key){
         delete node;
         return true;
     }
-    // case 2.2: left child
+    // case 2.2: one left child
     if ((node->right == nullptr)){
         if (node == root){
             root = node->left;
@@ -168,9 +166,7 @@ bool Tree::del(const int key){
         return true;
     }
     // case 3: 2 children
-    // условия не нужны тк я все ост разобрал и вышел из функции
-    // Реализация - найти минимальное справ, скопировать значение в удаляемое, удалить то от куда взяли минимальное
-
+    
     Node* right_child = node->right;
     Node* minNode = min_Node(right_child);
     Node* minParent = find_Parent(root, minNode->key);
@@ -186,6 +182,9 @@ bool Tree::del(const int key){
 
 Node* Tree::find_Parent(Node * root, int key) {
     // Возращает нулевой указатель, если ключа нет или ключ - корень дерева
+    if (root == nullptr){
+        return nullptr;
+    }
     if (root->key < key) {
         if (root->right == nullptr)
             return nullptr;
@@ -206,12 +205,7 @@ Node* Tree::find_Parent(Node * root, int key) {
 }
 
 Node* Tree::min_Node(Node* node){
-    if (node->left == nullptr){
-        return node;
-    }
-    else{
-        return min_Node(node->left);
-    }
+    return (node->left == nullptr) ? node : min_Node(node->left);
 }
 
 
