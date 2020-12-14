@@ -1,17 +1,7 @@
-/* 
-Реализация linked list 
-Я не очень понял зачем нужен Iterator и как он должен взаимодействовать со связным списком.
-Но я реализовал все методы класса Iterator и написал методы для работы со связным списком.
-
-Кроме этого файла есть другой. В нем реализован односвзяный список так как я себя это представляю. 
-Этого достаточно для удобной работы со связным списком. 
-Но на самом деле в реальных проектах всегда лучше использовать List из стандартной библиотеки.
-*/
-
-
 #include <iostream>
 #include <string>
 
+const int ERROR_NULLPTR = -1;
 
 class Node{
 public:
@@ -34,10 +24,7 @@ Node::Node(int value, Node* next)
 	this->next = next;
 }
 
-
-
-
-// объявим класс List, чтобы использовать в классе Iterator
+// сделаем аннотацию на класс List, чтобы использовать в классе Iterator
 class List;
 
 class Iterator {
@@ -58,9 +45,6 @@ public:
 };
 
 
-
-
-
 class List {
 private:
 
@@ -78,16 +62,10 @@ public:
     void popFront();
 	void popBack();
 	void clear();
-    // int& operator[] (int);
+
     void pushBack(int value);
     int getSize() const;
 };
-
-
-
-
-
-
 
 
 List::List(){
@@ -121,11 +99,8 @@ void List::pushBack(int value)
 	else
 	{
         Node* current = root;
-		while (current->next == nullptr)
-			{
-				current->next = new Node(value);
-				break;
-			}
+		while (current->next != nullptr) current = current->next;
+        current->next = new Node(value);
 	}
 	size++;
 }
@@ -154,29 +129,35 @@ Iterator List::begin(){
 
 
 
-Iterator::Iterator(List & lst){
-    current = lst.root;
+Iterator::Iterator(List & list){
+    current = list.root;
     prev = nullptr;
-    list = &lst;
+    this->list = &list;
 }
 
 
 
 Iterator Iterator::next(){
-    if (this->current->next == nullptr){
-        this->prev = this->current;
-        this->current = this->list->root;
+    if (current == nullptr){
         return *this;
     }
-    else{
-        this->prev = this->current;
-        this->current = this->current->next;
+    if (current->next == nullptr){
+        prev = current;
+        current = list->root;
         return *this;
     }
+    
+    prev = current;
+    current = current->next;
+    return *this;
+    
     
 }
 
 int Iterator::get_value(){
+    if (current == nullptr){
+        return ERROR_NULLPTR;
+    }
     return current->value;
 }
 
@@ -188,12 +169,17 @@ void Iterator::set_value(const int value){
 }
 
 void Iterator::insert(const int value){
-    Node* previous = current;
-	previous->next = new Node(value, previous->next);
+    if (current == nullptr){
+        return;
+    }
+	current->next = new Node(value, current->next);
 	list->size++;
 }
 
 void Iterator::del(){
+    if ((current == nullptr) || (prev == nullptr)){
+        return;
+    }
     Node* temp = this->current;
     if(temp->next == nullptr){
         prev->next = temp->next;
