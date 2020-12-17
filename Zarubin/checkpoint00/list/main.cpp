@@ -1,4 +1,5 @@
 #include <iostream>
+const int ERROR = 12345678;
 class List;
 
 class Node {
@@ -6,14 +7,8 @@ public:
     int value;
     Node *next;
 public:
-    Node(int value){
-        this->value = value;
-        next = nullptr;
-    }
-    Node(int value, Node *next){
-        this-> value = value;
-        this-> next = next;
-    }
+    Node(int value);
+    Node(int value, Node *next);
 };
 
 
@@ -23,19 +18,9 @@ private:
     Node *prev;
     List *head;
 public:
-    Iterator next(){
-        if (current != nullptr){
-            prev = current;
-            current = current->next;
-        }
-        return *this;
-    };
-    int get_value(){
-        return current->value;
-    };
-    void set_value(const int value){
-        current->value = value;
-    };
+    Iterator next();
+    int get_value();
+    void set_value(const int value);
 public:
     void insert(const int value);
     void del();
@@ -55,45 +40,75 @@ public:
     List();
 };
 
+Node::Node(const int value){
+    this->value = value;
+    this->next = nullptr;
+}
 
-Iterator :: Iterator(){
+Node::Node(const int value, Node *next){
+    this->value = value;
+    this->next = next;
+}
+
+Iterator Iterator::next(){
+    if (this->current == nullptr){return *this;}
+
+    this->prev = this->current;
+    this->current = this->current->next;
+    return *this;
+};
+
+int Iterator::get_value(){
+    if(current){return current->value;}
+    return NULL;
+};
+
+void Iterator::set_value(const int value){
+    if(current){current->value = value;}
+};
+
+Iterator::Iterator(){
     current = head->root;
 }
 
-Iterator :: Iterator (List &rooot){
+Iterator::Iterator (List &rooot){
     head = &rooot;
     current = head->root;
     prev = nullptr;
 }
 
-Iterator List :: begin(){
+Iterator List::begin(){
     Iterator remake(*this);
-    return (*this);
+    return (remake);
 }
 
-List ::List() {
+List::List() {
     root = nullptr;
 }
 
 void Iterator::insert (const int value){
-    current = new Node(value, current);
+    Node* tempNode = new Node(value, current);
+    if (prev != nullptr)
+    {
+        prev->next = tempNode;
+        return;
+    }
+    current = tempNode;
     head->root = current;
 }
 
 void Iterator::del() {
-    if (current != nullptr && prev != nullptr)
+    if (current && prev)
     {
         prev->next = current->next;
         delete current;
         current = prev->next;
-        return;
     }
-    if (prev == nullptr && current != nullptr)
+    else if (current == head->root)
     {
         head->root = current->next;
         delete current;
         current = head->root;
-        return;
     }
 }
 
@@ -108,6 +123,8 @@ int main() {
     iterator.del();
     std::cout << iterator.get_value() << '\n';
     iterator.set_value(16);
+    std::cout << iterator.get_value() << '\n';
+    iterator.set_value(24);
     std::cout << iterator.get_value() << '\n';
     std::cout << "The end." << std::endl;
 }
