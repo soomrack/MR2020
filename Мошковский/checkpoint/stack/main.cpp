@@ -1,45 +1,52 @@
 #include <iostream>
-#define POP_ERROR -42;
 
-struct Node {
+class Stack {
+private:
+    const int POP_ERROR = -42;
+    struct Node;
+    Node* top;
+
+public:
+    int pop();
+    void push(const int value);
+public:
+    Stack();
+    ~Stack();
+};
+
+struct Stack::Node {
     int content;
     Node* point;
 };
 
-class Stack {
-private:
-    Node* top;
-
-public:
-    int pop(){
-        if (!top) {
-            return -42;
-        }
-        int end = top->content;
-        Node *targetNode = top;
-        top = top->point;
-        delete targetNode;
-        return end;
+int Stack::pop() {
+    if (!top) {
+        return POP_ERROR;
     }
-    void push(const int value){
-        Node* temp;
-        temp = new Node;
-        temp->content = value;
-        temp->point = top;
-        top = temp;
-    };
-public:
-    Stack();
-     ~Stack(){
-        while (top) {
-            Node *half = top;
-            top = top ->point;
-            free (half);
-        }
-    };
+    int end = top->content;
+    Node* targetNode = top;
+    top = top->point;
+    delete targetNode;
+    return end;
+}
+
+void Stack::push(const int value) {
+    Node* temp;
+    temp = new Node;
+    temp->content = value;
+    temp->point = top;
+    top = temp;
 };
 
 Stack::Stack():top(NULL){}
+
+Stack::~Stack() {
+    while (top) {
+        Node* half = top;
+        top = top->point;
+        delete (half);
+    }
+}
 
 int main() {
     Stack go_check;
