@@ -21,14 +21,13 @@ public:
     Tree() {
         root = nullptr;
     }
-
-    Node *prevNewNode(int key, Node *root);//подготовка к добалению элемента
-    Node *prevSearch(int key, Node *root);//поиск предка
-    Node *search(int key, Node *root);//поиск по дереву
     void add(int key, void *data);//добавление элемента
     void del(int key);//удаление элемента
     Node *min(Node *root);//поиск минимального элемента
-
+private:
+    Node *prevNewNode(int key, Node *root);//подготовка к добалению элемента
+    Node *prevSearch(int key, Node *root);//поиск предка
+    Node *search(int key, Node *root);//поиск по дереву
 };
 
 Node *Tree::prevNewNode(int key, Node *root) {
@@ -128,7 +127,8 @@ void Tree::del(int key) {
         }
         return;
     }
-    Node* temp = min(delete_node->right);//оба потомка заполнены
+    //оба потомка заполнены
+    Node* temp = min(delete_node->right);
     if (temp == delete_node->right) {
         delete_node->key = temp->key;
         delete_node->data = temp->data;
