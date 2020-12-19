@@ -175,6 +175,6 @@ int main() {
     check.insert(11);
     for (; check.get_value() != NULL; check.next()) {
         std::cout << check.get_value() << '\n';
-        return 0;
     }
+    return 0;
 }
