@@ -169,13 +169,12 @@ int main() {
     List checking;
     Iterator check = checking.begin();
     check.insert(0);
-    check.del();
     check.insert(89);
     check.insert(29);
     check.insert(1);
     check.insert(11);
-    check.del();
-    int a = check.get_value();
-    std::cout<< a << std::endl;
-    return 0;
+    for (; check.get_value() != NULL; check.next()) {
+        std::cout << check.get_value() << '\n';
+        return 0;
+    }
 }
