@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 using namespace std;
 
+const int errornumber 787898;
+
 class Node {
 public:
     int value;
@@ -8,6 +10,8 @@ public:
 public:
     Node(const int value);
     Node(int value, Node* next);
+    Node(const int value, const Node* next);
+    ~Node();
 };
 
 class List;
@@ -40,7 +44,6 @@ public:
     void clear();
     void push_end(int value);
     void pop_front();
-    int get_count ();
 public:
     List();
     ~List();
@@ -107,7 +110,7 @@ int Iterator::get_value() {
     {
         return current->value;
     };
-    return 787898; //число показывающие ршибку
+    return errornumber; //число показывающие ршибку
 }
 
 void Iterator::set_value(const int value){
@@ -140,8 +143,16 @@ void Iterator::del() {
 }
 
 void Iterator::insert(const int value) {
+    if (list->root == nullptr) {
+        list->root = new Node(value);
+        current = list->root;
+        prev = nullptr;
+        return;
+    }
+    if (prev == nullptr) {
+        list->root = new Node(value, current);
+    }
     prev->next = new Node(value, current);
-    list->Count++;
 }
 
 Iterator List::begin() {
@@ -161,8 +172,7 @@ void List::clear() {
     while (root != nullptr) {
         pop_front();
     }
-
-}int List::get_count() { return Count; }
+}
 
 int main() 
 {

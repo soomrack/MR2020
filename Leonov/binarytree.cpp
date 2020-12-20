@@ -23,10 +23,7 @@ public:
 class Tree {
 private:
     Node* root;
-    Node* find_min(Node* tree) // поиск узла с минимальным ключом в дереве tree
-    {
-        return tree->left ? find_min(tree->left) : tree;
-    }
+    Node* min_Node(Node* root); // поиск узла с минимальным ключом в дереве tree
     Node* find_Node(Node* root, int key);
     Node* find_parent(Node* root, int key);
 public:
@@ -77,23 +74,21 @@ bool Tree::add(const int key, const std::string data)
     if (root == nullptr)
     {
         root = new Node(key, data);
-    }
-    else
-    {
-        Node* chiled = new Node(key, data);
-        Node parent = find_Node(root, key);
-        if (parent->key = key)
-        {
-            return false;
-        }
-        if (parent->key > key)
-        {
-            parent->left = child;
-            return true;
-        }
-        parent->right = child;
         return true;
     }
+    Node* chiled = new Node(key, data);
+    Node parent = find_Node(root, key);
+    if (parent->key = key)
+    {
+        return false;
+    }
+    if (parent->key > key)
+    {
+        parent->left = child;
+        return true;
+    }
+    parent->right = child;
+    return true;
 }
 
 bool Tree::del(const int key)
@@ -137,9 +132,9 @@ bool Tree::del(const int key)
     }
     Node* right_child = node->right;
     Node* minNode = min_Node(right_child);
-    Node* minparent = min_parent(root, minNode->key);
+    Node* minparent = find_parent(root, minNode->key);
     int minkey = minNode->key;
-    std::string data = minNode->data;
+    std::string mindata = minNode->data;
     del(minNode->key);
     node->data = mindata;
     node->key = minkey;
@@ -196,7 +191,7 @@ Node* Tree::find_Node(Node* root, int key) {
     }
 }
 
-Node* Tree::find_Parent(Node* root, int key) 
+Node* Tree::find_parent(Node* root, int key) 
 {
     if (root->key < key) 
     {
@@ -204,14 +199,14 @@ Node* Tree::find_Parent(Node* root, int key)
             return nullptr;
         if (root->right->key == key) 
             return root;
-        return find_Parent(root->right, key);
+        return find_parent(root->right, key);
     }
     if (root->key > key) {
         if (root->left == nullptr)
             return nullptr;
         if (root->left->key == key) 
             return root;
-        return find_Parent(root->left, key);
+        return find_parent(root->left, key);
     }
     return nullptr;
 }
