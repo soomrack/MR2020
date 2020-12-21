@@ -3,6 +3,7 @@
 
 // Binary search tree
 
+const std::string  ELEMENT_NOT_FOUND = "";
 
 class Node {
 public:
@@ -23,11 +24,11 @@ class Tree {
 private:
     Node *root;
     Node* findmin(Node* p) {return p->left ? findmin(p->left) : p;}
+    Node *search (int key);
+    Node *searchprev (int key);
 public:
     bool add(const int key, const std::string data);  // false if key already exists
     bool del(const int key);  // false if no key
-    Node *search (int key);
-    Node *searchprev (int key);
     std::string find(const int key);  // return '' if no key
 public:
     Tree();
@@ -201,7 +202,7 @@ std::string Tree::find(const int key)
 {
     Node *element = search(key);
     if (element == nullptr)
-        return "";
+        return ELEMENT_NOT_FOUND;
     return (element->data);
 }
 
