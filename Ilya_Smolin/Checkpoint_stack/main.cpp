@@ -1,6 +1,6 @@
 #include <iostream>
 
-int const errorcode = -666;
+int const ERROR_CODE = -666;
 
 class Stack {
 public:
@@ -24,7 +24,7 @@ struct Element *Top;
 int Stack::pop()
 {
     if (Top == nullptr)
-        return (errorcode);
+        return (ERROR_CODE);
     struct Element *pointer;
     int answer;
     pointer = Top;
