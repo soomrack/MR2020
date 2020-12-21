@@ -12,20 +12,20 @@ public:
 };
 
 
-struct Elem
+struct Element
 {
     int value;
-    struct Elem* next;
+    struct Element* next;
 };
 
-struct Elem *Top;
+struct Element *Top;
 
 
 int Stack::pop()
 {
     if (Top == nullptr)
         return (errorcode);
-    struct Elem *pointer;
+    struct Element *pointer;
     int answer;
     pointer = Top;
     answer = pointer->value;
@@ -37,8 +37,8 @@ int Stack::pop()
 
 void Stack::push(const int value)
 {
-    struct Elem *pointer;
-    pointer= new struct Elem;
+    struct Element *pointer;
+    pointer = new struct Element;
     pointer->value = value;
     pointer->next = Top;
     Top = pointer;
