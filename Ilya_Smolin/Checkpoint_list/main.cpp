@@ -1,6 +1,6 @@
 #include <iostream>
 
-const int errorcode = -666;
+const int ERROR_CODE = -666;
 
 class Node {
 public:
@@ -114,9 +114,9 @@ Iterator Iterator::next()
 
 int Iterator::get_value()
 {
-    if (current != nullptr)
-        return current->value;
-    return errorcode;
+    if (current = nullptr)
+        return ERROR_CODE;
+    return current->value;
 }
 
 
@@ -164,7 +164,7 @@ void Iterator::insert(const int value)
     {
         list->root = new Node (value, current);
     }
-    prev->next = new Node (value, current);
+    current->next = new Node (value, current->next);
 }
 
 Iterator List::begin()
