@@ -1,46 +1,49 @@
 #include <iostream>
-
+const int ERR0R = 2147483647;
 
 class Stack {
-private:
-    struct element {
-        int value;
-        element *Next;
-    };
-    element *top;
 public:
-    int pop(){
-        if (top == nullptr){
-            return 2147483647;
-        }
-        int temp = top -> value;
-        element *pointer = top;
-        top = top -> Next;
-        delete pointer;
-        pointer = nullptr;
-        return temp;
-    };
+    int pop();
+    void push(const int value);
+public:
+    Stack();
+    ~Stack();
+};
 
-    void push(const int value){
-        element *pointer = nullptr;
-        pointer = new element;
-        pointer -> value = value;
-        pointer -> Next = top;
-        top = pointer;
-    };
+struct element {
+    int value;
+    struct element *next;
+};
+struct element *top;
 
-    Stack(){
-        top = NULL;
-    };
+int Stack::pop(){
+    if (top == nullptr){return ERROR;}
+    int temp = top -> value;
+    element *poiner = top;
+    top = top -> next;
+    delete poiner;
+    poiner = nullptr;
+    return temp;
+};
 
-    ~Stack(){
-        while (top != nullptr){
-            element *pointer = top;
-            top = top -> Next;
-            delete pointer;
-            pointer = nullptr;
-        }
-    };
+void Stuck::push(const int value){
+    element *poiner = nullptr;
+    poiner = new element;
+    poiner -> value = value;
+    poiner -> next = top;
+    top = poiner;
+};
+
+Stack::Stack(){
+    top = nullptr;
+};
+
+Stack::~Stack(){
+    while (top != nullptr){
+        element *poiner = top;
+        top = top -> next;
+        delete poiner;
+    }
 };
 
 int main() {
