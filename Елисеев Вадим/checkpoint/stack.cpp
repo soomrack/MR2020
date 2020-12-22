@@ -2,8 +2,8 @@
 const int MAXstack = 100;
 
 struct Stack{
-    int64_t elem[MAXstack];
-    int64_t top;
+    int elem[MAXstack];
+    int top;
 };
 
 static void init(struct Stack* stk) {
@@ -16,8 +16,8 @@ static void push(struct Stack* stk, int64_t f) {
 
 }
 
-static int64_t pop(struct Stack* stk) {
-    int64_t elem;
+static int pop(struct Stack* stk) {
+    int elem;
     if ((stk->top) > 0)
     {
         stk->top--;
