@@ -10,7 +10,7 @@ static void init(struct Stack* stk) {
     stk->top = 0;
 }
 
-static void push(struct Stack* stk, int64_t f) {
+static void push(struct Stack* stk, int f) {
     stk->elem[stk->top] = f;
     stk->top++;
 
