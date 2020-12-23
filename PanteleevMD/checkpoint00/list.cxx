@@ -1,6 +1,8 @@
   
 #include <iostream>
 
+#define END_OF_LIST -1212121
+
 class List;
 class Iterator;
 
@@ -74,14 +76,14 @@ List::List()
 
 Iterator List::begin()
 {
-    Iterator fresh(*this);
-    return fresh;
+    Iterator newIter(*this);
+    return newIter;
 }
 
 List::~List()
 {
-    Iterator eraser;
-    while(root)     //deletes elements untill nullptr is reached
+    Iterator eraser(*this);
+    while(root != nullptr)     //deletes elements untill nullptr is reached
     {
         eraser.del();
     }
@@ -100,52 +102,67 @@ Iterator::Iterator(List &masterList)
     current = master->root;
     prev = nullptr;
 }
+//             <-
+//root -> e3 -> e2 -> e1 -- nullptr
 
 void Iterator::insert(const int value)
 {
-    Node* tempNode = new Node(value, current);
-    if (prev != nullptr)
+    /*if (current == nullptr)
     {
-        prev->next = tempNode;
+        current = new Node (value, nullptr);
+        master->root = current;
+        return;
+    }*/
+    if (prev == nullptr)            //iterator on root
+    {
+        current = new Node (value, current);
+        master->root = current;
         return;
     }
-    current = tempNode;
-    master->root = current;
+
+    current->next = new Node (value, current->next);
 }
 
 void Iterator::del()
 {
-    if (current && prev)       //if the list is not empty and previous element present
+    if (current == nullptr ) return;     //nothing to delete
+
+    if (master->root->next == nullptr)      //list of single element
     {
-        prev->next = current->next;     //ties neighbours together
-        delete current;                    //no need in updating head
-        current = prev->next;
-    }                                   
-    else if (current == master->root)
-    {
-        master->root = current->next;   //update head
         delete current;
-        current = master->root;
+        master->root = nullptr;
+        return;
     }
     
-    //next();
+    if (prev == nullptr)                //deleting head
+    {
+        master->root = current->next;
+        delete current;
+        current = master->root;
+        return;
+    }
+    //middle deletion
+    prev->next = current->next;      //ties neighbours together
+    delete current;
+    current = prev->next;
+    return;                         //no need in updating head
+  
 }
 
 int Iterator::get_value()
 {
-    if (current)        //not null
+    if (current == nullptr)        //list is empty
     {
-        return current->value;
+        return END_OF_LIST;
     }
-    return NULL;
+    return current->value;
 }
 
 void Iterator::set_value(int value)
 {
-    if (current)        //not null
-    {
-        current->value = value;
-    }
+    if (current == nullptr) {return;}       //list is empty
+
+    current->value = value;
 }
 
 Iterator Iterator::next()
@@ -174,7 +191,7 @@ int main() {
     it.insert(3);
     it.insert(4);
     it.insert(5);
-    for (; it.get_value() != NULL; it.next())
+    for (; it.get_value() != END_OF_LIST; it.next())
     {
         std::cout << it.get_value()  << '\n';
     }
@@ -200,7 +217,7 @@ int main() {
     it3.del();
     it3.del();
 
-    for (Iterator it3 = test.begin(); it3.get_value() != NULL; it3.next())
+    for (Iterator it3 = test.begin(); it3.get_value() != END_OF_LIST; it3.next())
     {
         std::cout << it3.get_value()  << '\n';
     }
@@ -210,7 +227,7 @@ int main() {
     it4.next();
     it4.next();
     it4.insert(99);
-    for (Iterator it4 = test.begin(); it4.get_value() != NULL; it4.next())
+    for (Iterator it4 = test.begin(); it4.get_value() != END_OF_LIST; it4.next())
     {
         std::cout << it4.get_value()  << '\n';
     }
