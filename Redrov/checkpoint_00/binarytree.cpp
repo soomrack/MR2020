@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+std::string NO_KEY = "no_key";
+
 
 class Node {
 public:
@@ -19,7 +21,7 @@ public:
 
 Node::Node(){
     this->key = 0;
-    this->data = "";
+    this->data = NO_KEY;
     this->left = nullptr;
     this->right = nullptr;
 }
@@ -60,11 +62,10 @@ Tree::Tree(){
     root = nullptr;
 }
 
-Tree::~Tree(){
-    while(root != nullptr){ del(root->key); }
-}
+Tree::~Tree(){ while(root != nullptr){ del(root->key); } }
 
 bool Tree::add(const int key, const std::string data){
+
     if (root == nullptr){
         root = new Node(key, data);
         return true;
@@ -87,6 +88,7 @@ bool Tree::add(const int key, const std::string data){
 
 
 Node* Tree::find_Node(Node * root, int key){
+
         if (root->key == key){
             return root;
         }
@@ -94,23 +96,25 @@ Node* Tree::find_Node(Node * root, int key){
             return (root->right == nullptr) ? root: find_Node(root->right, key);
         }
         return (root->left == nullptr) ? root:find_Node(root->left, key);
+
 }
 
 std::string Tree::find(const int key){
+
     if (root == nullptr)
-        return "";
+        return NO_KEY;
     Node* node = find_Node(root, key);
     if (node->key == key){
         return node->data;
     }
-    else{
-        return "";
-    }
+    
+    return NO_KEY;
+
 }
 
 
 bool Tree::del(const int key){
-    if (find(key) == ""){
+    if (find(key) == NO_KEY){
         return false;
     }
     Node* node = find_Node(root, key);
@@ -167,6 +171,7 @@ bool Tree::del(const int key){
 }
 
 Node* Tree::find_Parent(Node * root, int key) {
+    
     if (root->key < key) {
         if (root->right == nullptr)
             return nullptr;
@@ -184,15 +189,16 @@ Node* Tree::find_Parent(Node * root, int key) {
         return find_Parent(root->left, key);
     }
     return nullptr;
+
 }
 
 Node* Tree::min_Node(Node* node){
+    
     if (node->left == nullptr){
         return node;
     }
-    else{
-        return min_Node(node->left);
-    }
+    return min_Node(node->left);
+
 }
 
 

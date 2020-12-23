@@ -1,7 +1,7 @@
 #include <iostream>
 
-#define END_OF_LIST -1
-#define EMPTY_LIST -2
+const int END_OF_LIST = -1;
+const int EMPTY_LIST = -2;
 
 
 class List;

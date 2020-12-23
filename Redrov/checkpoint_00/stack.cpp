@@ -1,5 +1,12 @@
 #include <iostream>
 
+const int EMPTY_STACK = -1;
+
+struct Node{
+    int data;   
+    Node * prev; // pointer to the previous node
+};
+
 
 class Stack {
 public:
@@ -9,65 +16,63 @@ public:
     Stack();
     ~Stack();
 private:
-    int top;
-    int * data;
+    // int top;
+    // int * data;
+    Node * top;
 };
 
 
+Stack::Stack() :top(NULL) {}
+
+
+Stack::~Stack(){
+
+    while(top){
+        Node * nodeToDelete = top;
+        top = top->prev;
+        delete nodeToDelete;
+    }
+
+}
+
+
+void Stack::push(const int value){
+
+    Node * newNode = new Node;
+    newNode->data = value;
+    newNode->prev = top;
+    top = newNode;
+
+}
+
+
+int Stack::pop(){
+
+    if (!top){
+        return EMPTY_STACK;
+    }
+
+    int value = top->data;
+    Node * currentNode = top;
+    top = top->prev;
+    delete currentNode;
+
+    return value;
+
+}
 
 
 int main() {
 
     Stack stk;
 
-    // Потестим
+    // Тестики
     stk.push(1);
-    stk.push(313);
-    stk.push(1);
-    stk.push(313);
+    stk.push(2);
+    stk.push(3);
+    stk.push(4);
 
     std::cout << stk.pop() << ' ' << stk.pop() << ' ' << stk.pop() << ' ' << stk.pop();
 
     return 0;
-}
-
-
-// Конструктор стека при инициализвции без аргументов
-Stack::Stack(){
-    this->top = 0;
-    this->data = new int[ 1 ];
-    this->data[0] = 0;
-}
-
-// Деструктор стека - вызывается при завершении времени жизни объекта (например - закрылась скобка области видимости)
-Stack::~Stack(){
-    this->top = 0;
-    delete [] this->data;
-}
-
-void Stack::push(const int value){
-        
-        this->top++;
-        int * copy = new int[this->top];
-        for (int i = 0; i < this->top-1; i++){
-            copy[i] = this->data[i];
-        }
-        delete [] this->data;
-        this->data = copy;
-        this->data[this->top-1] = value;
-            
-}
-
-int Stack::pop(){
-
-    this->top--;
-    int elem =  this->data[this->top];
-    int * copy = new int[this->top];
-    for (int i = 0; i < this->top; i++){
-        copy[i] = this->data[i];
-    }
-    delete [] this->data;
-    this->data = copy;
-    return elem;
-
 }
