@@ -13,10 +13,10 @@ public:
     int value;
     List_Node *next;
 public:
-    List_Node();
+    List_Node()= default;;
     List_Node(int value);
     List_Node(int value, List_Node *next);
-    ~List_Node();
+    ~List_Node()= default;
 };
 
 class List;
@@ -28,13 +28,13 @@ private:
 public:
     void next();
     int get_value();
-    void set_value(const int value);
+    void set_value(int value);
 public:
-    void insert(const int value);  // insert new node after current
+    void insert(int value);  // insert new node after current
     void del();  // delete current node
 public:
     explicit Iterator(List &list);
-    ~Iterator();
+    ~Iterator()= default;
 };
 
 
@@ -46,7 +46,7 @@ public:
     Iterator begin();
 public:
     List();
-    ~List();
+    ~List()= default;
 };
 
 

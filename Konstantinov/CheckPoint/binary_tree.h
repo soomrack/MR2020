@@ -4,7 +4,8 @@
 
 #ifndef CPP_CHECKPOINT_BINARY_TREE_H
 #define CPP_CHECKPOINT_BINARY_TREE_H
-class Node {
+
+class Node{
 public:
     int key;
     std::string data;
@@ -12,28 +13,25 @@ public:
     Node *left;
     Node *right;
 public:
-    Node();
-    Node(const int key, const std::string data);
-    Node(const int key, const std::string data, Node *left, Node *right);
-    ~Node();
+    Node()= default;
+    Node(int key, std::string data);
+    Node(int key, std::string data, Node *left, Node *right);
+    ~Node()= default;
 };
 
 
 class Tree {
 private:
     Node *root;
-    Node* findParent(const int key);
+    Node* findParent(int key);
     Node* findMin(Node* pivot);
 public:
-    bool add(const int key, const std::string data);  // false if key already exists
-    bool del(const int key);  // false if no key
-    std::string find(const int key);  // return '' if no key
+    bool add(int key, std::string data);  // false if key already exists
+    bool del(int key);  // false if no key
+    std::string find(int key);  // return '' if no key
 public:
     Tree();
-    ~Tree();
+    ~Tree()= default;
 };
-
-
-
 
 #endif //CPP_CHECKPOINT_BINARY_TREE_H

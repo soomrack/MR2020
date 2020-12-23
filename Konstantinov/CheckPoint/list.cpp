@@ -5,52 +5,42 @@
 #include "list.h"
 
 List::List(){
-    this->root = NULL;
-
+    this->root = nullptr;
 }
-
-List::~List() {
-
-
-}
-
 
 Iterator List::begin() {
     Iterator iter(*this);
     return iter;
  }
 
- Iterator::Iterator(List &list) {
+
+Iterator::Iterator(List &list) {
     this->current = list.root;
-    this->prev = NULL;
+    this->prev = nullptr;
 }
 
-Iterator::~Iterator() {
-
-}
 
 void Iterator::next() {
-
+    this->prev = this->current;
+    this->current = this->current->next;
 }
 
 
 void Iterator::insert(const int value) {
-
     List_Node* new_node;
 
-    if(this->current->next != NULL) {
+    if(this->current->next != nullptr) {
         new_node = new List_Node(value, this->current->next);
     }
     else
         new_node = new List_Node(value);
 
-    if(new_node == NULL){
+    if(!new_node){
         exit(-1);
     }
 
     this->prev = this->current;
     this->current = new_node;
-
 }
 
 int Iterator::get_value() {
@@ -59,14 +49,11 @@ int Iterator::get_value() {
 
 
 void Iterator::set_value(const int value) {
-
     this->current->value = value;
-
 }
 
 void Iterator::del() {
-
-    if(this->current->next == NULL) {
+    if(this->current->next == nullptr) {
         delete this->current;
         this->current = this->prev;
         return;
@@ -87,13 +74,5 @@ List_Node::List_Node(int value, List_Node *next){
 }
 List_Node::List_Node(int value){
     this->value = value;
-    this->next = NULL;
-}
-
-List_Node::List_Node(){
-
-}
-
-List_Node::~List_Node() {
-
+    this->next = nullptr;
 }

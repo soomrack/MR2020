@@ -4,7 +4,7 @@
 
 #ifndef CPP_CHECKPOINT_STACK_H
 #define CPP_CHECKPOINT_STACK_H
-
+#define STACK_MEMORY_FAULT -100
 #include <iostream>
 
 class Stack_Node {
@@ -13,22 +13,21 @@ public:
     Stack_Node* next;
 
 public:
-    Stack_Node();
-    Stack_Node(const int value, Stack_Node* next);
-    ~Stack_Node();
+    Stack_Node()= default;
+    Stack_Node(int value, Stack_Node* next);
+    ~Stack_Node()= default;
 };
 
 
 class Stack {
 public:
     int pop();
-    void push(const int value);
+    void push(int value);
 public:
     Stack();
     ~Stack();
 private:
     Stack_Node* stack_pointer;
-
 };
 
 
