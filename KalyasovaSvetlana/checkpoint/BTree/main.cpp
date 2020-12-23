@@ -37,7 +37,7 @@ private:
     Node* find_element(int key, Node* root);
     Node* min_left(Node* root);
     Node* parent_node_search(int key, Node* root);
-    void delete_root_if_not_2_childs(void);
+    void change_root_if_no_parent(void);
 public:
     Node* root;
     Tree();
@@ -93,8 +93,8 @@ Node* Tree::parent_node_search(int key, Node* root)
     if (root == nullptr)
         return root;
     if (root->key == key) return nullptr;
-    if (root->left!= nullptr) if (key == root->left->key) return root;
-    if (root->right!= nullptr) if (key == root->right->key) return root;
+    if ((root->left!= nullptr) && (key == root->left->key)) return root;
+    if ((root->right!= nullptr) && (key == root->right->key)) return root;
     if (key < root->key) return parent_node_search(key, root->left);
     return parent_node_search(key, root->right);
 }
@@ -137,7 +137,7 @@ bool Tree::del(int key)
     Node* parent_delete_node = parent_node_search(key, root);
     if (parent_delete_node == nullptr)
     {
-        delete_root_if_not_2_childs();
+        change_root_if_no_parent();
         return true;
     }
 
@@ -167,7 +167,7 @@ bool Tree::del(int key)
     }
 }
 
-void Tree::delete_root_if_not_2_childs(void)
+void Tree::change_root_if_no_parent(void)
 {
     if ((root->left == nullptr) && (root->right == nullptr))
     {
