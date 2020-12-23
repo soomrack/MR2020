@@ -80,7 +80,7 @@ Iterator::Iterator(){
 
 Iterator List::begin(){
     Iterator foo(*this);
-    return (*this);
+    return foo;
 }
 
 List::List() {
