@@ -2,6 +2,8 @@
 #include <iostream>
 using namespace std;
 
+#define END -1
+
 class List;
 class Iterator;
 
@@ -11,8 +13,8 @@ class Node {
         Node *next;
     public:
         Node();
-        Node(int value);
-        Node(int value, Node *next);
+        Node(const int value);
+        Node(const int value, Node *next);
         ~Node();
 };
 
@@ -25,9 +27,9 @@ class Iterator {
     public:
         Iterator next();
         int get_value();
-        void set_value(int value);
+        void set_value(const int value);
     public:
-        void insert(int value);  // insert new node after current
+        void insert(const int value);  // insert new node after current
         void del();  // delete current node
     public:
         Iterator();
@@ -51,17 +53,17 @@ Node::Node(){
     next = nullptr;
 }
 
-Node::Node(int value){
+Node::Node(const int value){
     this->value = value;
 }
 
-Node::Node(int value, Node *next){
+Node::Node(const int value, Node *next){
     this->value = value;
     this->next = next;
 }
 
 Node::~Node(){
-    //delete this;
+
 }
 
 List::List(){
@@ -86,12 +88,12 @@ Iterator List::begin(){
 // }
 
 Iterator::Iterator(List &list){
-    current = list.root;
+    current = list->root;
     prev = nullptr;
     this->list = &list;
 }
 
-void Iterator::insert(int value){
+void Iterator::insert(const int value){
     Node *tempNode = new Node(value, current);
     if (prev != nullptr){
         prev->next = tempNode;
@@ -119,10 +121,10 @@ int Iterator::get_value(){
     if (current != nullptr){
         return current->value;
     }
-    return NULL;
+    return END;
 }
 
-void Iterator::set_value(int value){
+void Iterator::set_value(const int value){
     if (current != nullptr){
         current->value = value;
     }
@@ -130,7 +132,7 @@ void Iterator::set_value(int value){
 
 Iterator Iterator::next(){
     if (this->current == nullptr){
-        this->prev = this->current;
+        prev = current;
         this->current = nullptr;
         return *this;
     }
@@ -154,7 +156,7 @@ int main() {
     iterator.insert(2);
     iterator.insert(3);
     
-        for (; iterator.get_value() != NULL; iterator.next()){
+        for (; iterator.get_value() != END; iterator.next()){
         std::cout << iterator.get_value()  << '\n';
     }
     cout << "The end." << endl;
