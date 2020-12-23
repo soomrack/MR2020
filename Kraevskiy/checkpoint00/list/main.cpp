@@ -1,6 +1,6 @@
 #include <iostream>
 
-const int error = 12345;
+const int Error = 12345;
 
 class Node {
 public:
@@ -69,7 +69,7 @@ List::List()
 
 List::~List()
 {
-    while (list_size) { pop_first(); }
+    while (root != nullptr) { pop_first(); }
 }
 
 void List::pop_first()
@@ -95,10 +95,16 @@ Iterator List::begin()
 
 Iterator Iterator::next()
 {
-    if ( current != nullptr && current->next != nullptr )
+    if (current != nullptr)
     {
-        this->prev = this->current;
-        this->current = this->current->next;
+        if (current->next == nullptr)
+        {
+            prev = nullptr;
+            current = nullptr;
+            return *this;
+        }
+        prev = current;
+        current = current->next;
         return *this;
     }
 }
@@ -107,7 +113,7 @@ int Iterator::get_value()
 {
     if (current != nullptr)
         return current->value;
-    return error;
+    return Error;
 }
 
 void Iterator::set_value(const int value)
