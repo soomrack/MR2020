@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
 
+#define ERROR_OCCURED -1488
+
 class List;
 
 class Node {
@@ -9,8 +11,8 @@ public:
     Node *next;
 public:
     Node();
-    Node(int value);
-    Node(int value, Node *next);
+    Node(const int value);
+    Node(const int value, Node *next);
     ~Node(); 
 };
 
@@ -22,9 +24,9 @@ private:
 public:
     Iterator next();
     int get_value();
-    void set_value(int value);
+    void set_value(const int value);
 public:
-    void insert(int value);  // insert new node after current
+    void insert(const int value);  // insert new node after current
     void del();  // delete current node
 public:
     Iterator(List & list);
@@ -48,14 +50,14 @@ Node::Node(){
 
 }
 
-Node::Node(int value){
+Node::Node(const int value){
 
     this->value = value;
     this->next = nullptr;
 
 }
 
-Node::Node(int value, Node *next){
+Node::Node(const int value, Node *next){
 
     this->value = value;
     this->next = next;
@@ -92,7 +94,7 @@ Iterator Iterator::next(){
     } else {
 
         prev = nullptr;
-        current = list->root;
+        // current = list->root;
 
     }
 
@@ -103,7 +105,6 @@ Iterator Iterator::next(){
 int Iterator::get_value(){
 
     int value = this->current->value;
-    current = list->root;
     return value;
 
 }
@@ -116,19 +117,17 @@ void Iterator::set_value(int value){
 
     }
 
-    current = list->root;
-
 }
 
 void Iterator::insert(int value){
 
     Node *tempNode = new Node(value, current);
 
-    if (prev != nullptr){
+    if (current != nullptr){
 
-        prev->next = tempNode;
+        current->next = tempNode;
 
-    } else{
+    }else{
 
         current = tempNode;
 
@@ -152,7 +151,7 @@ void Iterator::del(){
         delete current;
         current = list->root;
 
-    } else {
+    }else{
 
         prev->next = current->next;
         delete current;
@@ -200,5 +199,5 @@ int main() {
     testIterator.next();
     cout << testIterator.get_value() << endl;
 
-    std::cout << "The end." << std::endl;
+    cout << "The end." << std::endl;
 }
