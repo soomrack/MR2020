@@ -1,8 +1,8 @@
 #include <iostream>
+const int error = 2147483647;
 
 class Stack {
 private:
-    const int error = 2147483647;
     struct Node;
     struct Node* top;
 public:
