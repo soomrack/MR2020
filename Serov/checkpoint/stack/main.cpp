@@ -46,12 +46,10 @@ Stack::Stack() {
 }
 
 Stack::~Stack() {
-    {
-        while (top) {
-            Node *delTop = top;
-            top = top ->next;
-            delete (delTop);
-        }
+    while (top) {
+	Node *delTop = top;
+        top = top ->next;
+        delete (delTop);
     }
 }
 
