@@ -134,7 +134,7 @@ List::List() {
 }
 
 List::~List() {
-    Iterator toDelete;
+    Iterator toDelete = begin();
     while (root != nullptr)
         toDelete.del();
 }
