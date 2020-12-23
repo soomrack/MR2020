@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
 
+#define END -1
+
 struct element {
     int value;              // a value on the stack
     element *nextElement;   //a pointer to the next element on the stack
@@ -29,7 +31,7 @@ Stack::~Stack(){
 
 int Stack::pop(){
     if(!top){
-        return -1;
+        return END;
     }
     int value = top->value;
     element *elementNow = top;
