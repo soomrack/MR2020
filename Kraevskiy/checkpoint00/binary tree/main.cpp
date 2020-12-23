@@ -25,16 +25,18 @@ public:
     void add(const int key, const string data, Node* leaf);
     bool del(const int key);                                // false if no key
     string find(const int key);                             // return "" if no key
-    bool del_find (Node* iterator, Node* previous, const int key);
-
-    Node* find(int key, Node* leaf);
-    Node* find_min(Node* ptr);
 
     Tree();
     ~Tree();
 
 private:
+
+    bool del_find (Node* iterator, Node* previous, const int key);
     void del_tree(Node* leaf);
+
+    Node* find(int key, Node* leaf);
+    Node* find_min(Node* ptr);
+
 };
 
 Node::Node(const int key, const string data)
