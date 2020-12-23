@@ -1,5 +1,7 @@
 #include <iostream>
 
+const int Error = 12345;
+
 class Stack {
 
 public:
@@ -10,13 +12,12 @@ public:
     bool isEmpty();
 
 private:
-    struct node;
-    node *top;
+    struct node *top;
 };
 
-struct Stack::node {
+struct node {
     int data;
-    node *pointer;
+    node *next;
 };
 
 Stack::Stack() : top(NULL) {}
@@ -25,23 +26,25 @@ void Stack::push(const int value)
 {
     node *previous = new node;
     previous->data = value;
-    previous->pointer = top;
+    previous->next = top;
     top = previous;
 }
 
 int Stack::pop()
 {
-    if (isEmpty()) { return -1; }
+    if (isEmpty()) { return Error; }
     int temp = top->data;
     node *previous = top;
-    top = top->pointer;
+    top = top->next;
     delete previous;
     return temp;
 }
 
 bool Stack::isEmpty()
 {
-    return top ? false : true;
+    if (top == nullptr)
+        return true;
+    return false;
 }
 
 
@@ -50,7 +53,7 @@ Stack::~Stack()
     while (top)
     {
         node *previous = top;
-        top = top->pointer;
+        top = top->next;
         delete previous;
     }
 }
