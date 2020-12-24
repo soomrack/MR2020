@@ -60,7 +60,7 @@ Node* Tree::findNode(Node *root, int key) {
     if (root->key == key) {
         return root;
     }
-    else if (root->key < key) {
+    if (root->key < key) {
         if (root->right == nullptr)
             return root;
         return findNode(root->right, key);
