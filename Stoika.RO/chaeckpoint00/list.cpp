@@ -1,5 +1,7 @@
 #include <iostream>
 
+const int error = NULL;
+
 class List;
 class Iterator;
 
@@ -85,7 +87,7 @@ Iterator List::begin()
 
 List::~List()
 {
-    while (size != 0) {
+    while (root != nullptr) {
         Node* temp = root;
         root = root->next;
         delete temp;
@@ -141,7 +143,7 @@ int Iterator::get_value()
     {
         return current->value;
     }
-    return NULL;
+    return error;
 }
 
 void Iterator::set_value(int value)

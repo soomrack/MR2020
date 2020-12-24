@@ -1,11 +1,10 @@
 #include <iostream>
 
+const int error = NULL;
+
 class Stack {
 private:
-    struct Node {
-        int value;
-        struct Node* next;
-    };
+    struct Node;
     struct Node* top;
 public:
     int pop();
@@ -13,21 +12,27 @@ public:
     Stack();
     ~Stack();
 };
-// Функция возвращает вершину из стека
+
+struct Stack::Node
+{
+    int value;
+    struct Node* next;
+};
+
 int Stack::pop() {
     struct Node* temp;
     temp = new Node;
     if (top==nullptr) {
-        return 2147483647;
+        return error;
     }
     int end = top->value;
     temp = top;
     top = top->next;
-    temp->next = nullptr;//элемент, следующий за вершиной стал вершиной
-    free(temp);
+    temp->next = nullptr;
+    delete(temp);
     return end;
 }
-// Функция вносит значение в стек
+
 void Stack::push(const int value) {
     struct Node* temp;
     temp = new  struct Node;
@@ -35,11 +40,11 @@ void Stack::push(const int value) {
     temp->next = top;
     top = temp;
 }
-// Конструктор стека при инициализвции без аргументов
+
 Stack::Stack() {
     top = nullptr;
 }
-// Деструктор стека - вызывается при завершении времени жизни объекта (например - закрылась скобка области видимости)
+
 Stack::~Stack() {
     while (top != nullptr) {
         pop();

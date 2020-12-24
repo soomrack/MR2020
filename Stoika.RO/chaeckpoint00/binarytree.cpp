@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+std::string error = "\0";
+
 // Binary search tree
 
 class Node 
@@ -50,28 +52,10 @@ class Tree
 {
 private:
     Node* root;
-    Node* findmin(Node* p) 
-    {
-        if (p->left)
-            return findmin(p->left);
-        else
-            return p;
-    }
-    Node* checkNode(Node* root, int key)
-    {
-        if (root == nullptr) return root;
-        if (root->key == key) return root;
-        else if (root->key > key) return checkNode(root->left, key);
-        else return checkNode(root->right, key);
-    }
-    Node* findParentWhenDeliting(Node* root, int key) {
-        if (root->right->key == key) return root;
-        if (root->left->key == key) return root;
-        if (root->key <= key) return findParentWhenDeliting(root->right, key);
-        return findParentWhenDeliting(root->left, key);
-    };
-
-public:
+    Node* findmin(Node* p);
+    Node* checkNode(Node* root, int key);
+    Node* findParentWhenDeleting(Node* root, int key) ;
+    public:
     bool add(const int key, const std::string data);  // false if key already exists
     bool del(const int key);  // false if no key
     std::string find(const int key);  // return '' if no key
@@ -79,6 +63,30 @@ public:
     Tree();
     ~Tree();
 };
+
+Node* Tree::findmin(Node* p)
+{
+    if (p->left)
+        return findmin(p->left);
+    else
+        return p;
+}
+
+Node* Tree::findParentWhenDeleting(Node* root, int key)
+{
+    if (root->right->key == key) return root;
+    if (root->left->key == key) return root;
+    if (root->key <= key) return findParentWhenDeleting(root->right, key);
+    return findParentWhenDeleting(root->left, key);
+};
+
+Node* Tree::checkNode(Node* root, int key)
+{
+    if (root == nullptr) return root;
+    if (root->key == key) return root;
+    else if (root->key > key) return checkNode(root->left, key);
+    else return checkNode(root->right, key);
+}
 
 Tree::Tree() 
 {
@@ -94,28 +102,25 @@ std::string Tree::find(const int key)
 {
     Node* current = root;
     if (current == nullptr)
-        return " ";
-    else
+        return error;
+    while (current->key != key)
     {
-        while (current->key != key)
+        if (key > current->key)
         {
-            if (key > current->key)
-            {
-                if (current->right == nullptr)
-                    return " ";
-                else
-                    current = current->right;
-            }
-            else if (key < current->key)
-            {
-                if (current->left == nullptr)
-                    return " ";
-                else 
-                    current = current->left;
-            }
+            if (current->right == nullptr)
+                return error;
+            else
+                current = current->right;
         }
-        return current->data;
+        else if (key < current->key)
+        {
+            if (current->left == nullptr)
+                return error;
+            else
+                current = current->left;
+        }
     }
+    return current->data;
 }
 
 bool Tree::add(const int key, const std::string data) 
@@ -126,45 +131,43 @@ bool Tree::add(const int key, const std::string data)
         root = new Node;
         root->key = key;
         root->data = data;
+        return true;
     }
-    else 
+    while (true)
     {
-        while (true)
+        if (current->key < key)
         {
-            if (current->key < key) 
+            if (current->right == nullptr)
             {
-                if (current->right == nullptr) 
-                {
-                    current->right = new Node;
-                    Node* newNode = current->right;
-                    newNode->key = key;
-                    newNode->data = data;
-                    return true;
-                }
-                else
-                    current = current->right;
+                current->right = new Node;
+                Node* newNode = current->right;
+                newNode->key = key;
+                newNode->data = data;
+                return true;
             }
-            else if (current->key > key) 
-            {
-                if (current->left == nullptr)
-                {
-                    current->left = new Node;
-                    Node* newNode = current->left;
-                    newNode->key = key;
-                    newNode->data = data;
-                    return true;
-                }
-                else current = current->left;
-            }
-            else return false;
+            else
+                current = current->right;
         }
+        else if (current->key > key)
+        {
+            if (current->left == nullptr)
+            {
+                current->left = new Node;
+                Node* newNode = current->left;
+                newNode->key = key;
+                newNode->data = data;
+                return true;
+            }
+            else current = current->left;
+        }
+        else return false;
     }
 }
 
 bool Tree::del(const int key)
 {
     Node* deleteNode = checkNode(root, key);
-    Node* ParentOfDeleteNode = findParentWhenDeliting(root, key);
+    Node* ParentOfDeleteNode = findParentWhenDeleting(root, key);
     if (deleteNode == nullptr)
         return false;
     if (deleteNode->left == nullptr && deleteNode->right == nullptr)
