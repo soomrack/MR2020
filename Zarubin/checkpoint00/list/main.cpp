@@ -56,16 +56,16 @@ Iterator Iterator::next(){
     this->prev = this->current;
     this->current = this->current->next;
     return *this;
-};
+}
 
 int Iterator::get_value(){
     if(current){return current->value;}
     return NULL;
-};
+}
 
 void Iterator::set_value(const int value){
     if(current){current->value = value;}
-};
+}
 
 Iterator::Iterator(){
     current = head->root;
