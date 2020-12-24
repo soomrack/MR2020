@@ -21,8 +21,8 @@ public:
 class Tree 
 {
 public:
-    bool add(int key,  std::string data);  // false if key already exists
-    bool del(int key);  // false if no key
+    bool add(const int key,  std::string data);  // false if key already exists
+    bool del(const int key);  // false if no key
     std::string find( int key);  // return '' if no key
 public:
     Tree();
@@ -76,7 +76,7 @@ Node* Tree::findMax(Node* p)
 
 Tree::~Tree() 
 {   
-    delete root;
+    delete root;        //will recursively destroy the tree
 }
 
 bool Tree::add(const int key, std::string data)       
@@ -119,44 +119,44 @@ bool Tree::add(const int key, std::string data)
 
 bool Tree::del(const int key)       
 {
-    Node *activeNode = root;
+    Node *nodeToDelete = root;
     Node *previousNode = nullptr;
 
-    if (activeNode == nullptr)
+    if (nodeToDelete == nullptr)
         return false;
 
-    while (activeNode->key != key) //leaves iteration when the key is found
+    while (nodeToDelete->key != key) //leaves iteration when the key is found
     {
-        if (key > activeNode->key) 
+        if (key > nodeToDelete->key) 
         {
-            if (activeNode->right == nullptr) return false;
-            previousNode = activeNode;
-            activeNode = activeNode->right;
+            if (nodeToDelete->right == nullptr) return false;
+            previousNode = nodeToDelete;
+            nodeToDelete = nodeToDelete->right;
 
         }
-        if (key < activeNode->key) 
+        if (key < nodeToDelete->key) 
         {
-            if (activeNode->left == nullptr) return false;
-            previousNode = activeNode;
-            activeNode = activeNode->left;
+            if (nodeToDelete->left == nullptr) return false;
+            previousNode = nodeToDelete;
+            nodeToDelete = nodeToDelete->left;
             
         }
     }  //proper key has been found
 
-    Node *leftChild = activeNode->left;     
-    Node *rightChild = activeNode->right;  
+    Node *leftChild = nodeToDelete->left;     
+    Node *rightChild = nodeToDelete->right;  
 
     if (rightChild != nullptr) 
     { 
         findMin(rightChild)->left = leftChild; //retrieve the smallest node from the right branch
 
-        if (activeNode==root){ //root is being deleted      
-            delete activeNode;
+        if (nodeToDelete==root){ //root is being deleted      
+            delete nodeToDelete;
             root = rightChild; //the root is dead long live the root (rightChild)
             return true; }   
 
         Node *prevRight = previousNode->right;
-        if (prevRight->key == activeNode->key) 
+        if (prevRight->key == nodeToDelete->key) 
         {
             previousNode->right = rightChild;       //swap right
         }
@@ -164,19 +164,19 @@ bool Tree::del(const int key)
     }
     else 
     { 
-        if (activeNode==root){ //root is being deleted
-            delete activeNode;
+        if (nodeToDelete==root){ //root is being deleted
+            delete nodeToDelete;
             root = leftChild; //the root is dead long live the root (leftChild)
             return true; }   
 
-        if (previousNode->left == activeNode)  
+        if (previousNode->left == nodeToDelete)  
         {
             previousNode->left = leftChild;     //swap left
         }
         else previousNode->right = leftChild;
     }
     
-    delete activeNode;
+    delete nodeToDelete;
     return true;
 }
 
