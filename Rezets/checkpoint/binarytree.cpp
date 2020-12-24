@@ -139,7 +139,7 @@ Node* Tree::get_parent(const int key, Node* sub_tree)
         if (key == sub_tree->right->key)
             return sub_tree;
     }
-    Node *result = (key < sub_tree->key) ? search(key, sub_tree->left) : search(key, sub_tree->right);
+    Node *result = (key < sub_tree->key) ? get_parent(key, sub_tree->left) : get_parent(key, sub_tree->right);
     return result;
     
 }
