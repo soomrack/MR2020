@@ -19,7 +19,7 @@ public:
 class Tree {
 private:
     Node *root;
-    Node* checkNode(Node* root, int key);
+    Node* findNode(Node* root, int key);
     Node* findParent(Node * root, int key);
     Node* min(Node* root);
 public:
@@ -43,12 +43,12 @@ Node::Node(const int key, const std::string data){
     this->right = nullptr;
 }
 
-Node* checkNode(Node* root, int key)
+Node* findNode(Node* root, int key)
 {
     if (root == nullptr) return root;
     if (root->key == key) return root;
-    if (root->key > key) return checkNode(root->left, key);
-    else return checkNode(root->right, key);
+    if (root->key > key) return findNode(root->left, key);
+    else return findNode(root->right, key);
 }
 
 Node::Node(int key,  std::string data,  Node *left,  Node *right)
@@ -64,19 +64,19 @@ Node::~Node() {
     delete right;
 }
 
-Node* Tree::checkNode(Node *root, int key) {
+Node* Tree::findNode(Node *root, int key) {
     if (root->key == key) {
         return root;
     }
     else if (root->key < key) {
         if (root->right == nullptr)
             return root;
-        return checkNode(root->right, key);
+        return findNode(root->right, key);
     }
     else {
         if (root->left == nullptr)
             return root;
-        return checkNode(root->left, key);
+        return findNode(root->left, key);
     }
 }
 
@@ -109,7 +109,7 @@ bool Tree::add(const int key, std::string data) {
     }
     else {
         Node* child = new Node(key, data);
-        Node* parent = checkNode(root, key);
+        Node* parent = findNode(root, key);
         if (parent->key == key) {
             return false;
         }
@@ -125,7 +125,7 @@ bool Tree::add(const int key, std::string data) {
 }
 
 bool Tree::del(const int key){
-    Node* deleteNode = checkNode(root,key);
+    Node* deleteNode = findNode(root,key);
     Node* ParentOfDeleteNode = findParent(root, key);
     if (deleteNode == nullptr)
         return false;
@@ -187,7 +187,7 @@ bool Tree::del(const int key){
 
 std::string Tree::find(const int key) {
     Node* node = root;
-    node = checkNode(node,key);
+    node = findNode(node,key);
     if (node == nullptr)
         return error;
     return node->data;
