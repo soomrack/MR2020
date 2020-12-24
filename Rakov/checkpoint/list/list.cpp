@@ -45,159 +45,115 @@ public:
 };
 
 Node::Node(){
-
     this->next = nullptr;
-
 }
 
 Node::Node(const int value){
-
     this->value = value;
     this->next = nullptr;
-
 }
 
 Node::Node(const int value, Node *next){
-
     this->value = value;
     this->next = next;
-
 }
 
-Node::~Node(){
-
-    
+Node::~Node(){  
 
 }
 
 Iterator::Iterator(List &list){
-
     this->list = &list;
     this->current = list.root;
     this->prev = nullptr;
-
 }
 
-Iterator::~Iterator(){
-
-    
+Iterator::~Iterator(){ 
 
 }
 
 Iterator Iterator::next(){
-
-    if (current->next != nullptr){
-
+    if (this->current != nullptr){
         prev = current;
         current = current->next;
-
-    } else {
-
-        prev = nullptr;
+    }else{
+        prev = current;
+        this->current = nullptr;
         // current = list->root;
-
     }
-
     return *this;
-
 }
 
 int Iterator::get_value(){
-
-    int value = this->current->value;
-    return value;
-
+    if (current != nullptr){
+        int value = this->current->value;
+        return value;
+    }
+    return ERROR_OCCURED;    
 }
 
-void Iterator::set_value(int value){
-
+void Iterator::set_value(const int value){
     if (current != nullptr){
-
         current->value = value;
-
     }
-
 }
 
-void Iterator::insert(int value){
-
-    Node *tempNode = new Node(value, current);
-
+void Iterator::insert(const int value){
     if (current != nullptr){
-
-        current->next = tempNode;
-
+        current->next = new Node(value, current->next);;
+        current = current->next;
     }else{
-
-        current = tempNode;
-
+        current = new Node(value, current);
+        list->root = current;
     }
-
-    delete tempNode;
-
 }
 
 void Iterator::del(){
-
-    if (current == nullptr){
-
-        return;
-
-    }
+    // if (current == nullptr){
+    //     return;
+    // }
 
     if (current == list->root){
-
         list->root = current->next;
         delete current;
         current = list->root;
-
-    }else{
-
+        return;
+    }else {
         prev->next = current->next;
         delete current;
-        current = list->root;
-
+        current = prev->next;
     }
-
 }
 
 Iterator List::begin(){
-
     Iterator firstIterator(*this);
     return firstIterator;
-
 }
 
 List::List(){
-
     this->root = nullptr;
-
 }
 
 List::~List(){
-
     Iterator cleaner(*this);
 
     while (root != nullptr){
-
         cleaner.del();
-
     }
-
 }
 
-
-int main() {
-    
+int main() {  
     List testList;
-    Iterator testIterator(testList);
+    Iterator testIterator = testList.begin();
 
     testIterator.insert(1);
     testIterator.insert(2);
     testIterator.insert(3);
-
-    testIterator.next();
-    cout << testIterator.get_value() << endl;
-
+    // testIterator.next();
+    Iterator testIterator2 = testList.begin();
+    for(; testIterator2.get_value() != ERROR_OCCURED; testIterator2.next()){
+        cout << testIterator2.get_value() << endl;
+    }
+    
     cout << "The end." << std::endl;
 }
