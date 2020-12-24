@@ -1,10 +1,15 @@
 #include <iostream>
 const int error = 2147483647;
 
+struct Node{
+    int value;
+    Node* next;
+};
+
+
 class Stack {
 private:
-    struct Node;
-    struct Node* top;
+    Node* top;
 public:
     int pop();
     void push(const int value);
@@ -13,11 +18,6 @@ public:
     ~Stack();
 };
 
-
-struct Stack::Node {
-    int value;
-    struct Node* next;
-};
 
 int Stack::pop() {
     struct Node* temp;
@@ -47,7 +47,7 @@ Stack::Stack() {
 
 Stack::~Stack() {
     while (top) {
-	Node *delTop = top;
+        Node *delTop = top;
         top = top ->next;
         delete (delTop);
     }
@@ -55,12 +55,12 @@ Stack::~Stack() {
 
 
 int main() {
-    Stack letscheck;
-    letscheck.push(228);
-    letscheck.push(1488);
-    letscheck.push(666);
-    letscheck.pop();
-    int element = letscheck.pop();
+    Stack letsCheck;
+    letsCheck.push(228);
+    letsCheck.push(1488);
+    letsCheck.push(666);
+    letsCheck.pop();
+    int element = letsCheck.pop();
     printf("%d\n",element);
     std::cout <<"The end." << std::endl;
 }
