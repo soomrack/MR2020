@@ -1,8 +1,4 @@
 #include <iostream>
-/*
- * Комментарии написала для себя, чтобы лучше понимать,
- * как это работает
- */
 
 class Stack {
 public:
@@ -13,48 +9,42 @@ public:
     ~Stack();
 
 private:
-    struct Element {
-        int v;
-        Element *p;
+    struct Node {
+        int value;
+        Element *next;
     };
-
-    Element *top;
+    Node *top;
 };
 
-//Создание стэка
 Stack::Stack(){
     top = nullptr;
 }
 
-//Добавление нового элемента
 void Stack::push(const int value) {
-    Element *pp = nullptr;     //Объявляем новый указатель
-    pp = new Element;          //Выделяем память по него
-    pp -> v = value;           //Значение = переданная переменная
-    pp -> p = top;             //Ссылка на пред. эл-т = top
-    top = pp;                  //Меняем ссылку на последний эл-т
+    Node *newNode = nullptr;
+    newNode = new Node;
+    newNode -> value = value;
+    newNode -> next = top;
+    top = newNode;
 }
 
-//Изьятие верхнего элемента из стэка
 int Stack::pop() {
-    if (top == nullptr){      //Проверка стека на пустоту
+    if (top == nullptr){
         return -1;
     }
-    int temporary = top -> v; //Сохраняем знач. верхнего эл-та
-    Element *pp = top;        //Создаём указ. на посл. эл-т
-    top = top -> p;           //Меняем: ссылка на посл. эл-т = ссылка на предпосл.
-    delete pp;                //Высвобождаем память
-    pp = nullptr;             //Заменяем указатель на нуль-указатель
-    return temporary;         //Возвращ. знач. верхнего эл-та
+    int temporary = top -> value;
+    Node *tempNode = top;
+    top = top -> next;
+    delete newNode;
+    return temporary;
 }
 
-//Высвобождение стэка
+
 Stack::~Stack() {
     while (top != nullptr){
-        Element *pp = top;        //Создаём указ. на посл. эл-т
-        top = top -> p;           //Меняем: ссылка на посл. эл-т = ссылка на предпосл.
-        delete pp;                //Высвобождаем память
-        pp = nullptr;             //Заменяем указатель на нуль-указатель
+        Node *tempNode = top;
+        top = top -> next;
+        delete tempNode;
     }
 }
 
