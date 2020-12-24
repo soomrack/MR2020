@@ -102,12 +102,10 @@ bool Tree::add(const int key, const string data){
 }
 
 Node* Tree::getMin(Node* min){
-    if (min->left != nullptr){
+    while (min->left != nullptr){
         getMin(min->left);
     }
-    else{
         return min;
-    }
 }
 
 bool Tree::del(const int key)       
@@ -219,10 +217,10 @@ int main() {
     cout<<test.find(9)<<endl;
     cout<<test.find(20)<<endl;
     cout<<test.find(6)<<endl;
-    cout<<test.find(15)<<"\n\n\n"<<endl;
+    cout<<test.find(15)<<"\n\n"<<endl;
     test.del(6);
     cout<<"deleted 6"<<endl;
-    cout<<test.find(6)<<"\n\n\n"<<endl;
+    cout<<test.find(6)<<"\n\n"<<endl;
     test.del(15);
     cout<<"deleted 15 root"<<endl;
     cout<<test.find(15)<<endl;
