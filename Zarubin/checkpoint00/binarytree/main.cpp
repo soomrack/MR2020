@@ -43,14 +43,6 @@ Node::Node(const int key, const std::string data){
     this->right = nullptr;
 }
 
-Node* findNode(Node* root, int key)
-{
-    if (root == nullptr) return root;
-    if (root->key == key) return root;
-    if (root->key > key) return findNode(root->left, key);
-    else return findNode(root->right, key);
-}
-
 Node::Node(int key,  std::string data,  Node *left,  Node *right)
 {
     this->key = key;
