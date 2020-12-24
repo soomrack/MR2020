@@ -102,7 +102,7 @@ void Iterator::insert(const int value)
         return;
     }
 
-    current->next = new Node (value, current->next);
+    prev->next = new Node (value, current);
 }
 
 void Iterator::del()
@@ -206,7 +206,6 @@ int main() {
     {
         std::cout << it4.get_value()  << '\n';
     }
-
-
+    
     std::cout << "The end." << std::endl;
 }
