@@ -4,27 +4,27 @@ using namespace std;
 class Node
 {
 public:
-    int key;
-    void* data;
-    Node* left_child;
-    Node* right_child;
+    int key;             // Ключ, т.е. метка, по которой осуществляется поиск данных в дереве
+    void* data;          // Данные
+    Node* left_child;    // Указатель на левого потомка
+    Node* right_child;   // Указатель на правого потомка
 public:
     Node(int key, void* data);
     ~Node() {};
 };
 
-Node::Node(const int key, void* data)
+Node::Node(const int key, void* data)    // Функция для формирования узла
 {
-    this->key = key;
-    this->data = data;
-    left_child = nullptr;
-    right_child = nullptr;
-}
+    this->key = key;          //    Please help me
+    this->data = data;        //    I am losing my mind
+    left_child = nullptr;     //    RLS
+    right_child = nullptr;    //    Robert Laurel Smith
+}                             //    head of development Department
 
 class Tree
 {
 public:
-    Node* root;
+    Node* root;    // Указатель на корень
 public:
     Tree()
     {
@@ -47,15 +47,15 @@ public:
 
 Node* Tree::search_parent_for_new_node(int key, Node* node)
 {
-    if (node->key >= key)
+    if (node->key >= key)    // Если ключ текущего узла меньше или равен ключю корня
     {
-        if (node->left_child == nullptr) return node;
-        return search_parent_for_new_node(key, node->left_child);
+        if (node->left_child == nullptr) return node;    // Если у корня отсутствует левый потомок, то возвращаем корень
+        return search_parent_for_new_node(key, node->left_child);    // Если у корня есть левый потомок, то принимаем его за родителя и продолжаем поиск
     }
-    else
+    else    // Иначе, т.е. если ключ текущего узла больше ключа корня
     {
-        if (node->right_child == nullptr) return node;
-        return search_parent_for_new_node(key, node->right_child);
+        if (node->right_child == nullptr) return node;    // Если у корня отсутствует правый потомок, то аозвращаем корень
+        return search_parent_for_new_node(key, node->right_child);    // Если у корня есть правый потомок, то принимаем его за родителя и продолжаем поиск
     }
 
     return nullptr;
@@ -63,9 +63,9 @@ Node* Tree::search_parent_for_new_node(int key, Node* node)
 
 int Tree::add_data(int key, void* data)
 {
-    Node* child = new Node(key, data);
+    Node* child = new Node(key, data);    // Создание нового узла
 
-    if (root == nullptr)
+    if (root == nullptr)    // Если корень отсутствует, то принимаем новый узел за него
     {
         root = child;
         return 1;
@@ -73,13 +73,13 @@ int Tree::add_data(int key, void* data)
 
     Node* parent = search_parent_for_new_node(key, root);
 
-    if (key <= parent->key)
+    if (key <= parent->key)    // Если ключ текущего узла меньше или равен ключу найденного родителя
     {
-        parent->left_child = child;
+        parent->left_child = child;    // Помещение "потомственного" узла слева
     }
     else
     {
-        parent->right_child = child;
+        parent->right_child = child;    // Иначе, помещение "потомственного" узла справа
     }
 
     return 1;
@@ -196,13 +196,13 @@ int Tree::delete_data(int key_to_delete)
     Node* node_to_delete = search_node_to_delete(key_to_delete, root);
     Node* parent_to_delete = search_parent_to_delete(key_to_delete, root);
 
-    if ((node_to_delete->left_child != nullptr) && (node_to_delete->right_child != nullptr))
+    if ((node_to_delete->left_child != nullptr) && (node_to_delete->right_child != nullptr))    // Если у удаляемого узла имеются оба потомка
     {
         Node* left_ntd = node_to_delete->left_child;
         Node* right_ntd = node_to_delete->right_child;
 
-        Node* successor = min_node(node_to_delete->right_child);
-        Node* s_parent = search_parent_to_delete(successor->key, node_to_delete->right_child);
+        Node* successor = min_node(node_to_delete->right_child);    // В качестве наследника выбираем минимальный элемент правого поддерева удаляемого узла
+        Node* s_parent = search_parent_to_delete(successor->key, node_to_delete->right_child);    // Поиск родителя наследника
         Node* s_right_child = successor->right_child;
 
         if (key_to_delete < parent_to_delete->key)
@@ -235,17 +235,17 @@ int Tree::delete_data(int key_to_delete)
         return 1;
     }
 
-    if ((node_to_delete->left_child != nullptr) && (node_to_delete->right_child == nullptr))
+    if ((node_to_delete->left_child != nullptr) && (node_to_delete->right_child == nullptr))    // Если у удаляемого узла имеется только левый потомок
     {
         Node* left_ntd = node_to_delete->left_child;
 
         if (key_to_delete < parent_to_delete->key)
         {
-            parent_to_delete->left_child = left_ntd;
+            parent_to_delete->left_child = left_ntd;    // Замена левого потомка родителя удаляемого узла на левого потомка удаляемого узла
         }
         else if (key_to_delete > parent_to_delete->key)
         {
-            parent_to_delete->right_child = left_ntd;
+            parent_to_delete->right_child = left_ntd;    // Замена правого потомка, если удаляемый узел был расположен справа
         }
 
         delete node_to_delete;
@@ -253,17 +253,17 @@ int Tree::delete_data(int key_to_delete)
         return 1;
     }
 
-    if ((node_to_delete->right_child != nullptr) && (node_to_delete->left_child == nullptr))
+    if ((node_to_delete->right_child != nullptr) && (node_to_delete->left_child == nullptr))    // Если у удаляемого узла имеется только правый потомок
     {
         Node* right_ntd = node_to_delete->right_child;
 
         if (key_to_delete < parent_to_delete->key)
         {
-            parent_to_delete->left_child = right_ntd;
+            parent_to_delete->left_child = right_ntd;    // Замена правого потомка родителя удаляемого узла на правого потомка удаляемого узла
         }
         else if (key_to_delete > parent_to_delete->key)
         {
-            parent_to_delete->right_child = right_ntd;
+            parent_to_delete->right_child = right_ntd;    // Замена левого потомка, если удаляемый узел был расположен слева
         }
 
         delete node_to_delete;
@@ -271,9 +271,9 @@ int Tree::delete_data(int key_to_delete)
         return 1;
     }
 
-    if (key_to_delete < parent_to_delete->key)
+    if (key_to_delete < parent_to_delete->key)    // Если у удаляемого узла нет потомков
     {
-        parent_to_delete->left_child = nullptr;
+        parent_to_delete->left_child = nullptr;    // Обнуление одной из ссылок в родительском узле
     }
     else if (key_to_delete > parent_to_delete->key)
     {
