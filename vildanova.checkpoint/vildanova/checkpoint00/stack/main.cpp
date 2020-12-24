@@ -1,7 +1,7 @@
 #include <iostream>
 
-#define STACK_MAX_SIZE 1000
-#define ERROR_EMPTY_STACK 101
+const int STACK_MAX_SIZE 1000;
+const int EMPTY_STACK = -1;
 
 class Stack
 {
@@ -19,7 +19,7 @@ private:
 int Stack::pop()
 {
     if (size == 0)
-        return ERROR_EMPTY_STACK;
+        return EMPTY_STACK;
     size--;
     return data[size];
 }
