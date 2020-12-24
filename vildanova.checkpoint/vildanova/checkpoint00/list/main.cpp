@@ -1,6 +1,6 @@
 #include <iostream>
 
-#define ERROR_CODE 101
+const int ERROR_CODE = -1; 
 
 class Node {
 public:
