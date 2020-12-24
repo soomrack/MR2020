@@ -58,7 +58,6 @@ Node::~Node() {
     delete right;
 }
 
-
 Tree::Tree() {
     root = nullptr;
 }
@@ -75,14 +74,18 @@ Node* Tree::getNode(Node *root, int key) {
 }
 
 Node* Tree::getParent(Node *root, int key){
-    if (root->key <= key) {
+    if (root->key < key) {
         if (root->right == nullptr)
+            return root;
+        if (root->right->key == key)
             return root;
         return getParent(root->right, key);
     }
 
     if (root->key > key) {
         if (root->left == nullptr)
+            return root;
+        if (root->left->key == key)
             return root;
         return getParent(root->left, key);
     }
@@ -92,7 +95,7 @@ Node* Tree::getParent(Node *root, int key){
 Node* Tree::getMin (Node *root) {
     Node *min = root;
     while (min->left != nullptr){
-        min = min->right;
+        min = min->left;
     }
     return min;
 }
@@ -210,7 +213,11 @@ int main() {
     testTree.del(31);
     testTree.del(89);
     testTree.del(5);
-    std::cout<<testTree.find(31)<<std::endl;
+    testTree.del(6);
+    testTree.del(7);
+    std::cout<<testTree.find(89)<<std::endl;
+    std::cout<<testTree.find(6)<<std::endl;
+    std::cout<<testTree.find(33)<<std::endl;
     std::cout<<testTree.find(123)<<std::endl;
     std::cout<<testTree.find(5)<<std::endl;
     std::cout << "The end." << std::endl;
