@@ -70,12 +70,11 @@ List::List(){
     root = nullptr;
 }
 
-List::~List(){
-    //delete this; 
+List::~List(){ 
     Iterator deleter(*this);
     while (root != nullptr){
         deleter.del();
-    } //or empty
+    }
 }
 
 Iterator List::begin(){
@@ -83,25 +82,39 @@ Iterator List::begin(){
     return newNode;
 }
 
-// Iterator::Iterator(){
+Iterator::Iterator(){
     
-// }
+}
 
 Iterator::Iterator(List &list){
-    current = list->root;
+    current = list.root;
     prev = nullptr;
     this->list = &list;
 }
 
-void Iterator::insert(const int value){
-    Node *tempNode = new Node(value, current);
-    if (prev != nullptr){
-        prev->next = tempNode;
+void Iterator::insert (const int value){
+    if (current == nullptr){
+        current = new Node(value, current);
+        list->root = current;
         return;
     }
-    current = tempNode;
-    list->root = current;
+    
+    current->next = new Node(value, current->next);
+    current = current->next;
+
 }
+
+// void Iterator::insert(const int value){
+
+//     Node *tempNode = new Node(value, current);
+//     if (current != nullptr){
+//         // current = current->next;
+//         current = tempNode;
+//         return;
+//     }
+//     current = tempNode;
+//     list->root = current;
+// }
 
 void Iterator::del(){
     if(current == list->root){
@@ -146,18 +159,17 @@ Iterator::~Iterator(){
 }
 
 int main() {
-    // Node test;
-    // test.value = 2;
-    // cout << test.value << endl;
-     List test;
+    List test;
 
     Iterator iterator = test.begin(); 
     iterator.insert(1);
     iterator.insert(2);
     iterator.insert(3);
-    
-        for (; iterator.get_value() != END; iterator.next()){
-        std::cout << iterator.get_value()  << '\n';
+
+    Iterator iterator2 = test.begin();
+    for (; iterator2.get_value() != END; iterator2.next()){
+        cout << iterator2.get_value()  << '\n';
     }
+
     cout << "The end." << endl;
 }
