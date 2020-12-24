@@ -1,5 +1,10 @@
 #include <iostream>
 
+struct Node {
+    int value;
+    Node *next;
+};
+
 class Stack {
 public:
     int pop();
@@ -7,12 +12,7 @@ public:
 public:
     Stack();
     ~Stack();
-
 private:
-    struct Node {
-        int value;
-        Element *next;
-    };
     Node *top;
 };
 
@@ -35,10 +35,9 @@ int Stack::pop() {
     int temporary = top -> value;
     Node *tempNode = top;
     top = top -> next;
-    delete newNode;
+    delete tempNode;
     return temporary;
 }
-
 
 Stack::~Stack() {
     while (top != nullptr){
