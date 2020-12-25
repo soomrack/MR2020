@@ -1,5 +1,4 @@
 #include <iostream>
-using namespace std;
 
 class Node
 {
@@ -10,11 +9,11 @@ public:
     Node* right;
 
 public:
-    Node(int key, std :: string data);
+    Node(int key, std::string data);
     ~Node();
 };
 
-Node::Node(int key, std :: string data){
+Node::Node(int key, std::string data){
     this->data = data;
     this->key = key;
     left = nullptr;
@@ -42,9 +41,9 @@ public:
     Node* root;
     Tree();
 public:
-    bool add(const int key, std :: string data);
+    bool add(const int key, std::string data);
     bool del(const int key);
-    std :: string find(const int key);
+    std::string find(const int key);
 };
 
 Tree::Tree() {
@@ -64,7 +63,7 @@ Node* Tree::parent_search(int key, Node* root)
     return(parent_search(key, root->right));
 }
 
-bool Tree::add(int key, std ::  string data)
+bool Tree::add(int key, std::string data)
 {
     Node* child = new Node(key, data);
     if (root == nullptr)
