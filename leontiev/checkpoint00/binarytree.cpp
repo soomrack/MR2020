@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <string>
 
+std::string NO_KEY = "no_key";   //добавил код ошибки
+
 
 class Node {
 public:
@@ -16,7 +18,7 @@ public:
 
 Node::Node() {
     this->key = 0;
-    this->data = "";
+    this->data = NO_KEY;
     this->left = nullptr;
     this->right = nullptr;
 }
@@ -84,18 +86,18 @@ Node* Tree::find_Node(Node* root, int key) {
 
 std::string Tree::find(const int key) {
     if (root == nullptr)
-        return "";
+        return NO_KEY;
     Node* node = find_Node(root, key);
     if (node->key == key) {
         return node->data;
     }
-    else {
-        return "";
-    }
+  //  else {
+        return NO_KEY;
+  //  }
 }
 
 bool Tree::del(const int key) {
-    if (find(key) == "") {
+    if (find(key) == NO_KEY) {
         return false;
     }
     Node* node = find_Node(root, key);
