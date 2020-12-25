@@ -93,7 +93,7 @@ List::~List()
 
 Iterator::Iterator()
 {
-    current = master->root;
+    current = master->root;  // initializing current node as root
     prev = nullptr;
 }
 
@@ -106,7 +106,7 @@ Iterator::Iterator(List &masterList)
 
 void Iterator::insert(const int value)
 {
-    if (current->next == nullptr)
+    if (current->next == nullptr)  // if current node is the last node
     {
         Node* tempNode = new Node(value);
         current->next = tempNode;

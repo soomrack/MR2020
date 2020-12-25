@@ -14,7 +14,7 @@ public:
 public:
     Node();
     Node(const int key, const std::string data);
-    // Node(const int key, const std::string data, const Node *left, const Node *right);
+    Node(const int key, const std::string data, Node *left, Node *right);
     // ~Node();
 };
 
@@ -33,15 +33,15 @@ Node::Node(const int key, const std::string data){
     this->right = nullptr;
 }
 
-// Node::~Node(){
-//     left = nullptr;
-//     right = nullptr;
-//     this->key = NULL;
-//     this->data = "";
-// }
+Node::Node(const int key, const std::string data, Node *left, Node *right){
+    this->key = key;
+    this->data = data;
+    this->left = left;
+    this->right = right;
+}
 
 
-class Tree {
+class Tree { //binary key search tree
 private:
     Node *root;
     Node* find_Node(Node* root, int key);
@@ -50,7 +50,7 @@ private:
 public:
     bool add(const int key, const std::string data);  // false если ключ уже существует
     bool del(const int key);  // false если нет ключа
-    std::string find(const int key);  // возвращает '' если нет ключа
+    std::string find(const int key);  // возвращает 'no_key' если нет ключа
 public:
     Tree();
     ~Tree();
@@ -66,14 +66,15 @@ Tree::~Tree(){ while(root != nullptr){ del(root->key); } }
 
 bool Tree::add(const int key, const std::string data){
 
-    if (root == nullptr){
+    if (root == nullptr){   // if tree is empty
         root = new Node(key, data);
         return true;
     }
 
     Node* child = new Node(key, data);
     Node* parent = find_Node(root, key);
-    if (parent->key == key){
+
+    if (parent->key == key){ 
         return false;
     }
     if (parent->key > key){
@@ -87,7 +88,7 @@ bool Tree::add(const int key, const std::string data){
 }
 
 
-Node* Tree::find_Node(Node * root, int key){
+Node* Tree::find_Node(Node * root, int key){  // find node by key recursively
 
         if (root->key == key){
             return root;
@@ -99,11 +100,12 @@ Node* Tree::find_Node(Node * root, int key){
 
 }
 
-std::string Tree::find(const int key){
+std::string Tree::find(const int key){   // returns data by key
 
-    if (root == nullptr)
-        return NO_KEY;
+    if (root == nullptr){ return NO_KEY; } // if tree is empty
+
     Node* node = find_Node(root, key);
+
     if (node->key == key){
         return node->data;
     }
@@ -170,16 +172,17 @@ bool Tree::del(const int key){
     
 }
 
-Node* Tree::find_Parent(Node * root, int key) {
+Node* Tree::find_Parent(Node * root, int key) { // find parent of existing node
     
-    if (root->key < key) {
+    if (root->key < key) {  // parent is to the right from root
         if (root->right == nullptr)
-            return nullptr;
+            return nullptr; // no parent
         if (root->right->key == key){
-            return root;
+            return root;   
         }
-        return find_Parent(root->right, key);
+        return find_Parent(root->right, key); // finding parent in the right side recursively
     }
+    // same for left side
     if (root->key > key) {
         if (root->left == nullptr)
             return nullptr;
@@ -188,13 +191,13 @@ Node* Tree::find_Parent(Node * root, int key) {
         }
         return find_Parent(root->left, key);
     }
-    return nullptr;
+    return nullptr; // function has got key of root or tree is empty
 
 }
 
-Node* Tree::min_Node(Node* node){
+Node* Tree::min_Node(Node* node){ // find node with the least key
     
-    if (node->left == nullptr){
+    if (node->left == nullptr){ 
         return node;
     }
     return min_Node(node->left);
