@@ -1,10 +1,15 @@
-#include <iostream>
++#include <iostream>
 
 const int error = NULL;
 
+struct Node
+{
+    int value;
+    struct Node* next;
+};
+
 class Stack {
 private:
-    struct Node;
     struct Node* top;
 public:
     int pop();
@@ -13,11 +18,6 @@ public:
     ~Stack();
 };
 
-struct Stack::Node
-{
-    int value;
-    struct Node* next;
-};
 
 int Stack::pop() {
     struct Node* temp;
