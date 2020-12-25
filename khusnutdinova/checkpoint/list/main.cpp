@@ -102,16 +102,14 @@ Iterator::Iterator(List &masterList)
     prev = nullptr;
 }
 
-void Iterator::insert (const int value){
-    if (current == nullptr){
+void Iterator::insert(const int value){
+    if (current != nullptr){
+        current->next = new Node(value, current->next);;
+        current = current->next;
+    }else{
         current = new Node(value, current);
         list->root = current;
-        return;
     }
-
-    current->next = new Node(value, current->next);
-    current = current->next;
-
 }
 
 void Iterator::del()
