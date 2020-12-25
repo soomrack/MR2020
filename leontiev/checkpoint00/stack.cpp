@@ -1,5 +1,7 @@
 ﻿#include <iostream>
 
+const int EMPTY_STACK = -1; //учёл пустой стек
+
 class Stack {
 public:
     int pop();
@@ -51,6 +53,9 @@ void Stack::push(const int value) {
 }
 
 int Stack::pop() {
+    if (!top){                   //учёл пустой стек
+        return EMPTY_STACK;      //учёл пустой стек
+    }                            //учёл пустой стек
     this->top--;
     int elem = this->data[this->top];
     int* copy = new int[this->top];
