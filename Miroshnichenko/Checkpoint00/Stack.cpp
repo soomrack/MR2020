@@ -8,20 +8,18 @@ public:
 public:
   Stack();
   ~Stack();
-private:
-  struct Element;
-  struct Element * top;
 };
 
-struct Stack::Element{
+struct Element {
   int value;
-  struct Element* next;
+  struct Element *next;
 };
+
+struct Element *top;
+
 int Stack::pop() {
-  if (top == nullptr) {
-    return error;
-  }
-  struct Element * pointer;
+  if (top == nullptr) return error;
+  struct Element *pointer;
   int topElement;
   pointer = top; 
   topElement = pointer->value; 
@@ -31,10 +29,10 @@ int Stack::pop() {
 }
 
 void Stack::push(const int value) {
-  struct Element * pointer;
+  struct Element *pointer;
   pointer = new struct Element;
   pointer->value = value;
-  pointer->next = top;
+  pointer->next = top; //элемент, бывший вершиной стал следующим
   top = pointer;
 }
 
@@ -43,9 +41,7 @@ Stack::Stack() {
 }
 
 Stack::~Stack() {
-  while (top != nullptr) {
-    pop();
-  }
+  while (top != nullptr) pop();
 }
 
 int main() {
