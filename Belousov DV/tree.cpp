@@ -21,7 +21,7 @@ public:
 class Tree {
 private:
     Node* root;
-    Node* lookForNode(Node* root, int key);
+    Node* GetNode(Node* root, int key);
     Node* findParent(Node* root, int key);
     Node* findMin(Node* root);
 public:
@@ -67,11 +67,11 @@ Tree::~Tree() {
     delete root;
 }
 
-Node* Tree::lookForNode(Node* root, int key) {
+Node* Tree::GetNode(Node* root, int key) {
     if (root == nullptr) return root;
     if (root->key == key) return root;
-    if (root->key > key) return lookForNode(root->left, key);
-    return lookForNode(root->right, key);
+    if (root->key > key) return GetNode(root->left, key);
+    return GetNode(root->right, key);
 }
 
 Node* Tree::findParent(Node* root, int key) {
@@ -99,7 +99,7 @@ Node* Tree::findMin(Node* root) {
 
 std::string Tree::find(const int key) {
     Node* temp = root;
-    temp = lookForNode(temp, key);
+    temp = GetNode(temp, key);
     if (temp == nullptr)
         return "";
     return temp->data;
@@ -107,7 +107,7 @@ std::string Tree::find(const int key) {
 
 bool Tree::add(const int key, std::string data) {
     Node* child = new Node(key, data);
-    if (lookForNode(root, key) != nullptr)
+    if (GetNode(root, key) != nullptr)
         return false;
 
     if (root == nullptr) {
@@ -124,7 +124,7 @@ bool Tree::add(const int key, std::string data) {
 }
 
 bool Tree::del(const int key) {
-    Node* deletedNode = lookForNode(root, key);
+    Node* deletedNode = GetNode(root, key);
     Node* parentOfDeletedNode = findParent(root, key);
     if (deletedNode == nullptr)
         return false;
