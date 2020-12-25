@@ -19,18 +19,18 @@ struct element *top;
 int Stack::pop(){
     if (top == nullptr){return ERROR;}
     int temp = top -> value;
-    element *poiner = top;
+    element *pointer = top;
     top = top -> next;
-    delete poiner;
-    poiner = nullptr;
+    delete pointer;
+    pointer = nullptr;
     return temp;
 };
 
 void Stuck::push(const int value){
-    element *poiner = nullptr;
-    poiner = new element;
-    poiner -> value = value;
-    poiner -> next = top;
+    element *pointer = nullptr;
+    pointer = new element;
+    pointer -> value = value;
+    pointer -> next = top;
     top = poiner;
 };
 
@@ -40,9 +40,9 @@ Stack::Stack(){
 
 Stack::~Stack(){
     while (top != nullptr){
-        element *poiner = top;
+        element *pointer = top;
         top = top -> next;
-        delete poiner;
+        delete pointer;
     }
 };
 
