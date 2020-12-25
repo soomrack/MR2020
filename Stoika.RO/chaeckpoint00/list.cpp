@@ -14,14 +14,13 @@ public:
     Node();
     Node(int value);
     Node(int value, Node* next);
-    ~Node();
+
 };
 
 class Iterator 
 {
 private:
     List* master;
-
     Node* current;
     Node* prev;
 public:
@@ -32,7 +31,6 @@ public:
     void insert(const int value);  // insert new node after current
     void del();  // delete current node
 public:
-    Iterator();
     Iterator(List& master);
     ~Iterator();
 };
@@ -49,7 +47,6 @@ public:
     List();
     ~List();
 };
-
 
 Node::Node()
 {
@@ -68,11 +65,6 @@ Node::Node(int value, Node* next)
     this->next = next;
 }
 
-Node::~Node()
-{
-    //delete this;
-}
-
 List::List()
 {
     size = 0;
@@ -81,8 +73,8 @@ List::List()
 
 Iterator List::begin()
 {
-    Iterator fresh(*this);
-    return fresh;
+    Iterator newIt(*this);
+    return newIt;
 }
 
 List::~List()
@@ -93,13 +85,6 @@ List::~List()
         delete temp;
         size--;
     }
-}
-
-
-Iterator::Iterator()
-{
-    current = master->root;
-    prev = nullptr;
 }
 
 Iterator::Iterator(List& masterList)
@@ -123,18 +108,25 @@ void Iterator::insert(const int value)
 
 void Iterator::del()
 {
-    if (current && prev)     
+    if (current == nullptr) 
+        return;
+    if (master->root->next == nullptr) 
     {
-        prev->next = current->next;  
-        delete current;                  
-        current = prev->next;
+        delete current;
+        master->root = nullptr;
+        return;
     }
-    else if (current == master->root)
+    if (prev == nullptr)  
     {
-        master->root = current->next; 
+        master->root = current->next;
         delete current;
         current = master->root;
+        return;
     }
+    prev->next = current->next; 
+    delete current;
+    current = prev->next;
+    return;
 }
 
 int Iterator::get_value()
