@@ -87,13 +87,13 @@ List::List() {
 }
 
 void Iterator::insert (const int value){
-    Node* tempNode = new Node(value, current);
-    if (prev != nullptr)
+    if (current != nullptr)
     {
-        prev->next = tempNode;
+        current->next = new Node(value, current->next);
+        current = current->next;
         return;
     }
-    current = tempNode;
+    current = new Node(value, current);
     head->root = current;
 }
 
