@@ -16,22 +16,6 @@ private:
 
 
 
-int main() {
-
-
-    Stack stk;
-
-    // Тестики
-    stk.push(1);
-    stk.push(313);
-    stk.push(1);
-    stk.push(313);
-
-    std::cout << stk.pop() << ' ' << stk.pop() << ' ' << stk.pop() << ' ' << stk.pop();
-
-    return 0;
-}
-
 
 // Конструктор стека при инициализвции без аргументов
 Stack::Stack(){
@@ -72,4 +56,22 @@ int Stack::pop(){
     this->data = copy;
     return elem;
 
+}
+
+
+
+int main() {
+
+
+    Stack stk;
+
+    // Тестики
+    stk.push(1);
+    stk.push(313);
+    stk.push(1);
+    stk.push(313);
+
+    std::cout << stk.pop() << ' ' << stk.pop() << ' ' << stk.pop() << ' ' << stk.pop();
+
+    return 0;
 }
