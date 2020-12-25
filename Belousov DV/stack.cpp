@@ -25,7 +25,7 @@ int Stack::pop() {
     temp = top;
     top = top->link;
     temp->link = nullptr;
-    free(temp);
+    delete(temp);
     return end;
 }
 
@@ -46,7 +46,7 @@ Stack ::~Stack() {
         while (top) {
             Node* half = top;
             top = top->link;
-            free(half);
+            delete(half);
         }
     }
 }
