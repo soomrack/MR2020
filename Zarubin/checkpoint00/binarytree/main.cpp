@@ -98,22 +98,19 @@ Node* Tree::min(Node* root)
 bool Tree::add(const int key, std::string data) {
     if (root == nullptr) {
         root = new Node(key, data);
-    }
-    else {
-        Node* child = new Node(key, data);
-        Node* parent = findNode(root, key);
-        if (parent->key == key) {
-            return false;
-        }
-        if (parent->key > key) {
-            parent->left = child;
-            return true;
-        }
-
-        parent->right = child;
         return true;
-
     }
+    Node* child = new Node(key, data);
+    Node* parent = findNode(root, key);
+    if (parent->key == key) {
+        return false;
+    }
+    if (parent->key > key) {
+        parent->left = child;
+        return true;
+    }
+    parent->right = child;
+    return true;
 }
 
 bool Tree::del(const int key){
