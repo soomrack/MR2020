@@ -74,13 +74,13 @@ Node* Tree::findNode(Node *root, int key) {
 
 Node* Tree::findParent(Node *root, int key){
     if (root->key <= key) {
-        if (root->right == nullptr)
+        if (root->right == nullptr || root->right->key == key)
             return root;
         return findParent(root->right, key);
     }
 
     if (root->key > key) {
-        if (root->left == nullptr)
+        if (root->left == nullptr || root->left->key == key)
             return root;
         return findParent(root->left, key);
     }
