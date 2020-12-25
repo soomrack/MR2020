@@ -64,7 +64,7 @@ List::List()
 
 List::~List()
 {
-    while (size)
+    while (nullptr)
         pop_front();
 }
 
