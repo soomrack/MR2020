@@ -3,6 +3,7 @@
 const int END_OF_LIST = 1212121;
 
 class List;
+class Iterator;
 
 class Node {
 public:
@@ -12,13 +13,15 @@ public:
     Node();
     Node( int value);
     Node( int value,  Node *next);
+    ~Node();
 };
 
 class Iterator {
 private:
+    List *master;
+
     Node *current;
     Node *prev;
-    List *master;
 public:
     Iterator next();
     int get_value();
@@ -29,6 +32,7 @@ public:
 public:
     Iterator();
     Iterator(List &master);
+    ~Iterator();
 };
 
 class List {
@@ -57,6 +61,11 @@ Node::Node( int value,  Node *next)
 {
     this->value = value;
     this->next = next;
+}
+
+Node::~Node()
+{
+
 }
 
 List::List()
@@ -102,7 +111,7 @@ void Iterator::insert(const int value)
         return;
     }
 
-    prev->next = new Node (value, current);
+    current->next = new Node (value, current->next);
 }
 
 void Iterator::del()
@@ -143,7 +152,6 @@ int Iterator::get_value()
 void Iterator::set_value(int value)
 {
     if (current == nullptr) {return;}
-
     current->value = value;
 }
 
@@ -156,7 +164,15 @@ Iterator Iterator::next()
 
     return *this;
 }
+
+Iterator::~Iterator()
+{
+    //delete this;
+}
+
+
 int main()
 {
     std::cout << "The end." << std::endl;
 }
+
