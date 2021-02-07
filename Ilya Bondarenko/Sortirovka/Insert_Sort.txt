@@ -1,0 +1,19 @@
+﻿"Insert_Sort.exe" (Win32). Загружено "C:\Users\Илья\source\repos\Insert_Sort\Debug\Insert_Sort.exe". Символы загружены.
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\ntdll.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\kernel32.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\KernelBase.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\msvcp140d.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\vcruntime140d.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\ucrtbased.dll". 
+Поток 0xc94 завершился с кодом 0 (0x0).
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\kernel.appcore.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\msvcrt.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\rpcrt4.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\sspicli.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\cryptbase.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\bcryptprimitives.dll". 
+"Insert_Sort.exe" (Win32). Загружено "C:\Windows\SysWOW64\sechost.dll". 
+Поток 0x3e28 завершился с кодом 0 (0x0).
+Поток 0x4cf0 завершился с кодом 0 (0x0).
+Поток 0x539c завершился с кодом 0 (0x0).
+Программа "[19952] Insert_Sort.exe" завершилась с кодом 0 (0x0).
