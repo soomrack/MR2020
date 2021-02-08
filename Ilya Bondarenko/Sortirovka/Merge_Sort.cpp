@@ -45,6 +45,6 @@ void merge_sort_function(int* array, int size) {
 }
    
 int main() {
-    int a[10] = { 5, 7, 10, 44, 52, 76, 3, 2, 1 };
+    int a[10] = { 5, 7, 10, 44, 52, 76, 3, 2, 1, 8 };
     merge_sort_function(a, 10);
 }
