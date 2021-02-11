@@ -9,8 +9,8 @@
 #define MEM_ERR -1
 
 void BubbleSort(int *array, size_t size);
-int MergeSort(int *array, size_t size);
+int  MergeSort (int *array, size_t size);
 void InsertSort(int *array, size_t size);
-
+void HeapSort  (int *array, size_t size);
 
 #endif //SORTINGS_SORTINGS_H

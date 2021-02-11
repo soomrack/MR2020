@@ -17,63 +17,64 @@ void BubbleSort(int *array, size_t size){
     }
 }
 
-static int MergeArrays(int * left, size_t left_size, int* right, size_t right_size){
+static void MergeArrays(int * left, size_t left_size, int* right, size_t right_size, int * buffer){
 
     int left_ptr = 0;
     int right_ptr = 0;
 
-    int * result = new int[left_size + right_size];           // Динамически выделяем столько памяти, сколько нужно. Не более
-
-    if(result == nullptr){
-        return MEM_ERR;                                       // Проверяем на нулевой указатель и выходим из функции при ошибке
-    }
-
     for(int i = 0; i < left_size + right_size; i++){
         if(right_ptr < right_size && left_ptr < left_size) {  // Если обе половины ещё не полностью записаны
             if (left[left_ptr] > right[right_ptr]) {          // Тогда сравниваем текущий элемент в каждой половине
-                result[i] = right[right_ptr];                 // И вставляем наименьший, инкрементируя соответствующий указатель
+                buffer[i] = right[right_ptr];                 // И вставляем наименьший, инкрементируя соответствующий указатель
                 right_ptr++;
             }
             else {
-                result[i] = left[left_ptr];
+                buffer[i] = left[left_ptr];
                 left_ptr++;
             }
         } else if( right_ptr < right_size){                   // Если же одна из половин "кончилась", то остаток забиваем из второй
-            result[i] = right[right_ptr];
+            buffer[i] = right[right_ptr];
             right_ptr++;
         } else{
-            result[i] = left[left_ptr];
+            buffer[i] = left[left_ptr];
             left_ptr++;
         }
 
     }
 
-    memcpy(left, result, 4 * (left_size + right_size));     // Поскольку левая и правая половина могут быть только "соседними", можно копировать без разделения
-    delete result;
+    memcpy(left, buffer, 4 * (left_size + right_size));     // Поскольку левая и правая половина могут быть только "соседними", можно копировать без разделения
 
-    return 0;
 }
 
-int MergeSort(int *array, size_t size){
+static void StaticMergeSort(int *array, size_t size, int * buffer){
 
     if(size <= 1)
-        return 0;
+        return;
 
     size_t left_size = size/2;
     size_t right_size = size - left_size;
 
     int * right_array = array + left_size;
 
-    if(MergeSort(array, left_size) != 0){                               // Сортировка первого массива
-        return MEM_ERR;
-    }
-    if(MergeSort(right_array, right_size) != 0){                        // И второго
+    StaticMergeSort(array, left_size, buffer);                               // Сортировка первого массива
+
+    StaticMergeSort(right_array, right_size, buffer);                        // И второго
+
+    MergeArrays(array, left_size, right_array, right_size, buffer); // Затем - слияние
+
+}
+
+int MergeSort(int *array, size_t size){
+    int * buffer = new int[size];
+
+    if (buffer == nullptr){
         return MEM_ERR;
     }
 
-    if(MergeArrays(array, left_size, right_array, right_size) != 0){    // Затем - слияние
-        return MEM_ERR;
-    }
+    StaticMergeSort(array, size, buffer);
+
+    delete[] buffer;
+
     return 0;
 }
 
@@ -92,5 +93,39 @@ void InsertSort(int *array, size_t size){
                 continue;
             }
         }
+    }
+}
+
+static void Heapify(int * array, size_t size, int i){
+    int largest = i;
+
+    int left  = 2*i + 1;
+    int right = 2*i + 2;
+
+    if(left < size && array[left] > array[largest]){
+        largest = left;
+    }
+    if(right < size && array[right] > array[largest]){
+        largest = right;
+    }
+
+    if (largest != i){
+        std::swap(array[i], array[largest]);
+
+        Heapify(array, size, largest);
+    }
+}
+
+void HeapSort(int *array, size_t size){
+
+    for(int i = size/2 -1; i >= 0; i--){
+        Heapify(array, size, i);
+    }
+
+    for(int i = size-1; i >= 0; i--){
+
+        std::swap(array[0], array[i]);
+
+        Heapify(array, i, 0);
     }
 }

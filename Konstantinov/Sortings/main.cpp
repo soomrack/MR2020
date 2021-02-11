@@ -5,12 +5,13 @@
 
 int main() {
     int original[10];
+    std::cout << "Original   : ";
 
     for (int i = 0; i < 10; i++){
         original[i] = rand() % 255;
         std::cout << original[i] << " ";
     }
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 
     int bubble[10];
     memcpy(bubble, original, sizeof(original));
@@ -25,8 +26,8 @@ int main() {
     int merge[10];
     memcpy(merge, original, sizeof(original));
 
-    std::cout << MergeSort(merge, 10);
-    std::cout << "Merge Sort:  ";
+    MergeSort(merge, 10);
+    std::cout << "Merge Sort : ";
     for (int i: merge){
         std::cout << i << " ";
     }
@@ -39,6 +40,17 @@ int main() {
 
     std::cout << "Insert Sort: ";
     for (int i: insert){
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+
+    int heap[10];
+    memcpy(heap, original, sizeof(original));
+
+    HeapSort(heap, 10);
+
+    std::cout << "Heap Sort  : ";
+    for (int i: heap){
         std::cout << i << " ";
     }
     return 0;
