@@ -5,8 +5,10 @@ void testSort (int * arr, int size){
 
     int * arrCopy1 = new int[size];
     int * arrCopy2 = new int[size];
+    int * arrCopy3 = new int[size];
     copyArr(arr, arrCopy1, size);
     copyArr(arr, arrCopy2, size);
+    copyArr(arr, arrCopy3, size);
 
     insertionSort(arr, size);
     std::cout << "Insertion sort: ";
@@ -20,8 +22,13 @@ void testSort (int * arr, int size){
     std::cout << "Merge sort: ";
     printArr(arrCopy2, size);
 
+    heapSort(arrCopy3, size);
+    std::cout << "Heap sort: ";
+    printArr(arrCopy3, size);
+
     delete [] arrCopy1;
     delete [] arrCopy2;
+    delete [] arrCopy3;
     std::cout << std::endl;
 }
 

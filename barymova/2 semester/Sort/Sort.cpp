@@ -79,6 +79,26 @@ void mergeSort (int * arr, int size){
     merge(arr, middle, size);
 }
 
+static void heapify (int * arr, int size){
+    for (int i = 0; i < size; i++){
+        int currentIndex = i;
+        while (currentIndex != 0){
+            int parentIndex = (currentIndex - 1)/2;
+            if (arr[parentIndex] >= arr[currentIndex]) break;
+            swap(&arr[parentIndex], &arr[currentIndex]);
+            currentIndex = parentIndex;
+        }
+    }
+}
+
+void heapSort (int * arr, int size){
+    heapify(arr, size);
+    for (int i = size - 1; i > 0; i--){
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i);
+    }
+}
+
 void printArr(int * arr, int size) {
     for (int i = 0; i < size; i++) {
         std::cout << arr[i] << ' ';
