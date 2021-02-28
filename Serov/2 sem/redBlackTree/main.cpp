@@ -8,7 +8,7 @@ class Node {
 public:
     int key;
     std::string data;
-    std:: string color;
+    bool red;
 public:
     Node *left;
     Node *right;
@@ -26,11 +26,15 @@ private:
     Node *getNode(Node* root, int key);
     Node* getParent (Node * root, int key);
     Node* getMin(Node* root);
-    Node *getUncle (Node* root, int parentKey);
-    void changeColorWhileAdding (Node* child);
+    Node *getUncle (Node *root, int childKey);
+    Node *getSon(Node *root, Node* parent);
+    void changeColorWhileAdding (Node* child, Node* root);
     void rotateTreeToRight (Node* grandpa);
     void rotateTreeToLeft (Node* grandpa);
+    void blackNodeBalance (Node *parent);
+    void outputTree (Node *root, int totalSpace);
 public:
+    void printTree();
     bool add(const int key, std::string data);  // false if key already exists
     bool del(const int key);  // false if no key
     std::string find(const int key);  // return '' if no key
@@ -42,7 +46,7 @@ public:
 Node::Node() {
     left = nullptr;
     right = nullptr;
-    color = "read";
+    red = true;
 }
 
 Node::Node(int key, std::string data) {
@@ -50,7 +54,7 @@ Node::Node(int key, std::string data) {
     this->data = data;
     left = nullptr;
     right = nullptr;
-    color = "read";
+    red = true;
 }
 
 Node::Node(int key,  std::string data,  Node *left,  Node *right)
@@ -59,7 +63,7 @@ Node::Node(int key,  std::string data,  Node *left,  Node *right)
     this->data = data;
     this->left = left;
     this->right = right;
-    color = "read";
+    red = true;
 }
 
 Node::~Node() {
@@ -75,6 +79,26 @@ Tree::~Tree() {
     delete root;
 }
 
+
+void Tree::outputTree(Node *root, int level) {
+    if(root)
+    {
+        outputTree(root->left,level + 1);
+        for(int i = 0;i< level;i++) std::cout<<"   ";
+        if (root->red == true)
+            printf("r");
+        if (root->red == false)
+            printf("b");
+        std::cout << root->key << std::endl;
+        outputTree(root->right,level + 1);
+    }
+}
+
+
+
+void Tree::printTree() {
+    outputTree(root,0);
+}
 
 void Tree::rotateTreeToRight (Node *grandpa) {
     Node *grandgrandpa = getParent(root,grandpa->key);
@@ -141,6 +165,14 @@ Node* Tree::getUncle(Node *root, int childkey) {
         return grandpa->left;
 }
 
+//случай для нахождения брата удаляемого корня
+Node* Tree::getSon (Node *root, Node* parent){
+    if (parent->left == nullptr)
+        return parent->right;
+    else
+        return parent->left;
+}
+
 Node* Tree::getMin (Node *root) {
     Node *min = root;
     while (min->left != nullptr){
@@ -157,61 +189,57 @@ std::string Tree::find(const int key){
     return temp->data;
 }
 
-void Tree::changeColorWhileAdding(Node* child) {
-    child->color = "red";
+void Tree::changeColorWhileAdding(Node* child, Node* root) {
+    root->red = false;
+    child->red = true;
     Node* parent = getParent(root, child->key);
+    Node* uncle = getUncle(root, child->key);
 
     if (parent == nullptr){
-        child->color = "black";
+        child->red = false;
         return;
     }
 
-    if (parent->color == "black") {
+    Node* grandpa = getParent(root, parent->key);
+    if (parent->red == false) {
         return;
     }
 
-    if (parent->color == "red") {
-        Node* grandpa = getParent(root, parent->key);
-        Node* uncle = getUncle(root, child->key);
+    if (parent->red == true) {
+        if ((uncle != nullptr) && (uncle->red == true)) {
+            parent->red = false;
+            uncle->red = false;
+            grandpa->red = true;
+            return changeColorWhileAdding(grandpa, root);
+        }
 
-        if ((uncle == nullptr)||(uncle->color == "black")) {
+        if ((uncle == nullptr)||(uncle->red == false)) {
             if (grandpa->left == parent){
                 if (parent->right == child){
-                    Node *tempParent = grandpa->left;
-                    Node *tempChildLeft = child->left;
-                    grandpa->left = child;
-                    child->left = tempParent;
-                    tempParent->right = tempChildLeft;
+                    rotateTreeToLeft(parent);
                     child = grandpa->left->left;
                     parent = getParent(root,child->key);
+                    grandpa = getParent(root,parent->key);
                 }
-                parent->color = "red";
-                grandpa->color = "black";
+                parent->red = false;
+                grandpa->red = true;
                 rotateTreeToRight(grandpa);
+                root->red = false;
                 return;
             }
 
             if (grandpa->right == parent){
                 if (parent->left == child){
-                    Node *tempParent = grandpa->right;
-                    Node *tempChildRight = child->right;
-                    grandpa->right = child;
-                    child->right = tempParent;
-                    tempParent->left = tempChildRight;
+                    rotateTreeToRight(parent);
                     child = grandpa->right->right;
                     parent = getParent(root,child->key);
+                    grandpa = getParent(root,parent->key);
                 }
-                parent->color = "red";
-                grandpa->color = "black";
+                parent->red = false;
+                grandpa->red = true;
                 rotateTreeToLeft(grandpa);
+                root->red = false;
                 return;
-            }
-
-            if (uncle->color == "red") {
-                parent->color = "black";
-                uncle->color = "black";
-                grandpa->color = "red";
-                return changeColorWhileAdding(grandpa);
             }
         }
     }
@@ -224,7 +252,7 @@ bool Tree::add(const int key, std::string data) {
         return false;
 
     if (root == nullptr){
-        child->color = "black";
+        child->red = false;
         root = child;
         return true;
     }
@@ -236,72 +264,157 @@ bool Tree::add(const int key, std::string data) {
     else
         parent->right = child;
 
-    changeColorWhileAdding(child);
+    changeColorWhileAdding(child, root);
     return true;
 }
 
-bool Tree::del(const int key){
-    Node* deletedNode = getNode(root,key);
-    Node* parentOfDeletedNode = getParent(root, key);
-    if (deletedNode == nullptr)
+void Tree::blackNodeBalance(Node *parent) {
+    if (parent == root)
+        return;
+
+    Node *child = getSon(root, parent);
+    Node *grandpa = getParent(root,parent->key);
+    //меняем цвет родителя и ребенка и делаем поворот дерева
+    //это позволяет привести данный случай к последующим
+    if (child->red == true){
+        parent->red = true;
+        child->red = false;
+        if (child == parent->left)
+            rotateTreeToLeft(parent);
+        else
+            rotateTreeToRight(parent);
+    }
+
+    //если все черные, то делаем ребенка красным и рекурсивно запускаем функцию
+    if (child->red == false && parent->red == false){
+        if (child->left == nullptr || child->left->red == false){
+            if (child->right == nullptr || child->right->red == false){
+                //родитель удаляемого узла не меняется, а вот брат может запросто
+                child = getSon(root, parent);
+                child->red = true;
+                return blackNodeBalance(grandpa);
+            }
+        }
+    }
+
+    //если ребенок черный, а родитель красный, то меняем их цвета местами
+    if (child->red == false && parent->red == true){
+        if (child->left == nullptr || child->left->red == false){
+            if (child->right == nullptr || child->right->red == false){
+                child = getSon(root, parent);
+                child->red = true;
+                parent->red = false;
+                return;
+            }
+        }
+    }
+
+    //если ребенок правый(левый) и у него левый(правый) красный сын, то поворачиваем дерево
+    //и меняем цвета, чтобы привести ситуацию к реализуемой ниже
+    if (child->red == false){
+        if (child == parent->left && child->right->red == true){
+            if (child->left->red == false || child->left == nullptr){
+                child = getSon (root, parent);
+                child->red = true;
+                child->right->red = false;
+                rotateTreeToLeft(child);
+            }
+        }
+
+        else if (child == parent->right && child->left->red == true){
+            if (child->right->red == false || child->right == nullptr){
+                child = getSon (root, parent);
+                child->red = true;
+                child->left->red = false;
+                rotateTreeToRight(child);
+            }
+        }
+
+        //тут может быть только правый(левый) черный ребенок с правым(левым) красным сыном
+        //поэтому мы просто меняем цветами родителя и ребенка и поворачиваем дерево
+        child = getSon (root, parent);
+        child->red = parent->red;
+        parent->red = false;
+        if (child == parent->right){
+            child->right->red = false;
+            rotateTreeToLeft(parent);
+            return;
+        }
+        child->left->red = false;
+        rotateTreeToRight(parent);
+        return;
+    }
+}
+
+
+bool Tree::del(const int key) {
+    Node *delNode = getNode(root, key);
+    Node *delParent = getParent(root, key);
+    if (delNode == nullptr)
         return false;
 
-    if (deletedNode->left == nullptr && deletedNode->right == nullptr)
-    {
-        if (parentOfDeletedNode ->left == deletedNode)
-        {
-            parentOfDeletedNode ->left = nullptr;
-            delete deletedNode;
+    if (delNode->left != nullptr && delNode->right != nullptr) {
+        //если 2 потомка, то сводим к случаю с 1 или 0 потомками, не меняя цвета
+        Node *min = getMin(delNode->right);
+        delNode->key = min->key;
+        delNode->data = min->data;
+        min->key = key;
+        del(min->key);
+    }
+
+    if (delNode->red == true) {
+        // если узел красный, то у него либо 0 потомков, либо 2
+        if (delNode->left == nullptr && delNode->right == nullptr) {
+            if (delParent->left == delNode) {
+                delParent->left = nullptr;
+                delete delNode;
+                return true;
+            }
+            delParent->right = nullptr;
+            delete delNode;
             return true;
         }
-        parentOfDeletedNode->right = nullptr;
-        delete deletedNode;
+    }
+
+    // это возможно только для черного узла и красного потомка
+    // тогда мы присоединяем потомка к родителю и меняем его цвет на черный
+    if (delNode->right == nullptr && delNode->left != nullptr) {
+        if (delParent->left == delNode) {
+            delParent->left = delNode->left;
+            delete delNode;
+            delParent->left->red = false;
+            return true;
+        }
+        delParent->right = delNode->left;
+        delete delNode;
+        delParent->right->red = false;
         return true;
     }
 
-    if (deletedNode->left == nullptr && deletedNode->right != nullptr)
-    {
-        if (parentOfDeletedNode->left == deletedNode)
-        {
-            parentOfDeletedNode->left = deletedNode->right;
-            delete deletedNode;
+    // аналогично предыдущему случаю
+    if (delNode->left == nullptr && delNode->right != nullptr) {
+        if (delParent->left == delNode) {
+            delParent->left = delNode->right;
+            delete delNode;
+            delParent->left->red = false;
             return true;
         }
-        parentOfDeletedNode->right = deletedNode->right;
-        delete deletedNode;
+        delParent->right = delNode->right;
+        delete delNode;
+        delParent->right->red = false;
         return true;
     }
 
-    if (deletedNode->left != nullptr && deletedNode->right == nullptr)
-    {
-        if (parentOfDeletedNode->left == deletedNode)
-        {
-            parentOfDeletedNode->left = deletedNode->left;
-            delete deletedNode;
-            return true;
-        }
-        parentOfDeletedNode->right = deletedNode->left;
-        delete deletedNode;
+    //тут остается только вариант с черным узлом и 0 потомков
+    if (delNode->red = false){
+        if (delParent->left == delNode)
+            delParent->left = nullptr;
+        else
+            delParent->right = nullptr;
+        delete delNode;
+        blackNodeBalance(delParent);
         return true;
     }
-
-    if ((deletedNode->left != nullptr) && (deletedNode->right != nullptr))
-    {
-        Node* temp = getMin(deletedNode->right);
-        if (temp == deletedNode->right)
-        {
-            deletedNode->key = temp->key;
-            deletedNode->data = temp->data;
-            deletedNode->right = temp->right;
-            delete temp;
-            return true;
-        }
-        deletedNode->data = temp->data;
-        deletedNode->key = temp->key;
-        del(temp->key);
-        return true;
-    }
-    return true;
 }
 
 
@@ -313,10 +426,35 @@ int main() {
     testTree.add(29, "6");
     testTree.add(44, "8");
     testTree.add(95, "9");
+    testTree.add(88, "11");
+    testTree.add(-5, "13");
+    testTree.add(1, "3");
+    testTree.add(2, "5");
+    testTree.add(3, "7");
+    testTree.add(4, "6");
+    testTree.add(5, "8");
+    testTree.add(6, "9");
+    testTree.add(7, "11");
+    testTree.add(8, "13");
+    testTree.add(10, "3");
+    testTree.add(11, "5");
+    testTree.add(12, "7");
+    testTree.add(13, "6");
     std::cout<<testTree.find(42)<<std::endl;
     std::cout<<testTree.find(29)<<std::endl;
     std::cout<<testTree.find(95)<<std::endl;
     std::cout<<testTree.find(31)<<std::endl;
     std::cout<<testTree.find(44)<<std::endl;
+    std::cout<<testTree.find(33)<<std::endl;
+    testTree.printTree();
+    testTree.del(6);
+    testTree.del(7);
+    testTree.del(12);
+    testTree.del(88);
+    testTree.del(33);
+    std::cout<<testTree.find(88)<<std::endl;
+    std::cout<<testTree.find(7)<<std::endl;
+    testTree.printTree();
     std::cout << "The end." << std::endl;
 }
+
