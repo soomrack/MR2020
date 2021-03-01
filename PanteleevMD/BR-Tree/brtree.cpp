@@ -69,7 +69,6 @@ Node::~Node() {
 
 Tree::Tree() {
     root = this->nil;
-    root->parent = this->nil;
 }
 
 Tree::~Tree() {
