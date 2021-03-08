@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
+//using namespace std;
 // red-black tree
 
 class Node {
@@ -26,7 +26,7 @@ private:
     Node* nil;
     void rotate_left(Node* pivot);
     void rotate_right(Node* pivot);
-    void fix_insert(Node* z_node);
+    void fix_insert(Node* pivot);
     void transplant(Node* sbtee_one, Node* sbtree_two);
     void delete_node(Node* node_to_del);
     Node* find_node(Node* search_start, const int key);
@@ -79,7 +79,7 @@ Tree::Tree() {
 Tree::~Tree() {
     delete root;
 }
-void Tree::construct_nil()
+void Tree::construct_nil()      // nil is universal node that replaces nullptr in this implementation
 {
     this->nil = new Node();
     this->nil->color = 0;
@@ -160,12 +160,12 @@ void Tree::transplant(Node* sbtree_one, Node* sbtree_two)
     else sbtree_one->parent->right = sbtree_two;            // right child
 
     if (sbtree_two != this->nil)
-        sbtree_two->parent = sbtree_one->parent;             // exchange parents if not nil
+        sbtree_two->parent = sbtree_one->parent;            // exchange parents if not nil
 }
 
 void Tree::add(const int key, const std::string data)
 {
-    Node* z_node = new Node(key,data);
+    Node* new_node = new Node(key,data);
 
     Node* tailing_ptr = this->nil;
     Node* upper_ptr = this->root;
@@ -173,64 +173,64 @@ void Tree::add(const int key, const std::string data)
     while (upper_ptr != this->nil)              //looking for a place to attach new node
     {
         tailing_ptr = upper_ptr;                //saves previuos upper_ptr value (upper_ptr's parent)
-        if (z_node->key < upper_ptr->key) 
+        if (new_node->key < upper_ptr->key) 
             upper_ptr = upper_ptr->left; 
         else 
             upper_ptr = upper_ptr->right;
     }
-    z_node->parent = tailing_ptr;               //sets .parent to be either nullptr or actual parent
+    new_node->parent = tailing_ptr;               //sets .parent to be either nullptr or actual parent
     if (tailing_ptr == this->nil)
-        this->root = z_node;                    //updates root for previously empty tree
-    else if (z_node->key < tailing_ptr->key)
-        tailing_ptr->left = z_node;             //actually attach the node
-    else tailing_ptr->right = z_node;
+        this->root = new_node;                    //updates root for previously empty tree
+    else if (new_node->key < tailing_ptr->key)
+        tailing_ptr->left = new_node;             //actually attach the node
+    else tailing_ptr->right = new_node;
 
-    z_node->left = this->nil;
-    z_node->right = this->nil;
+    new_node->left = this->nil;
+    new_node->right = this->nil;
 
-    fix_insert(z_node);                     //fix broken conventions
+    fix_insert(new_node);                     //fix broken conventions
 }
 
-void Tree::fix_insert(Node* z_node)
+void Tree::fix_insert(Node* pivot)
 {
-    while (z_node->parent->color == 1)      // while z's parent is RED (both parent and z are red => rule broken)
+    while (pivot->parent->color == 1)      // while piv's parent is RED (both parent and z are red => rule broken)
     {
-        if (z_node->parent == z_node->parent->parent->left) {       //if z's parent is left son
-            Node* uncle_node = z_node->parent->parent->right;            //pick right uncle
-            if (uncle_node->color == 1) {                                //uncle is RED
-                z_node->parent->color = 0;                          //=>  recoloring case
+        if (pivot->parent == pivot->parent->parent->left) {       // if piv's parent is left son
+            Node* uncle_node = pivot->parent->parent->right;      // pick right uncle
+            if (uncle_node->color == 1) {                         // uncle is RED
+                pivot->parent->color = 0;                         // =>  recoloring case
                 uncle_node->color = 0;
-                z_node->parent->parent->color = 1;
-                z_node = z_node->parent->parent;
+                pivot->parent->parent->color = 1;
+                pivot = pivot->parent->parent;
             }
             else {
-                if (z_node == z_node->parent->right) {             //right uncle is BLACK and z is the right son
-                    z_node = z_node->parent;                       //=>  left triangle case
-                    rotate_left(z_node);
+                if (pivot == pivot->parent->right) {              // right uncle is BLACK and z is the right son
+                    pivot = pivot->parent;                        // =>  left triangle case
+                    rotate_left(pivot);
                 }
 
-                z_node->parent->color = 0;                         //=>  left line case 
-                z_node->parent->parent->color = 1;
-                rotate_right(z_node->parent->parent);
+                pivot->parent->color = 0;                         // =>  left line case 
+                pivot->parent->parent->color = 1;
+                rotate_right(pivot->parent->parent);
             }
         }
-        else {                                                      //if z's parent is right son
-            Node* uncle_node = z_node->parent->parent->left;         //pick left uncle
-            if (uncle_node->color == 1) {                            //uncle is RED
-                z_node->parent->color = 0;                          //=>  recoloring case
+        else {                                                    // if z's parent is right son
+            Node* uncle_node = pivot->parent->parent->left;       // pick left uncle
+            if (uncle_node->color == 1) {                         // uncle is RED
+                pivot->parent->color = 0;                         // =>  recoloring case
                 uncle_node->color = 0;
-                z_node->parent->parent->color = 1;
-                z_node = z_node->parent->parent;
+                pivot->parent->parent->color = 1;
+                pivot = pivot->parent->parent;
             }
             else {
-                if (z_node == z_node->parent->left) {             //right uncle is BLACK and z is the left son
-                    z_node = z_node->parent;                       //=>  right triangle case
-                    rotate_right(z_node);
+                if (pivot == pivot->parent->left) {               // right uncle is BLACK and z is the left son
+                    pivot = pivot->parent;                        // =>  right triangle case
+                    rotate_right(pivot);
                 }
 
-                z_node->parent->color = 0;                         //=>  right line case 
-                z_node->parent->parent->color = 1;
-                rotate_left(z_node->parent->parent);
+                pivot->parent->color = 0;                         // =>  right line case 
+                pivot->parent->parent->color = 1;
+                rotate_left(pivot->parent->parent);
             }
         
         }
