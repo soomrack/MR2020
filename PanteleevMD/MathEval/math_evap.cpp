@@ -75,6 +75,7 @@ std::vector<string> infix_to_postfix(string orig_exp)
     std::stack<char> operations;
 
     bool number_flag = false;
+    bool operator_flag = true;
     char symbol;
     char prev_symbol;
     string number = "";
@@ -83,10 +84,14 @@ std::vector<string> infix_to_postfix(string orig_exp)
     {
         string token(1,symbol); 
         if (is_digit(symbol)) {
-                     // digit may (or may not) be multi-digit
-            number_flag = true;
-            //prev_symbol = symbol;
+            number_flag = true;                 // digit may (or may not) be multi-digit
+            if (operator_flag) {                // unary operator handler
+                number += prev_symbol;
+                operator_flag = false;
+            }
             number += symbol;
+
+            prev_symbol = symbol;
             continue;
         }
         else if (number_flag) {                 // multi-digit number has ended
@@ -97,6 +102,8 @@ std::vector<string> infix_to_postfix(string orig_exp)
 
         if (symbol == '(') {
             operations.push(symbol);
+
+            prev_symbol = symbol;
             continue;
         }
         if (symbol == ')') {
@@ -105,15 +112,26 @@ std::vector<string> infix_to_postfix(string orig_exp)
                 operations.pop();
             }
             operations.pop();
+            prev_symbol = symbol;
             continue;
         }
 
-        if (is_binary_operator(symbol))
+        if (is_binary_operator(symbol)) {
+            if ( is_binary_operator(prev_symbol) ) {
+                operator_flag = true;
+
+                prev_symbol = symbol;
+                continue;
+            }
+
             while (!operations.empty() && get_priority(operations.top()) >= get_priority(symbol)) {
                 postfix_exp.push_back( string(1, operations.top()) );
                 operations.pop();
             }
-            operations.push(symbol);
+            if (operator_flag == false)         // meh, needs better solution
+                operations.push(symbol);
+        }
+        prev_symbol = symbol;                  // I need this at the end of every loop, but 'continue' makes it dificult 
     }
     if (number_flag)                 // pushing last number
         postfix_exp.push_back(number);
@@ -133,7 +151,7 @@ int evaluate_postfix(std::vector<string> postfix_expr)
     for (auto expr_iter = postfix_expr.begin() ; expr_iter != postfix_expr.end(); ++expr_iter)
     {
         string token = *expr_iter;
-        if (is_binary_operator(token[0])) {
+        if (is_binary_operator(token[0]) && token.length() == 1) {
             expr_iter--;
             string operand_two = *(expr_iter);
             postfix_expr.erase(expr_iter);
@@ -162,5 +180,5 @@ int eval_expr(string infix_expr)
 
 int main()
 {
-    std::cout << eval_expr("(2+12)*(1-13)");
+    std::cout << eval_expr("-1*-5");
 }
