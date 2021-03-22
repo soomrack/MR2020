@@ -1,0 +1,182 @@
+#include <iostream>
+
+using namespace std;
+const int cell = 2;
+
+class Node {
+public:
+    int keys[(2 * cell - 1)];
+    Node* children[(2 * cell)];
+    int count;
+    bool leaf;
+    Node(int key);
+};
+
+Node::Node(int key) {
+    this->keys[0] = key;
+    for (int counter = 1; counter < (2 * cell - 1); counter++)
+        this->keys[counter] = 0;
+    for (int counter = 1; counter < (2 * cell - 1); counter++)
+        counter = nullptr;
+    this->leaf = true;
+    this->count = 1;
+}
+
+class B_Tree {
+public:
+    Node* root;
+    B_Tree() { root = nullptr; }
+
+    void adding(int key);
+    static Node* FIND(int key, Node* root);
+    void REMOVE(int key);
+    static void PRINT(Node* root);
+private:
+    static void insert(int key, Node* node);
+    static void sort(Node* node);
+    void restruct(Node* node);
+    static Node* find_parent(Node* node, Node* root);
+};
+
+void B_Tree::adding (int key) {
+    if (root == nullptr) {
+        root = new Node(key);
+        return;
+    }
+    Node* temp = root;
+    while (!temp->leaf) {
+        for (int counter = 0; counter < (2 * cell - 1); counter++) {
+            if (temp->keys[counter] != 0) {
+                if (key < temp->keys[counter]) {
+                    temp = temp->children[i];
+                    break;
+                }
+                if ((temp->keys[counter + 1] == 0) && (key > temp->keys[counter])) {
+                    temp = temp->children[counter + 1];
+                    break;
+                }
+            }
+            else
+                break;
+        }
+    }
+    insert(key, temp);
+    Node* temp_parent = find_parent(temp, root);
+    while (temp->count >= (2 * cell - 1)) {
+        if (temp == root)
+            restruct(temp);
+        else {
+            restruct(temp);
+            temp = temp_parent;
+        }
+    }
+}
+
+void B_Tree::insert(int key, Node* node) {
+    node->keys[node->count] = key;
+    node->count = node->count + 1;
+    sort(node);
+}
+
+void B_Tree::sort(Node* node) {
+    int temp;
+    for (int counter = 0; counter < (node->count); counter++) {
+        for (int counter_2 = counter + 1; counter_2 < (node->count); counter_2++) {
+            if (node->keys[counter] > node->keys[counter_2]) {
+                temp = node->keys[counter];
+                node->keys[counter] = node->keys[counter_2];
+                node->keys[counter_2] = temp;
+            }
+        }
+    }
+}
+
+Node* B_Tree::FIND(int key, Node* root) {
+    for (int counter = 0; counter < (root->count); counter++) {
+        if (root->keys[counter] == key)
+            return root;
+    }
+    for (int counter = 0; counter  < (root->count); counter++) {
+        if (key < root->keys[counter])
+            return FIND(key, root->children[counter]);
+        if ((key > root->keys[counter]) && (root->count = (counter + 1)))
+            return FIND(key, root->children[counter + 1]);
+    }
+    return nullptr;
+}
+
+void B_Tree::restruct(Node* node) {
+    Node* new_child1 = new Node(0);
+    new_child1->count = 0;
+    Node* new_child2 = new Node(0);
+    new_child2->count = 0;
+
+    for (int counter = 0; counter < (cell - 1); counter++) {
+        new_child1->keys[counter] = node->keys[counter];
+        new_child2->keys[counter] = node->keys[counter + cell];
+    }
+    new_child1->count = cell - 1;
+    new_child2->count = cell - 1;
+    if (node->children[0] != nullptr) {
+        for (int counter = 0; counter <= (cell - 1); counter++) {
+            new_child1->children[counter] = node->children[counter];
+            new_child2->children[counter] = node->children[counter + cell];
+        }
+        new_child1->leaf = false;
+        new_child2->leaf = false;
+    }
+
+    if (node == root) {
+        node->keys[0] = node->keys[cell - 1];
+        for (int counter = 1; counter  < (2 * cell - 1); counter++)
+            node->keys[counter] = 0;
+        node->count = 1;
+        node->children[0] = new_child1;
+        node->children[1] = new_child2;
+        for (int counter = 2; counter < (2 * cell); counter++)
+            node->children[counter] = nullptr;
+        node->leaf = false;
+    }
+    else {
+        Node* parent_node = find_parent(node, root);
+        insert(node->keys[cell - 1], parent_node);
+        for (int counter = 0; counter < (2 * cell); counter++) {
+            if (parent_node->children[counter] == node)
+            {
+                parent_node->children[counter] = nullptr;
+            }
+        }
+        for (int counter = 0; counter < (2 * cell); counter++) {
+            if (parent_node->children[counter] == nullptr) {
+                for (int counter_2 = (2 * cell - 1); counter_2 > (counter + 1); counter_2--)
+                    parent_node->children[counter_2] = parent_node->children[counter_2 - 1];
+                parent_node->children[counter + 1] = new_child2;s
+                parent_node->children[counter] = new_child1;
+                break;
+            }
+        }
+        parent_node->leaf = false;
+    }
+}
+
+Node* B_Tree::find_parent(Node* node, Node* root) {
+    for (int counter = 0; counter < (2 * cell); counter++)
+    {
+        if (root->children[counter] == node)
+        {
+            return root;
+        }
+    }
+    for (int counter = 0; counter < (2 * cell); counter++)
+    {
+        if (root->children[counter] != nullptr)
+        {
+            find_parent(node, root->children[counter]);
+        }
+    }
+}
+
+int main() 
+{  
+    return 0;
+}
