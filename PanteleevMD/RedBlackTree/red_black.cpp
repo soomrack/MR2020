@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include <sstream>
+
 //using namespace std;
 // red-black tree
 
@@ -24,6 +26,13 @@ class Tree {
 private:
     Node* root;
     Node* nil;
+    // for Debug Visualizer ext
+    std::string json_viz;
+    std::string viz;
+    std::string nodes;
+    std::string edges;
+    void visualize(Node* node);
+
     void rotate_left(Node* pivot);
     void rotate_right(Node* pivot);
     void fix_insert(Node* pivot);
@@ -78,6 +87,35 @@ Tree::Tree() {
 
 Tree::~Tree() {
     delete root;
+}
+
+void Tree::visualize(Node* node)
+{   
+    // -exec set print elements 0        <- to debug console
+    if (node != this->nil) {
+        std::string color = "";
+        if (node->color == 1)
+            color = "red";
+        else color = "black";
+
+        this->nodes += "{\"id\":\"" + std::to_string(node->key) + "\", \"color\": \"" + color + "\"}, ";
+        this->edges += "{\"from\":\"" + std::to_string(node->parent->key) + "\",\"to\":\"" + std::to_string(node->key) + "\"}, ";
+        visualize(node->left);
+        visualize(node->right);
+    }
+    if (node == this->root)
+    {
+        std::string nd_lst = this->nodes;
+        std::string edg_lst = this->edges;
+        nd_lst = nd_lst.substr(0, nd_lst.length()-2);
+        edg_lst = edg_lst.substr(0, edg_lst.length()-2);
+        this->json_viz = "{\"kind\":{\"graph\":true}, \"nodes\":[" + nd_lst + "],"
+        "\"edges\":[" + edg_lst + "]}";
+
+        //this->json_viz.clear();
+        this->nodes.clear();
+        this->edges.clear();
+    }
 }
 void Tree::construct_nil()      // nil is universal node that replaces nullptr in this implementation
 {
@@ -187,8 +225,9 @@ void Tree::add(const int key, const std::string data)
 
     new_node->left = this->nil;
     new_node->right = this->nil;
-
+    visualize(this->root);
     fix_insert(new_node);                     //fix broken conventions
+    visualize(this->root);
 }
 
 void Tree::fix_insert(Node* pivot)
@@ -264,6 +303,7 @@ void Tree::del(const int key)
     Node* node_to_del = find_node(this->root, key);
     if (node_to_del != this->nil)
         delete_node(node_to_del);
+    visualize(this->root);
 }
 
 int main()
