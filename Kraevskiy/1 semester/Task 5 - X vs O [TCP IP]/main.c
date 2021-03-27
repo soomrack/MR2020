@@ -22,7 +22,7 @@ void game_start(){
     pokazat_hod_igri();
 }
 
-int read() {    // не используется в программе, т.к. отсутвует ввод в консоль
+int read() {    // Г­ГҐ ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГІГ±Гї Гў ГЇГ°Г®ГЈГ°Г Г¬Г¬ГҐ, ГІ.ГЄ. Г®ГІГ±ГіГІГўГіГҐГІ ГўГўГ®Г¤ Гў ГЄГ®Г­Г±Г®Г«Гј
     int cell_number;
     printf("Your turn\nEnter the number of cell\n");
     scanf("%d" , &cell_number);
@@ -91,7 +91,7 @@ int win_move(int igrok) {
     char player;
     if (igrok==1) player='X';
     if (igrok==0) player='O';
-    for (int i=1; i<=3; i++) // яЁютхЁър яю ёЄюысшърь
+    for (int i=1; i<=3; i++) // ГїВЁГѕГІГµВЁГєГ° ГїГѕ ВёВЄГѕГ»Г±ГёГєГ°Гј
     {
         if (board[1][i]==player && board[2][i]==player && board[3][i]==' ') {board[3][i]=player; return decrypto(3,i);}
         if (board[1][i]==' ' && board[2][i]==player && board[3][i]==player) {board[1][i]=player; return decrypto(1,i);}
@@ -141,8 +141,8 @@ int enemy_win_block (int igrok) {
     if (board[3][1]==enemy && board[2][2]==enemy && board[1][3]==' ') {board[1][3]= player; return decrypto(1,3);}
     if (board[3][1]==enemy && board[2][2]==' ' && board[1][3]==enemy) {board[2][2]= player; return decrypto(2,2);}
     if (board[3][1]==' ' && board[2][2]==enemy && board[1][3]==enemy) {board[3][1]= player; return decrypto(3,1);}
-    //printf("blocked result is "); отладка
-    //("%d\n", res); отладка
+    //printf("blocked result is "); Г®ГІГ«Г Г¤ГЄГ 
+    //("%d\n", res); Г®ГІГ«Г Г¤ГЄГ 
     return res;
 }
 
@@ -152,19 +152,19 @@ int computer_turn (int igrok) {
     if (igrok==1) player='X';
     if (igrok==0) player='O';
     int res = 0;
-    // занимаем центр
+    // Г§Г Г­ГЁГ¬Г ГҐГ¬ Г¶ГҐГ­ГІГ°
     if (place_available(5)) {board[2][2] = player; return decrypto(2,2);}
-    // угловые с сочетанием
+    // ГіГЈГ«Г®ГўГ»ГҐ Г± Г±Г®Г·ГҐГІГ Г­ГЁГҐГ¬
     if (board[1][1]== player && place_available(3)) {board[1][3] = player; return decrypto(1,3);}
     if (board[1][3]== player && place_available(9)) {board[3][3] = player; return decrypto(3,3);}
     if (board[3][3]== player && place_available(7)) {board[3][1] = player; return decrypto(3,1);}
     if (board[3][1]== player && place_available(1)) {board[1][1] = player; return decrypto(1,1);}
-    // угловые
+    // ГіГЈГ«Г®ГўГ»ГҐ
     if (place_available(1)) {board[1][1] = player; return decrypto(1,1);}
     if (place_available(3)) {board[1][3] = player; return decrypto(1,3);}
     if (place_available(7)) {board[3][1] = player; return decrypto(3,1);}
     if (place_available(9)) {board[3][3] = player; return decrypto(3,3);}
-    // оставшиеся
+    // Г®Г±ГІГ ГўГёГЁГҐГ±Гї
     if (place_available(2)) {board[1][2] = player; return decrypto(1,2);}
     if (place_available(6)) {board[2][3] = player; return decrypto(2,3);}
     if (place_available(8)) {board[3][2] = player; return decrypto(3,2);}
@@ -201,7 +201,7 @@ int hod(int a, int player) {
     turn_number++;
     printf("turn number is %d\n", turn_number);
     if (turn_number==9) {
-        return 10; // 10 - если псоледний ход был за противником
+        return 10; // 10 - ГҐГ±Г«ГЁ ГЇГ±Г®Г«ГҐГ¤Г­ГЁГ© ГµГ®Г¤ ГЎГ»Г« Г§Г  ГЇГ°Г®ГІГЁГўГ­ГЁГЄГ®Г¬
     }
     Sleep(6000);
     int block;
@@ -209,17 +209,17 @@ int hod(int a, int player) {
     if (win_move(player)==0) {
         block = enemy_win_block(player);
         if (block==0) {
-            //printf("computer turn\n"); отладка
+            //printf("computer turn\n"); Г®ГІГ«Г Г¤ГЄГ 
             res = computer_turn(player);
         } else {
             res = block;
-            //printf("enemy blocked\n"); отладка
+            //printf("enemy blocked\n"); Г®ГІГ«Г Г¤ГЄГ 
             //printf("%d\n", res);
         }
     } else {
         wwin = true;
         res = win_move(player);
-        //printf("win moving\n");  //отладка
+        //printf("win moving\n");  //Г®ГІГ«Г Г¤ГЄГ 
     }
     write(res, player);
     printf("my cell number is %d\n", res);
@@ -235,15 +235,15 @@ int hod(int a, int player) {
 
 int main(){
     WSADATA ws;
-    WSAStartup( MAKEWORD(2,2), &ws);  // инициализация использования сокета
+    WSAStartup( MAKEWORD(2,2), &ws);  // ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГї Г±Г®ГЄГҐГІГ 
 
     SOCKET s;
-    s = socket(AF_INET, SOCK_STREAM, 0);  // создание сокета
+    s = socket(AF_INET, SOCK_STREAM, 0);  // Г±Г®Г§Г¤Г Г­ГЁГҐ Г±Г®ГЄГҐГІГ 
 
     SOCKADDR_IN sa;
     memset(&sa, 0, sizeof(sa));
-    sa.sin_family = AF_INET;                // работа с адресом IpV4
-    sa.sin_port = htons(1234);     // и портом 1234
+    sa.sin_family = AF_INET;                // Г°Г ГЎГ®ГІГ  Г± Г Г¤Г°ГҐГ±Г®Г¬ IpV4
+    sa.sin_port = htons(1234);     // ГЁ ГЇГ®Г°ГІГ®Г¬ 1234
 
     char c;
     printf("s - server\nc - client\n");
@@ -253,8 +253,8 @@ int main(){
     memset(buf, 0, sizeof(buf));
 
     if (c == 'c') {
-        sa.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  // адресс подключения (сервера)
-        connect(s, &sa, sizeof(sa));                          // устанавливаем соединение с сервером
+        sa.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");  // Г Г¤Г°ГҐГ±Г± ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­ГЁГї (Г±ГҐГ°ГўГҐГ°Г )
+        connect(s, &sa, sizeof(sa));                          // ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ Г± Г±ГҐГ°ГўГҐГ°Г®Г¬
 
         game_start();
         printf("client plays for zeros\ncrosses go first\n");
@@ -266,13 +266,13 @@ int main(){
             recv(s, buf, sizeof(buf), 0);
             enemy_turn = buf[0];
             our_turn = hod(enemy_turn, 0);
-            if (our_turn==10) { // процедура ход возвращает 10 в случае ничьи
-                game_end();     // и если последний ход мы приняли от противника
+            if (our_turn==10) { // ГЇГ°Г®Г¶ГҐГ¤ГіГ°Г  ГµГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ 10 Гў Г±Г«ГіГ·Г ГҐ Г­ГЁГ·ГјГЁ
+                game_end();     // ГЁ ГҐГ±Г«ГЁ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ГµГ®Г¤ Г¬Г» ГЇГ°ГЁГ­ГїГ«ГЁ Г®ГІ ГЇГ°Г®ГІГЁГўГ­ГЁГЄГ 
                 return 0;
             }
             buf[0] = our_turn;
             send(s, buf, sizeof(buf), 0);
-            if (turn_number==9) {   // случай если последних ход мы отправили противникку
+            if (turn_number==9) {   // Г±Г«ГіГ·Г Г© ГҐГ±Г«ГЁ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГµ ГµГ®Г¤ Г¬Г» Г®ГІГЇГ°Г ГўГЁГ«ГЁ ГЇГ°Г®ГІГЁГўГ­ГЁГЄГЄГі
                 game_end();
                 return 0;
             }
@@ -281,31 +281,31 @@ int main(){
 
     if (c == 's') {
         bind(s, &sa, sizeof(sa));
-        listen(s, 100);         // прослушка входящих сообщений
-        // переменные для хранения информации о соединении
+        listen(s, 100);         // ГЇГ°Г®Г±Г«ГіГёГЄГ  ГўГµГ®Г¤ГїГ№ГЁГµ Г±Г®Г®ГЎГ№ГҐГ­ГЁГ©
+        // ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»ГҐ Г¤Г«Гї ГµГ°Г Г­ГҐГ­ГЁГї ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ Г® Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГЁ
         SOCKET client_socket;
         SOCKADDR_IN client_addr;
         int client_addr_size = sizeof(client_addr);
 
-        while (client_socket = accept(s, &client_addr, &client_addr_size)) {   // установка соединения с клиентом
+        while (client_socket = accept(s, &client_addr, &client_addr_size)) {   // ГіГ±ГІГ Г­Г®ГўГЄГ  Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГї Г± ГЄГ«ГЁГҐГ­ГІГ®Г¬
             printf("players are connected\n");
             game_start();
             printf("server plays for crosses\n");
             buf[0] = first_turn(1);
             int enemy_turn;
             int our_turn;
-            send(client_socket, buf, sizeof(buf), 0); // отправка первого хода клиенту
+            send(client_socket, buf, sizeof(buf), 0); // Г®ГІГЇГ°Г ГўГЄГ  ГЇГҐГ°ГўГ®ГЈГ® ГµГ®Г¤Г  ГЄГ«ГЁГҐГ­ГІГі
             while(server_work) {
                 recv(client_socket, buf, sizeof(buf), 0);
                 enemy_turn = buf[0];
                 our_turn = hod(enemy_turn, 1);
-                if (our_turn==10) { // процедура ход возвращает 10 в случае ничьи
-                    game_end();     // и если последний ход мы приняли от противника
+                if (our_turn==10) { // ГЇГ°Г®Г¶ГҐГ¤ГіГ°Г  ГµГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ 10 Гў Г±Г«ГіГ·Г ГҐ Г­ГЁГ·ГјГЁ
+                    game_end();     // ГЁ ГҐГ±Г«ГЁ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ГµГ®Г¤ Г¬Г» ГЇГ°ГЁГ­ГїГ«ГЁ Г®ГІ ГЇГ°Г®ГІГЁГўГ­ГЁГЄГ 
                     return 0;
                 }
                 buf[0] = our_turn;
                 send(client_socket, buf, sizeof(buf), 0);
-                if (turn_number==9) {  // случай если последних ход мы отправили противникку
+                if (turn_number==9) {  // Г±Г«ГіГ·Г Г© ГҐГ±Г«ГЁ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГµ ГµГ®Г¤ Г¬Г» Г®ГІГЇГ°Г ГўГЁГ«ГЁ ГЇГ°Г®ГІГЁГўГ­ГЁГЄГЄГі
                     game_end();
                     return 0;
                 }
