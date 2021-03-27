@@ -8,8 +8,8 @@ int board[7][7] = { 77, 77, 77, 77, 77, 77, 77,
                     77, 99, 99, 99, 77, 99, 77,
                     77, 77, 77, 77, 77, 99, 77,
                     77, 77, 77, 77, 77, 77, 77 };
-// 77 - ¯®«¥ á¢®¡®¤­®
-// 99 - ¯à¨£à ¤ 
+// 77 - Â¯Â®Â«Â¥ Ã¡Â¢Â®Â¡Â®Â¤Â­Â®
+// 99 - Â¯Ã Â¨Â£Ã Â Â¤Â 
 void print_board ()
 {
     printf("\n");
@@ -22,7 +22,7 @@ void print_board ()
     }
     printf("\n");
 }
-// ­ ­¨á¥­¨¥ ­ ç «ì­®© â®çª¨ ¨ æ¥«¨ ­  ¤®áªã
+// Â­Â Â­Â¨Ã¡Â¥Â­Â¨Â¥ Â­Â Ã§Â Â«Ã¬Â­Â®Â© Ã¢Â®Ã§ÂªÂ¨ Â¨ Ã¦Â¥Â«Â¨ Â­Â  Â¤Â®Ã¡ÂªÃ£
 void board_initiate(int start_r, int start_c, int goal_r, int goal_c)
 {
     for (int i = 0; i <= 6; i++)
@@ -36,7 +36,7 @@ void board_initiate(int start_r, int start_c, int goal_r, int goal_c)
         }
     }
 }
-// ¯à®¢¥àª  ­  á¢®¡®¤ã ïç¥©ª¨
+// Â¯Ã Â®Â¢Â¥Ã ÂªÂ  Â­Â  Ã¡Â¢Â®Â¡Â®Â¤Ã£ Ã¯Ã§Â¥Â©ÂªÂ¨
 bool matrix_border_check(int i, int j)
 {
     bool res = false;
@@ -46,7 +46,7 @@ bool matrix_border_check(int i, int j)
         res = false;
     return res;
 }
-// ¯à®¢¥àª  á¢®¡ ¤­  «¨ ª«¥âª  ¯à¨ ®¡à â­®¬ å®¤¥
+// Â¯Ã Â®Â¢Â¥Ã ÂªÂ  Ã¡Â¢Â®Â¡Â Â¤Â­Â  Â«Â¨ ÂªÂ«Â¥Ã¢ÂªÂ  Â¯Ã Â¨ Â®Â¡Ã Â Ã¢Â­Â®Â¬ Ã¥Â®Â¤Â¥
 bool matrix_step_back_check(int i, int j)
 {
     bool res = false;
@@ -56,7 +56,7 @@ bool matrix_step_back_check(int i, int j)
         res = false;
     return res;
 }
-// ¯à®¢¥àª  ­  ­ «¨ç¨¥ ­¥ § ­ïâëå ª«¥â®ç¥ª ¢ ¯®«¥
+// Â¯Ã Â®Â¢Â¥Ã ÂªÂ  Â­Â  Â­Â Â«Â¨Ã§Â¨Â¥ Â­Â¥ Â§Â Â­Ã¯Ã¢Ã«Ã¥ ÂªÂ«Â¥Ã¢Â®Ã§Â¥Âª Â¢ Â¯Â®Â«Â¥
 bool board_free()
 {
     for (int i = 0; i <= 6; i++)
@@ -69,7 +69,7 @@ bool board_free()
     }
     return false;
 }
-// à ááâ ­®¢ª  á®á¥¤¨©
+// Ã Â Ã¡Ã¡Ã¢Â Â­Â®Â¢ÂªÂ  Ã¡Â®Ã¡Â¥Â¤Â¨Â©
 void put_neighbors (int numb)
 {
     for (int i = 0; i <= 6; i++)
@@ -103,7 +103,7 @@ void put_neighbors (int numb)
 
 int step_back(int i, int j, int numb)
 {
-    int n = 44; // 44 - ¯ãâì ®â æ¥«¨ ¤® ­ ç « 
+    int n = 44; // 44 - Â¯Ã£Ã¢Ã¬ Â®Ã¢ Ã¦Â¥Â«Â¨ Â¤Â® Â­Â Ã§Â Â«Â 
     while (numb != 10)
     {
         if (board[i-1][j-1] == numb-1 && matrix_step_back_check(i-1,j-1))
@@ -171,7 +171,7 @@ int step_back(int i, int j, int numb)
     }
     return 0;
 }
-// ¢ë¢®¤ ­ £«ï¤­®£® ¯®«ï á å®¤®¬ ®â ­ ç «  ¤® æ¥«¨
+// Â¢Ã«Â¢Â®Â¤ Â­Â Â£Â«Ã¯Â¤Â­Â®Â£Â® Â¯Â®Â«Ã¯ Ã¡ Ã¥Â®Â¤Â®Â¬ Â®Ã¢ Â­Â Ã§Â Â«Â  Â¤Â® Ã¦Â¥Â«Â¨
 void rebuild_pole (int goal_row, int goal_col)
 {
     char char_board[7][7] = {' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -203,22 +203,22 @@ void rebuild_pole (int goal_row, int goal_col)
 
 int main()
 {
-    int start_row = 3-1; // § ¤ ­¨¥ â®çª¨ áâ àâ 
+    int start_row = 3-1; // Â§Â Â¤Â Â­Â¨Â¥ Ã¢Â®Ã§ÂªÂ¨ Ã¡Ã¢Â Ã Ã¢Â 
     int start_col = 2-1;
-    int goal_row = 5-1;  // § ¤ ­¨¥ â®çª¨ æ¥«¨
+    int goal_row = 5-1;  // Â§Â Â¤Â Â­Â¨Â¥ Ã¢Â®Ã§ÂªÂ¨ Ã¦Â¥Â«Â¨
     int goal_col = 5-1;
     board_initiate(start_row, start_col, goal_row, goal_col);
     print_board();
     int initial_numb = 10;
-    while (board_free()) // ¯à®æ¥¤ãà  § ¯®«­¥­¨ï ¯®«ï
+    while (board_free()) // Â¯Ã Â®Ã¦Â¥Â¤Ã£Ã Â  Â§Â Â¯Â®Â«Â­Â¥Â­Â¨Ã¯ Â¯Â®Â«Ã¯
     {
         put_neighbors(initial_numb);
         initial_numb++;
     }
     print_board();
-    int goal_number = board[goal_row][goal_col]; // ã§­ ¥¬ ª ª®¥ ª®«¨çáâ¢® å®¤®¢ ­ã¦­® ¤® æ¥«¨
+    int goal_number = board[goal_row][goal_col]; // Ã£Â§Â­Â Â¥Â¬ ÂªÂ ÂªÂ®Â¥ ÂªÂ®Â«Â¨Ã§Ã¡Ã¢Â¢Â® Ã¥Â®Â¤Â®Â¢ Â­Ã£Â¦Â­Â® Â¤Â® Ã¦Â¥Â«Â¨
 
-    step_back(goal_row, goal_col, goal_number); // ®¡à â­ë© å®¤ ®â æ¥«¨ ª ­ ç «ã
+    step_back(goal_row, goal_col, goal_number); // Â®Â¡Ã Â Ã¢Â­Ã«Â© Ã¥Â®Â¤ Â®Ã¢ Ã¦Â¥Â«Â¨ Âª Â­Â Ã§Â Â«Ã£
     print_board();
     rebuild_pole(goal_row, goal_col);
     printf("X - locked area\nS - Start\nG - Goal\n* - Shortest way");
