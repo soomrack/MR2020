@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-// B-Tree
+// Binary search tree
 
 const int numberOfPointers = 4;
 const int emptyKey = 2147483647;
@@ -26,9 +26,16 @@ private:
     int getChildIndex (Node *root, int key);
     void adding(Node *root, int key, std::string data);
     bool isNodeALief (Node *root);
+    int getAmountOfKeys (Node *currentNode);
     void split (Node *parent, Node *child);
     std::string getNodeData(Node* currentNode, int key);
     Node* getParent (Node * currentNode, int key, Node* parent);
+    Node* getNodeByKey (Node *root, int key);
+    void deleteKeyFromNode (Node *currentNode, int key);
+    void merge(Node *leftNode, Node *rightNode, Node *parent, int index);
+    void rebalanceLief(Node *currentNode, int keysNum, int index, Node *parent);
+    //эту функцию как раз и осталось допилить
+    void rebalanceNotALief(Node *currentNode, int keysNum, int index, Node *parent);
 public:
     bool add(const int key, std::string data);  // false if key already exists
     bool del(const int key);  // false if no key
@@ -128,10 +135,9 @@ void Tree::split(Node *parent, Node *child) {
     Node *left = new Node();
     Node *right = new Node();
     int mid;
-
     if (numberOfPointers % 2 == 1)
         mid = (numberOfPointers-1)/2;
-    else {
+    else{
         if (index < (numberOfPointers/2))
             mid = numberOfPointers/2;
         else
@@ -174,7 +180,6 @@ void Tree::split(Node *parent, Node *child) {
 
 void Tree::adding(Node *node, int key, std::string data) {
     int index = getChildIndex(node,key);
-
     if (isNodeALief(node) == true){
         Node* child = new Node ();
         node->arrOfPointers[index] = child;
@@ -195,6 +200,8 @@ std::string Tree::getNodeData(Node *currentNode, int key) {
     return getNodeData(currentNode->arrOfPointers[index],key);
 }
 
+
+
 Node* Tree::getParent(Node *currentNode, int key, Node* parent){
     Node *father = parent;
     if (currentNode == root)
@@ -211,6 +218,24 @@ std::string Tree::find(const int key){
     return data;
 }
 
+Node* Tree::getNodeByKey(Node *root, int key) {
+    Node *currentNode = root;
+    int index = getChildIndex(root, key);
+    if (currentNode->arrOfKeys[index-1] == key)
+        return currentNode;
+    return getNodeByKey(currentNode->arrOfPointers[index], key);
+}
+
+int Tree::getAmountOfKeys(Node *currentNode) {
+    int num = 0;
+    for (int i = 0; i<=(numberOfPointers-2); i++){
+        if (currentNode->arrOfKeys[i] != emptyKey) {
+            num++;
+        }
+    }
+    return num;
+}
+
 bool Tree::add(const int key, std::string data) {
     if (root == nullptr){
         root = new Node ();
@@ -218,12 +243,114 @@ bool Tree::add(const int key, std::string data) {
         root->arrOfData[0] = data;
         return true;
     }
+
     if (getNodeData(root,key) != "")
         return false;
     adding(root,key,data);
     return true;
 }
 
+void Tree::deleteKeyFromNode(Node *currentNode, int key) {
+    int index = 0;
+    for (int i = 0; i<=(numberOfPointers-2);i++){
+        if (currentNode->arrOfKeys[i] == key){
+            currentNode->arrOfKeys[i] = emptyKey;
+            currentNode->arrOfData[i] = "";
+            currentNode->arrOfPointers[i+1] = nullptr;
+            break;
+        }
+        index++;
+    }
+    for (int j = index; j<=(numberOfPointers-3);j++){
+        std::swap(currentNode->arrOfKeys[j],currentNode->arrOfKeys[j+1]);
+        std::swap(currentNode->arrOfData[j],currentNode->arrOfData[j+1]);
+        std::swap(currentNode->arrOfPointers[j+1],currentNode->arrOfPointers[j+2]);
+    }
+}
+
+void Tree:: merge (Node *leftNode, Node *rightNode, Node *parent, int index){
+    int keysNum = getAmountOfKeys(leftNode);
+    leftNode->arrOfKeys[keysNum] = parent->arrOfKeys[index-1];
+    leftNode->arrOfData[keysNum] = parent->arrOfData[index-1];
+    leftNode->arrOfPointers[keysNum+1] = rightNode->arrOfPointers[0];
+    int rightKeysNum = getAmountOfKeys(rightNode);
+    int j = 0;
+    for (int i = keysNum+1; i<=(keysNum+rightKeysNum);i++){
+        leftNode->arrOfKeys[i] = rightNode->arrOfKeys[j];
+        leftNode->arrOfData[i] = rightNode->arrOfData[j];
+        leftNode->arrOfPointers[i+1] = rightNode->arrOfPointers[j+1];
+        j++;
+    }
+    deleteKeyFromNode(parent,parent->arrOfKeys[index-1]);
+}
+
+void Tree::rebalanceLief(Node *currentNode, int keysNum, int index, Node *parent) {
+    Node *leftBrother = root;
+    Node *rightBrother = root;
+    if (index != 0){
+        leftBrother = parent->arrOfPointers[index-1];
+        int leftKeysNum = getAmountOfKeys(leftBrother);
+        if (leftKeysNum >= (numberOfPointers/2)){
+            int tempKey = leftBrother->arrOfKeys[leftKeysNum-1];
+            std::string tempData = leftBrother->arrOfData[leftKeysNum-1];
+            currentNode->arrOfKeys[keysNum] = parent->arrOfKeys[index-1];
+            currentNode->arrOfData[keysNum] = parent->arrOfData[index-1];
+            for (int i = keysNum; i>0; i++){
+                std::swap(currentNode->arrOfKeys[keysNum], currentNode->arrOfKeys[keysNum-1]);
+                std::swap(currentNode->arrOfData[keysNum],currentNode->arrOfData[keysNum-1]);
+            }
+            parent->arrOfKeys[index-1] = tempKey;
+            parent->arrOfData[index-1] = tempData;
+            leftBrother->arrOfKeys[leftKeysNum-1] = emptyKey;
+            leftBrother->arrOfData[leftKeysNum-1] = "";
+            return;
+        }
+    }
+
+    if (index != numberOfPointers-1){
+        rightBrother = parent->arrOfPointers[index+1];
+        int rightKeysNum = getAmountOfKeys(rightBrother);
+        if (rightKeysNum >= (numberOfPointers/2)){
+            int tempKey = rightBrother->arrOfKeys[0];
+            std::string tempData = leftBrother->arrOfData[0];
+            currentNode->arrOfKeys[keysNum] = parent->arrOfKeys[index+1];
+            currentNode->arrOfData[keysNum] = parent->arrOfData[index+1];
+            parent->arrOfKeys[index+1] = tempKey;
+            parent->arrOfData[index+1] = tempData;
+            deleteKeyFromNode(rightBrother,rightBrother->arrOfKeys[0]);
+            return;
+        }
+        Node *grandpa = getParent(root,parent->arrOfKeys[0],root);
+        int parIndex = getChildIndex(grandpa,parent->arrOfKeys[0]);
+        if (index != 0)
+            merge(leftBrother,currentNode,parent,index);
+        else
+            merge(currentNode,rightBrother,parent,index+1);
+        int parKeysNum = getAmountOfKeys(parent);
+        if (parKeysNum < (numberOfPointers/2))
+            return rebalanceNotALief(parent,keysNum,index,grandpa);
+    }
+}
+
+bool Tree::del(const int key){
+    Node *NodeWithDeletedKey = getNodeByKey(root,key);
+    if (isNodeALief(NodeWithDeletedKey) == true){
+        int keysNum = getAmountOfKeys(NodeWithDeletedKey);
+
+        if (keysNum >= (numberOfPointers/2)){
+            deleteKeyFromNode(NodeWithDeletedKey,key);
+            return true;
+        }
+
+        else {
+            Node *parent = getParent(root,key,root);
+            int index = getChildIndex(parent,key);
+            deleteKeyFromNode(NodeWithDeletedKey,key);
+            rebalanceLief(NodeWithDeletedKey,keysNum,index,parent);
+        }
+    }
+
+}
 
 
 int main() {
