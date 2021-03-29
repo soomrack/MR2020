@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define MAX_SIZE_OF_STACK 100
+
+typedef struct {
+    int data[MAX_SIZE_OF_STACK];
+    uint32_t size;
+} Stack_t;
+
+void push(Stack_t * stack, int value) {
+    if (stack->size >= MAX_SIZE_OF_STACK)
+        exit(1);
+    stack -> data[stack -> size] = value;
+    stack -> size ++;
+}
+
+int pop(Stack_t * stack) {
+    if (stack -> size == 0)
+        exit(1);
+    stack -> size--;
+    return stack -> data[stack -> size];
+}
+
+int peek(const Stack_t * stack) {
+    return stack->data[stack->size - 1];
+}
+
+int defining_priorities(char value) {
+    if (value == '+') {
+        return 2;
+    }
+    if (value == '-') {
+        return 2;    
+    }
+    if (value == '*') {
+        return 3;
+    }
+    if (value == '/') {
+        return 3;    
+    }
+    if (value == '(') {
+        return 1;
+    }
+}
+
+int32_t eval(const char* input_string)
+{
+    char string[100] = { 0 };
+    strcpy(string, input_string);
+    
+    char* pointer = string;
+    char* pointer_space;
+    while (strchr(pointer, ' ')) 
+    {
+        pointer_space = strchr(pointer, ' ');
+        memmove(pointer_space, pointer_space + 1, strlen(pointer)); 
+    }
+    char string_rpn[100] = { 0 };
+    strcpy(string_rpn, string);
+    int call = 0;
+    for (int counter = 0; counter < strlen(string); ++counter)
+    {
+        if ((string[counter] == '-') && (string[counter - 1] == '('))
+        {
+            string_rpn[counter + call] = '0';
+            int counter_2 = counter + 1;
+            while (counter_2 - 1 < strlen(string))
+            {
+                string_rpn[counter_2 + call] = string[counter_2 - 1];
+                counter_2 ++;
+            }
+            call++;
+        }
+    }
+
+    Stack_t stack;
+    stack.size = 0;
+
+    char string_end[100] = { 0 };
+    char string_space[2] = " ";
+    for (int counter_3 = 0; counter_3 < strlen(string_rpn); counter_3 ++)
+    {
+        if (!isalnum(string_rpn[counter_3]))
+        {
+            strcat(string_end, string_space);
+            if (string_rpn[counter_3] == ')')
+            {
+                while (peek(&stack) != '(')
+                {                  
+                    char string_curr[2];
+                    string_curr[0] = peek(&stack);
+                    strcat(string_end, string_curr);
+                    pop(&stack);
+                }
+                pop(&stack); 
+            }
+            else if (string_rpn[counter_3] == '(')
+            {
+                push(&stack, string_rpn[counter_3]);
+            }
+           
+            else if ((stack.size == 0) || (value(peek(&stack)) < value(string_rpn[counter_3])))
+            {
+                push(& stack, string_rpn[counter_3]);
+            }
+          
+            else
+            {
+                do
+                {                
+                    char string_curr[2];
+                    string_curr[0] = peek(&stack);
+                    strcat(string_end, string_curr);
+                    pop(&stack);
+                } while (!((stack.size == 0) || (value(peek(&stack)) < value(string_rpn[counter_3]))));
+               
+                push(&stack, string_rpn[counter_3]);
+            }
+        }
+     
+        else
+        {         
+            char string_curr[2];
+            string_curr[0] = string_rpn[counter_3];
+            strcat(string_end, string_curr);
+        }
+    }
+   
+    while (stack.size > 0)
+    {
+        char string_curr[2];
+        string_curr[0] = peek(&stack);
+        strcat(string_end, string_curr);
+        pop(&stack);
+    }
+    printf("%s\n", string_end);
+
+    int64_t stack_2[100] = { 0 };
+    int counter_4 = 0;
+
+    for (int counter_5 = 0; counter_5 < strlen(string_end); counter_5 ++)
+    {
+        int64_t c = 0;
+        if (string_end[counter_5] == ' ')
+            continue;
+        else if (string_end[counter_5] == '+') {
+            stack_2[counter_4 - 2] = stack_2[counter_4 - 2] + stack_2[counter_4 - 1];
+            counter_4 --;
+        }
+        else if (string_end[counter_5] == '-') {
+            stack_2[counter_4 - 2] = stack_2[counter_4 - 2] - stack_2[counter_4 - 1];
+            counter_4 --;
+        }
+        else if (string_end[counter_5] == '*') {
+            stack_2[counter_4 - 2] = stack_2[counter_4 - 1] * stack_2[counter_4 - 2];
+            counter_4 --;
+        }
+        else if (string_end[counter_5] == '/') {
+            stack_2[counter_4 - 2] = stack_2[counter_4 - 2] / stack_2[counter_4 - 1];
+            counter_4 --;
+        }
+        else
+        {           
+            char string_num[100] = { 0 };
+            while (isalnum(string_end[counter_5]))
+            {
+                char string_curr[2];
+                string_curr[0] = string_end[counter_5];
+                strcat(string_num, string_curr);
+                counter_5++;
+            }
+            counter_5--;
+            c = strtol(string_num, NULL, 10);
+            stack_2[counter_4] = c;
+            counter_4++;
+        }
+    }
+    return (int)stack_2[counter_4 - 1];
+}
+
+int main(void)
+{
+    return 0;
+}
