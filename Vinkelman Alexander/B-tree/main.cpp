@@ -18,6 +18,12 @@ private:
     void sort(BNode *node);
     void restruct(BNode *node);
     bool searchKey(int key, BNode *node);
+    void remove(int key, BNode *node);
+    void removeFromNode(int key, BNode *node);
+    void removeLeaf(int key, BNode *node);
+    void lconnect(BNode *node, BNode *othernode);
+    void rconnect(BNode *node, BNode *othernode);
+    void repair(BNode *node);
 
 public:
     Tree();
@@ -187,6 +193,271 @@ bool Tree::searchKey(int key, BNode *node){
             return false;
         }
     } else return false;
+}
+
+void Tree::removeFromNode(int key, BNode *node){
+    for (int i=0; i<node->count; i++){
+        if (node->keys[i]==key){
+            for (int j=i; j<node->count; j++) {
+                node->keys[j]=node->keys[j+1];
+                node->children[j]=node->children[j+1];
+            }
+            node->keys[node->count-1]=0;
+            node->children[node->count-1]=node->children[node->count];
+            node->children[node->count]=nullptr;
+            break;
+        }
+    }
+    node->count--;
+}
+
+void Tree::lconnect(BNode *node, BNode *othernode){
+    if (node==nullptr) return;
+    for (int i=0; i<=(othernode->count-1); i++){
+        node->keys[node->count]=othernode->keys[i];
+        node->children[node->count]=othernode->children[i];
+        node->count=node->count+1;
+    }
+    node->children[node->count]=othernode->children[othernode->count];
+    for (int j=0; j<=node->count; j++){
+        if (node->children[j]==nullptr) break;
+        node->children[j]->parent=node;
+    }
+    delete othernode;
+}
+
+void Tree::rconnect(BNode *node, BNode *othernode){
+    if (node==nullptr) return;
+    for (int i=0; i<=(othernode->count-1); i++){
+        node->keys[node->count]=othernode->keys[i];
+        node->children[node->count+1]=othernode->children[i+1];
+        node->count=node->count+1;
+    }
+    for (int j=0; j<=node->count; j++){
+        if (node->children[j]==nullptr) break;
+        node->children[j]->parent=node;
+    }
+    delete othernode;
+}
+
+void Tree::repair(BNode *node){
+    if ((node==root)&&(node->count==0)){
+        if (root->children[0]!=nullptr){
+            root->children[0]->parent=nullptr;
+            root=root->children[0];
+        } else {
+            delete root;
+        }
+        return;
+    }
+    BNode *ptr=node;
+    int k1;
+    int k2;
+    int positionSon;
+    BNode *parent=ptr->parent;
+    for (int j=0; j<=parent->count; j++){
+        if (parent->children[j]==ptr){
+            positionSon=j; //позиция узла по отношению к родителю
+            break;
+        }
+    }
+    //если ptr-первый ребенок (самый левый)
+    if (positionSon==0){
+        insert_to_node(parent->keys[positionSon], ptr);
+        lconnect(ptr, parent->children[positionSon+1]);
+        parent->children[positionSon+1]=ptr;
+        parent->children[positionSon]=nullptr;
+        removeFromNode(parent->keys[positionSon], parent);
+        if(ptr->count==2*t){
+            while (ptr->count==2*t){
+                if (ptr==root){
+                    restruct(ptr);
+                    break;
+                } else {
+                    restruct(ptr);
+                    ptr=ptr->parent;
+                }
+            }
+        } else
+        if (parent->count<=(t-2)) repair(parent);
+    } else {
+        //если ptr-последний ребенок (самый правый)
+        if (positionSon==parent->count){
+            insert_to_node(parent->keys[positionSon-1], parent->children[positionSon-1]);
+            lconnect(parent->children[positionSon-1], ptr);
+            parent->children[positionSon]=parent->children[positionSon-1];
+            parent->children[positionSon-1]=nullptr;
+            removeFromNode(parent->keys[positionSon-1], parent);
+            BNode *temp=parent->children[positionSon];
+            if(ptr->count==2*t){
+                while (temp->count==2*t){
+                    if (temp==root){
+                        restruct(temp);
+                        break;
+                    } else {
+                        restruct(temp);
+                        temp=temp->parent;
+                    }
+                }
+            } else
+            if (parent->count<=(t-2)) repair(parent);
+        } else { //если ptr имеет братьев справа и слева
+            insert_to_node(parent->keys[positionSon], ptr);
+            lconnect(ptr, parent->children[positionSon+1]);
+            parent->children[positionSon+1]=ptr;
+            parent->children[positionSon]=nullptr;
+            removeFromNode(parent->keys[positionSon], parent);
+            if(ptr->count==2*t){
+                while (ptr->count==2*t){
+                    if (ptr==root){
+                        restruct(ptr);
+                        break;
+                    } else {
+                        restruct(ptr);
+                        ptr=ptr->parent;
+                    }
+                }
+            } else
+            if (parent->count<=(t-2)) repair(parent);
+        }
+    }
+}
+
+void Tree::removeLeaf(int key, BNode *node){
+    if ((node==root)&&(node->count==1)){
+        removeFromNode(key, node);
+        root->children[0]=nullptr;
+        delete root;
+        root=nullptr;
+        return;
+    }
+    if (node==root) {
+        removeFromNode(key, node);
+        return;
+    }
+    if (node->count>(t-1)) {
+        removeFromNode(key, node);
+        return;
+    }
+    BNode *ptr=node;
+    int k1;
+    int k2;
+    int position;
+    int positionSon;
+    int i;
+    for (int i=0; i<=node->count-1; i++){
+        if (key==node->keys[i]) {
+            position=i; //позиция ключа в узле
+            break;
+        }
+    }
+    BNode *parent=ptr->parent;
+    for (int j=0; j<=parent->count; j++){
+        if (parent->children[j]==ptr){
+            positionSon=j; //позиция узла по отношению к родителю
+            break;
+        }
+    }
+    //если ptr-первый ребенок (самый левый)
+    if (positionSon==0){
+        if (parent->children[positionSon+1]->count>(t-1)){ //если у правого брата больше, чем t-1 ключей
+            k1=parent->children[positionSon+1]->keys[0]; //k1 - минимальный ключ правого брата
+            k2=parent->keys[positionSon]; //k2 - ключ родителя, больше, чем удаляемый, и меньше, чем k1
+            insert_to_node(k2, ptr);
+            removeFromNode(key, ptr);
+            parent->keys[positionSon]=k1; //меняем местами k1 и k2
+            removeFromNode(k1, parent->children[positionSon+1]); //удаляем k1 из правого брата
+        } else { //если у правого <u>единственного</u> брата не больше t-1 ключей
+            removeFromNode(key, ptr);
+            if (ptr->count<=(t-2)) repair(ptr);
+        }
+    } else {
+        //если ptr-последний ребенок (самый правый)
+        if (positionSon==parent->count){
+            //если у левого брата больше, чем t-1 ключей
+            if (parent->children[positionSon-1]->count>(t-1)){
+                BNode *temp=parent->children[positionSon-1];
+                k1=temp->keys[temp->count-1]; //k1 - максимальный ключ левого брата
+                k2=parent->keys[positionSon-1]; //k2 - ключ родителя, меньше, чем удаляемый и больше, чем k1
+                insert_to_node(k2, ptr);
+                removeFromNode(key, ptr);
+                parent->keys[positionSon-1]=k1;
+                removeFromNode(k1, temp);
+            } else { //если у <u>единственного</u> левого брата не больше t-1 ключей
+                removeFromNode(key, ptr);
+                if (ptr->count<=(t-2)) repair(ptr);
+            }
+        } else { //если ptr имеет братьев справа и слева
+            //если у правого брата больше, чем t-1 ключей
+            if (parent->children[positionSon+1]->count>(t-1)){
+                k1=parent->children[positionSon+1]->keys[0]; //k1 - минимальный ключ правого брата
+                k2=parent->keys[positionSon]; //k2 - ключ родителя, больше, чем удаляемый и меньше, чем k1
+                insert_to_node(k2, ptr);
+                removeFromNode(key, ptr);
+                parent->keys[positionSon]=k1; //меняем местами k1 и k2
+                removeFromNode(k1, parent->children[positionSon+1]); //удаляем k1 из правого брата
+            } else {
+                //если у левого брата больше, чем t-1 ключей
+                if (parent->children[positionSon-1]->count>(t-1)){
+                    BNode *temp=parent->children[positionSon-1];
+                    k1=temp->keys[temp->count-1]; //k1 - максимальный ключ левого брата
+                    k2=parent->keys[positionSon-1]; //k2 - ключ родителя, меньше, чем удаляемый и больше, чем k1
+                    insert_to_node(k2, ptr);
+                    removeFromNode(key, ptr);
+                    parent->keys[positionSon-1]=k1;
+                    removeFromNode(k1, temp);
+                } else { //если у обоих братьев не больше t-1 ключей
+                    removeFromNode(key, ptr);
+                    if (ptr->count<=(t-2)) repair(ptr);
+                }
+            }
+        }
+    }
+}
+
+void Tree::remove(int key, BNode *node){
+    BNode *ptr=node;
+    int position; //номер ключа
+    int i;
+    for (int i=0; i<=node->count-1; i++){
+        if (key==node->keys[i]) {
+            position=i;
+            break;
+        }
+    }
+    int positionSon; //номер сына по отношению к родителю
+    if (ptr->parent!=nullptr){
+        for(int i=0; i<=ptr->parent->count; i++){
+            if (ptr->children[i]==ptr){
+                positionSon==i;
+                break;
+            }
+        }
+    }
+    //находим наименьший ключ правого поддерева
+    ptr=ptr->children[position+1];
+    int newkey=ptr->keys[0];
+    while (ptr->leaf==false) ptr=ptr->children[0];
+    //если ключей в найденном листе не больше 1 - ищем наибольший ключ в левом поддереве
+    //иначе - просто заменяем key на новый ключ, удаляем новый ключ из листа
+    if (ptr->count>(t-1)) {
+        newkey=ptr->keys[0];
+        removeFromNode(newkey, ptr);
+        node->keys[position]=newkey;
+    } else {
+        ptr=node;
+        //ищем наибольший ключ в левом поддереве
+        ptr=ptr->children[position];
+        newkey=ptr->keys[ptr->count-1];
+        while (ptr->leaf==false) ptr=ptr->children[ptr->count];
+        newkey=ptr->keys[ptr->count-1];
+        node->keys[position]=newkey;
+        if (ptr->count>(t-1)) removeFromNode(newkey, ptr);
+        else {
+            //если ключей не больше, чем t-1 - перестраиваем
+            removeLeaf(newkey, ptr);
+        }
+    }
 }
 
 int main() {
