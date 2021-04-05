@@ -1,13 +1,16 @@
-// Created by alena on 22.03.2021.
-
 #include "B_tree.h"
 
 B_Node::B_Node(int t, bool leaf) {
     this->t = t;
     this->leaf = leaf;
-    keys = new int[t*2-1];
+    keys = new int[2*t-1];
     Children = new B_Node*[2*t];
+    Parent = nullptr;
     n_keys = 0;
+}
+B_Node::~B_Node() {
+    delete [] keys;
+    delete [] Children;
 }
 void B_Node::traverse() {
     int i;
@@ -48,6 +51,7 @@ void B_Tree::insert(int key) {
         if (root->n_keys == 2*t-1) { // Root is full
             B_Node *new_node = new B_Node(t, false);
             new_node->Children[0] = root;
+            root->Parent = new_node;
             // Split the old root and move 1 key to the new root
             new_node->split_Child(0, root);
             // Insert to one of the splitted children the key
@@ -66,7 +70,6 @@ void B_Tree::insert(int key) {
 void B_Node::insert_smart(int key) {
     // The greatest key
     int i = n_keys - 1;
-    
     if (leaf == true) { // This child is a leaf node
         // Moves all greater keys (and, btw, find the location of new key to be inserted)
         while (i >= 0 && keys[i] > key) {
@@ -81,7 +84,7 @@ void B_Node::insert_smart(int key) {
         while (i >= 0 && keys[i] > key) {
             i--;
         }
-        if (Children[i+1]->n_keys == 2*t-1) { // Child is full
+        if (Children[i+1]->n_keys == 2*t-1) { // Child i+1 is full
             // Split the child and move 1 key up
             split_Child(i + 1, Children[i + 1]);
             // Insert to one of the splitted children the key
@@ -99,6 +102,7 @@ void B_Node::split_Child(int i, B_Node *old_child) {
     // new_child is going to store (t-1) keys of old_child
     B_Node *new_child = new B_Node(old_child->t, old_child->leaf);
     new_child->n_keys = t - 1;
+    new_child->Parent = old_child->Parent;
     // Copy the last (t-1) keys of old_child to new_child
     for (int j = 0; j < t-1; j++) {
         new_child->keys[j] = old_child->keys[j + t];

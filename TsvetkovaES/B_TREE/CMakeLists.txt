@@ -3,4 +3,4 @@ project(B_tree)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(B_tree main.cpp B_tree.cpp B_tree.h)
+add_executable(B_tree main.cpp B_tree.cpp B_tree.h Delete.cpp)
