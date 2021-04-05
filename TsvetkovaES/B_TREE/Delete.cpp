@@ -123,28 +123,37 @@ B_Node* B_Node::get_succ(int key_count) {
 
 void B_Node::del_from_nonleaf(int key_count) {
     /*
-    int key_to_del = keys[key_count];
     B_Node * succ = this->get_succ();
     if(succ->n_keys > (t - 1)) { // аксцессор не пустой
+        // ключ - аксцессор
         int succ_key = succ->keys[0];
-        // ставим аксцессор на место node_del->keys[key_count];
+        // ставим аксцессор на место ключа, который мы удаляем;
         this->keys[key_count] = succ_key;
-        this->n_keys--;
-        succ.del(succ_key);
-        // return;
+        // удаляем ключ-аксцессор
+        succ.del_from_leaf(0);
+        return;
     }
     Node * pred = this->get_pred();
     if(pred->n_keys > t - 1) { // предецессор не пустой
+        // ключ - предецессор
         int pred_key = pred->keys[pred->n_keys-1];
-        // ставим предецессор на место node_del->keys[key_count];
+        // ставим предецессор на место ключа, который мы удаляем;
         this->keys[key_count] = pred_key;
-        this->n_keys--;
-        pred.del(pred_key);
-        // return;
+        // удаляем ключ-предецессор
+        pred.del_from_leaf(pred->n_keys-1);
+        return;
     }
-    succ.merge(pred);
-    succ.del(key_to_del);
-    // refactor (Accessor->Parent);
+    
+    // аксцессор и предецессор оба пустые
+    int pred_key = pred->keys[pred->n_keys-1];
+    // ставим предецессор на место ключа, который мы удаляем;
+    this->keys[key_count] = pred_key;
+    int a = n_keys-1;
+    // объединяем аксцессор и предецессор
+    pred.merge(succ);
+    // удаляем ключ-предецессор (он в серединке объединённого узла)
+    pred.del_from_leaf(a);
+    return;
     */
 }
 
