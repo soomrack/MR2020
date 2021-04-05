@@ -1,182 +1,197 @@
 #include <iostream>
-
 using namespace std;
-const int cell = 2;
+
+const int number_of_pointers = 4;
+const int empty_key = INT_MAX;
+
 
 class Node {
-public:
-    int keys[(2 * cell - 1)];
-    Node* children[(2 * cell)];
-    int count;
-    bool leaf;
-    Node(int key);
-};
-
-Node::Node(int key) {
-    this->keys[0] = key;
-    for (int counter = 1; counter < (2 * cell - 1); counter++)
-        this->keys[counter] = 0;
-    for (int counter = 1; counter < (2 * cell - 1); counter++)
-        counter = nullptr;
-    this->leaf = true;
-    this->count = 1;
-}
-
-class B_Tree {
-public:
-    Node* root;
-    B_Tree() { root = nullptr; }
-
-    void adding(int key);
-    static Node* FIND(int key, Node* root);
-    void REMOVE(int key);
-    static void PRINT(Node* root);
 private:
-    static void insert(int key, Node* node);
-    static void sort(Node* node);
-    void restruct(Node* node);
-    static Node* find_parent(Node* node, Node* root);
+    bool Node_full(); 
+    bool Node_leaf();
+
+    void split_child(int i, Node* Child);
+  
+    void Insert_Non_Full(const int key, string data);
+    int Count_Keys();
+public:
+    int array_of_keys [number_of_pointers - 1]; 
+    string array_of_data [number_of_pointers - 1];
+    Node* Pointers [number_of_pointers]{};
+public:
+    Node();
+    ~Node();
+    friend class BTree;
 };
 
-void B_Tree::adding (int key) {
-    if (root == nullptr) {
-        root = new Node(key);
-        return;
+
+class BTree {
+public:
+    void Insert(const int key, string data);
+    bool Delete(const int key);
+    string Find(const int key);
+public:
+    BTree() { root = nullptr; };
+    ~BTree() { delete root; };
+    friend class Node;
+private:
+    Node* root;
+    string Find_In_Subtree(Node* current_node, int key);
+
+};
+
+Node::Node()
+{
+    for (int counter = 0; counter <= (number_of_pointers - 2); counter++) {
+        array_of_keys[counter] = empty_key;
+        array_of_data[counter] = "";
+        Pointers[counter] = nullptr;
     }
-    Node* temp = root;
-    while (!temp->leaf) {
-        for (int counter = 0; counter < (2 * cell - 1); counter++) {
-            if (temp->keys[counter] != 0) {
-                if (key < temp->keys[counter]) {
-                    temp = temp->children[i];
-                    break;
-                }
-                if ((temp->keys[counter + 1] == 0) && (key > temp->keys[counter])) {
-                    temp = temp->children[counter + 1];
-                    break;
-                }
-            }
-            else
-                break;
-        }
-    }
-    insert(key, temp);
-    Node* temp_parent = find_parent(temp, root);
-    while (temp->count >= (2 * cell - 1)) {
-        if (temp == root)
-            restruct(temp);
-        else {
-            restruct(temp);
-            temp = temp_parent;
-        }
-    }
+    Pointers[number_of_pointers - 1] = nullptr;
 }
 
-void B_Tree::insert(int key, Node* node) {
-    node->keys[node->count] = key;
-    node->count = node->count + 1;
-    sort(node);
+Node::~Node()
+{
+    delete Pointers[number_of_pointers - 1];
 }
 
-void B_Tree::sort(Node* node) {
-    int temp;
-    for (int counter = 0; counter < (node->count); counter++) {
-        for (int counter_2 = counter + 1; counter_2 < (node->count); counter_2++) {
-            if (node->keys[counter] > node->keys[counter_2]) {
-                temp = node->keys[counter];
-                node->keys[counter] = node->keys[counter_2];
-                node->keys[counter_2] = temp;
-            }
+bool Node::Node_full ()
+{
+    if (array_of_keys[number_of_pointers - 2] == empty_key)
+        return true;
+    return false;
+}
+
+bool Node::Node_leaf ()
+{
+    if (Pointers[0] == nullptr)
+        return true;
+    return false;
+}
+
+int Node::Count_Keys()
+{
+    int count = 0;
+    for (int counter = 0; counter <= (number_of_pointers - 2); counter++) {
+        if (array_of_keys[counter] != empty_key) {
+            count++;
         }
     }
+    return count;
+}
+string BTree::Find_In_Subtree(Node* current_node, int key)
+{
+    if (current_node == nullptr)
+        return "fault";
+    int counter = 0;
+    while (counter <= number_of_pointers - 2 && current_node->array_of_keys[counter] <= key)
+        counter++;
+
+    if (current_node->array_of_keys[counter - 1] == key)
+        return current_node->array_of_data[counter - 1];
+    if (current_node->Node_leaf())
+        return "not_found";
+    return Find_In_Subtree(current_node->Pointers[counter], key);
 }
 
-Node* B_Tree::FIND(int key, Node* root) {
-    for (int counter = 0; counter < (root->count); counter++) {
-        if (root->keys[counter] == key)
-            return root;
-    }
-    for (int counter = 0; counter  < (root->count); counter++) {
-        if (key < root->keys[counter])
-            return FIND(key, root->children[counter]);
-        if ((key > root->keys[counter]) && (root->count = (counter + 1)))
-            return FIND(key, root->children[counter + 1]);
-    }
-    return nullptr;
+string BTree::Find(const int key)
+{
+    return Find_In_Subtree(root, key);
 }
 
-void B_Tree::restruct(Node* node) {
-    Node* new_child1 = new Node(0);
-    new_child1->count = 0;
-    Node* new_child2 = new Node(0);
-    new_child2->count = 0;
+void BTree::Insert(const int key, string data)
+{
 
-    for (int counter = 0; counter < (cell - 1); counter++) {
-        new_child1->keys[counter] = node->keys[counter];
-        new_child2->keys[counter] = node->keys[counter + cell];
-    }
-    new_child1->count = cell - 1;
-    new_child2->count = cell - 1;
-    if (node->children[0] != nullptr) {
-        for (int counter = 0; counter <= (cell - 1); counter++) {
-            new_child1->children[counter] = node->children[counter];
-            new_child2->children[counter] = node->children[counter + cell];
-        }
-        new_child1->leaf = false;
-        new_child2->leaf = false;
+    if (root == nullptr)
+    {
+        root = new Node();
+        root->array_of_keys[0] = key;
+        root->array_of_data[0] = data;
     }
 
-    if (node == root) {
-        node->keys[0] = node->keys[cell - 1];
-        for (int counter = 1; counter  < (2 * cell - 1); counter++)
-            node->keys[counter] = 0;
-        node->count = 1;
-        node->children[0] = new_child1;
-        node->children[1] = new_child2;
-        for (int counter = 2; counter < (2 * cell); counter++)
-            node->children[counter] = nullptr;
-        node->leaf = false;
+    if (root->Node_full())
+    {  
+        Node* New_Root = new Node();
+        New_Root->Pointers[0] = root;  
+        New_Root->split_child(0, root);
+
+        if (New_Root->array_of_keys[0] < key)
+            New_Root->Pointers[1]->Insert_Non_Full(key, data);
+        else
+            New_Root->Pointers[0]->Insert_Non_Full(key, data);
+
+        root = New_Root;
     }
     else {
-        Node* parent_node = find_parent(node, root);
-        insert(node->keys[cell - 1], parent_node);
-        for (int counter = 0; counter < (2 * cell); counter++) {
-            if (parent_node->children[counter] == node)
-            {
-                parent_node->children[counter] = nullptr;
-            }
-        }
-        for (int counter = 0; counter < (2 * cell); counter++) {
-            if (parent_node->children[counter] == nullptr) {
-                for (int counter_2 = (2 * cell - 1); counter_2 > (counter + 1); counter_2--)
-                    parent_node->children[counter_2] = parent_node->children[counter_2 - 1];
-                parent_node->children[counter + 1] = new_child2;s
-                parent_node->children[counter] = new_child1;
-                break;
-            }
-        }
-        parent_node->leaf = false;
+        root->Insert_Non_Full(key, data);
     }
 }
 
-Node* B_Tree::find_parent(Node* node, Node* root) {
-    for (int counter = 0; counter < (2 * cell); counter++)
+void Node::split_child(int counter_0, Node* Child)
+{
+    Node* Right = new Node();
+    for (int counter_1 = 0; counter_1 < number_of_pointers - 3; ++counter_1)
     {
-        if (root->children[counter] == node)
-        {
-            return root;
-        }
+        Right->array_of_keys[counter_1] = Child->array_of_keys[counter_1 + (number_of_pointers - 2)];
+        Right->array_of_data[counter_1] = Child->array_of_data[counter_1 + (number_of_pointers - 2)];
+        Child->array_of_keys[counter_1 + (number_of_pointers - 2)] = empty_key;
+        Child->array_of_data[counter_1 + (number_of_pointers - 2)] = "";
     }
-    for (int counter = 0; counter < (2 * cell); counter++)
+    for (int counter_2 = 0; counter_2 < number_of_pointers - 2; counter_2 ++)
     {
-        if (root->children[counter] != nullptr)
+        Right->Pointers[counter_2] = Child->Pointers[counter_2 + (number_of_pointers - 2)];
+        Child->Pointers[counter_2 + (number_of_pointers - 2)] = nullptr;
+    }
+
+    for (int counter_3 = Count_Keys(); counter_3 >= counter_0 + 1; counter_3--) {
+        Pointers[counter_3 + 1] = Pointers[counter_3];
+    }
+
+    Pointers[counter_0 + 1] = Right;
+    for (int counter_4 = Count_Keys() - 1; counter_4 >= counter_0; counter_4--)
+    {
+        array_of_keys[counter_4 + 1] = array_of_keys[counter_4];
+        array_of_data[counter_4 + 1] = array_of_data[counter_4];
+    }
+
+    array_of_keys[counter_0] = Child->array_of_keys[number_of_pointers - 3];
+    Child->array_of_keys[number_of_pointers - 3] = empty_key;
+    array_of_data[counter_0] = Child->array_of_data[number_of_pointers - 3];
+    Child->array_of_data[number_of_pointers - 3] = "";
+}
+
+void Node::Insert_Non_Full(const int key, string data)
+{
+
+    int index = Count_Keys() - 1;
+
+    if (Node_leaf())
+    {      
+        while (index >= 0 && array_of_keys[index] > key)
         {
-            find_parent(node, root->children[counter]);
+            array_of_keys[index + 1] = array_of_keys[index];
+            array_of_data[index + 1] = array_of_data[index];
+            index--;
         }
+        array_of_keys[index + 1] = key;
+        array_of_data[index + 1] = data;
+    }
+    else
+    {
+        while (index >= 0 && array_of_keys[index] > key)
+            index--;
+        if (Pointers[index + 1]->Node_full())
+        {
+            split_child(index + 1, Pointers[index + 1]);
+            if (array_of_keys[index + 1] < key) {
+                index++;
+            }
+        }
+        Pointers[index + 1]->Insert_Non_Full(key, data);
     }
 }
 
-int main() 
-{  
+int main()
+{
     return 0;
 }
