@@ -23,42 +23,32 @@ void B_Node::borrow_from_right(int node_pos) {
     n_keys++;
 }
 
-void B_Node::merge(int node_pos) {
-    if(node_pos != 0) {
-        B_Node *left_sibl = Parent->Children[node_pos - 1];
-        int key_parent = Parent->keys[node_pos - 1];
-        for (int i = n_keys - 1; i >= 0; i--) {
-            keys[i + left_sibl->n_keys + 1] = keys[i];
-        }
-        keys[left_sibl->n_keys] = key_parent;
-        for (int i = 0; i < left_sibl->n_keys; i++) {
-            keys[i] = left_sibl->keys[i];
-        }
-        n_keys = n_keys + 1 + left_sibl->n_keys;
-        // При объединении ключей количество ключей у родителя может стать меньше минимального.
-        // Нужно сделать корректное удаление (просто удаление или удаление с merge или borrow left/right)
-        Parent->del_from_leaf(node_pos - 1);
-        delete left_sibl; // ????????????????????????????
-        return;
-    } else {
-        B_Node* right_sibl = Parent->Children[node_pos + 1];
-        int key_parent = Parent->keys[node_pos];
-        keys[n_keys] = key_parent;
-        for(int i = 0; i< right_sibl->n_keys; i++) {
-            keys[n_keys + i] = right_sibl->keys[i];
-        }
-        n_keys = n_keys + 1 + right_sibl->n_keys;
-        Parent->del_from_leaf(node_pos);
-        delete right_sibl;
-        return;
+void B_Node::merge_right_sibl(int node_pos) {
+    // this в данном случае левый брат на позиции node_pos
+    B_Node* right_sibl = Parent->Children[node_pos+1];
+    // ключ родителя перекидываем в левого брата (из массива ключей родителя удалим его ниже)
+    int key_parent = Parent->keys[node_pos];
+    keys[n_keys] = key_parent;
+    n_keys++;
+    // объединяем левого и правого брата в один узел, перекидываем ключи..
+    for (int i = 0; i < right_sibl->n_keys; i++) {
+        keys[i + n_keys] = right_sibl->keys[i];
     }
-    
+    n_keys += right_sibl->n_keys;
+    // удаляем правого брата из массива детей родителя
+    for (int i = node_pos+1; i < n_keys; i++) {
+        Parent->Children[i] = Parent->Children[i+1];
+    }
+    // ключ из массива ключей родителя нужно корректно удалить
+    Parent->del_from_leaf(node_pos);
+    // правый брат больше не нужен
+    delete right_sibl;
 }
 
-void B_Node::del_from_leaf(int key_count) {
-    // если в узле больше чем минимум ключей - просто удаляем ключ
-    if(n_keys > (t - 1)) {
-        for(int i = key_count; i < n_keys - 1; i++) {
+void B_Node::del_from_leaf(int key_pos) {
+    // если в узле больше чем минимум ключей (или это корень дерева) - просто удаляем ключ
+    if(n_keys > (t - 1) || Parent == nullptr) {
+        for(int i = key_pos; i < n_keys - 1; i++) {
             keys[i] = keys[i+1];
         }
         n_keys--;
@@ -77,84 +67,108 @@ void B_Node::del_from_leaf(int key_count) {
         if(left_sibling->n_keys > this->t - 1) {
             // просим у него один ключ ("перебрасываем" через родителя)
             borrow_from_left(node_del_pos);
-            key_count++;
+            key_pos++;
             // теперь в узле больше чем минимум ключей - просто удаляем ключ
-            del_from_leaf(key_count);
+            del_from_leaf(key_pos);
             return;
         }
     }
     // если правый брат есть
-    if(node_del_pos < (Parent->n_keys - 1)) {
+    if(node_del_pos < (Parent->n_keys)) {
         right_sibling = Parent->Children[node_del_pos + 1];
         // если у него больше t-1 ключей
         if(right_sibling->n_keys > t - 1) {
             // просим у него один ключ ("перебрасываем" через родителя)
             borrow_from_right(node_del_pos);
             // теперь в узле больше чем минимум ключей - просто удаляем ключ
-            del_from_leaf(key_count);
+            del_from_leaf(key_pos);
             return;
         }
     }
     // Если у левого и правого брата минимальное количество ключей (просить у них ключ нельзя),
     // то мы объединяем два братских узла
-    merge (node_del_pos);
-    // ЗНАЧЕНИЕ key_count изменится!!!!!1
-    // удалить ключ из обновлённого узла node_del
-    del_from_leaf(key_count);
+    if(node_del_pos != 0) { // перекидываем все ключи в левого брата из node_del
+        key_pos += left_sibling->n_keys;
+        left_sibling->merge_right_sibl(node_del_pos - 1);
+        left_sibling->del_from_leaf(key_pos);
+    } else { // перекидываем ключи с правого брата в node_del
+        this->merge_right_sibl(node_del_pos);
+        del_from_leaf(key_pos);
+    }
 }
 
-B_Node* B_Node::get_pred(int key_count) {
-    // Keep moving to the right most node until we reach a leaf
-    B_Node* cur = Children[key_count];
+B_Node* B_Node::get_pred(int key_pos) {
+    // максимальный ключ в поддереве левого потомка
+    B_Node* cur = Children[key_pos];
     while (cur->leaf == false) {
         cur = cur->Children[cur->n_keys];
     }
     return cur;
 }
 
-B_Node* B_Node::get_succ(int key_count) {
-    // Keep moving the left most node starting from Children[key_count+1] until we reach a leaf
-    B_Node *cur = Children[key_count+1];
+B_Node* B_Node::get_succ(int key_pos) {
+    // минимальный ключ в поддереве правого потомка
+    B_Node *cur = Children[key_pos + 1];
     while (cur->leaf == false) {
         cur = cur->Children[0];
     }
     return cur;
 }
 
-void B_Node::del_from_nonleaf(int key_count) {
-    /*
-    B_Node * succ = this->get_succ();
-    if(succ->n_keys > (t - 1)) { // аксцессор не пустой
-        // ключ - аксцессор
-        int succ_key = succ->keys[0];
-        // ставим аксцессор на место ключа, который мы удаляем;
-        this->keys[key_count] = succ_key;
-        // удаляем ключ-аксцессор
-        succ.del_from_leaf(0);
+void B_Node::merge_succ_pred(B_Node *succ, B_Node *pred, int node_pos, int key_pos) {
+    if(pred->Parent == succ->Parent) { // если они братья, тогда объединяем их как братьев
+        key_pos += pred->n_keys;
+        pred->merge_right_sibl(node_pos);
+        pred->del_from_leaf(key_pos);
         return;
     }
-    Node * pred = this->get_pred();
-    if(pred->n_keys > t - 1) { // предецессор не пустой
-        // ключ - предецессор
-        int pred_key = pred->keys[pred->n_keys-1];
-        // ставим предецессор на место ключа, который мы удаляем;
-        this->keys[key_count] = pred_key;
-        // удаляем ключ-предецессор
-        pred.del_from_leaf(pred->n_keys-1);
-        return;
+    // ключ родителя акцессора ставим на место ключа, который удаляем (из массива ключей родителя удалим его ниже)
+    int key_succ_parent = succ->Parent->keys[0];
+    keys[key_pos] = key_succ_parent;
+    // объединяем аксцессор и предецессор в один узел, перекидываем ключи..
+    for(int i = 0; i < succ->n_keys; i++) {
+        pred->keys[pred->n_keys + 1] = succ->keys[i];
+    }
+    pred->n_keys += succ->n_keys;
+    // удаляем аксцессор из массива детей родителя аксцессора
+    for(int i = 0; i < succ->n_keys; i++) {
+        succ->Parent->Children[i] = succ->Parent->Children[i + 1];
+    }
+    // ключ родителя акцессора нужно корректно удалить
+    succ->Parent->del_from_leaf(0);
+    // аксцессор больше не нужен
+    delete succ;
+}
+
+void B_Node::del_from_nonleaf(int key_pos) {
+    // порядковый номер узла node_del в массиве детей Children
+    int node_del_pos = 0;
+    if(Parent != nullptr) {
+        while(Parent->Children[node_del_pos] != this) node_del_pos++;
     }
     
+    B_Node * succ = this->get_succ(key_pos);
+    if(succ->n_keys > (t - 1)) { // аксцессор не пустой
+        // ключ - аксцессора
+        int succ_key = succ->keys[0];
+        // ставим аксцессор на место ключа, который мы удаляем;
+        this->keys[key_pos] = succ_key;
+        // удаляем ключ-аксцессор
+        succ->del_from_leaf(0);
+        return;
+    }
+    B_Node * pred = this->get_pred(key_pos);
+    if(pred->n_keys > t - 1) { // предецессор не пустой
+        // ключ - предецессора
+        int pred_key = pred->keys[pred->n_keys-1];
+        // ставим предецессор на место ключа, который мы удаляем;
+        this->keys[key_pos] = pred_key;
+        // удаляем ключ-предецессор
+        pred->del_from_leaf(pred->n_keys-1);
+        return;
+    }
     // аксцессор и предецессор оба пустые
-    int pred_key = pred->keys[pred->n_keys-1];
-    // ставим предецессор на место ключа, который мы удаляем;
-    this->keys[key_count] = pred_key;
-    int a = n_keys-1;
-    // объединяем аксцессор и предецессор
-    pred.merge(succ);
-    // удаляем ключ-предецессор (он в серединке объединённого узла)
-    pred.del_from_leaf(a);
-    return;
-    */
+    merge_succ_pred(succ,pred,node_del_pos,key_pos);
 }
 
 bool B_Tree::del(int key_to_del) {
@@ -165,14 +179,14 @@ bool B_Tree::del(int key_to_del) {
         return false;
     }
     // порядковый номер ключа key_to_del в массиве ключей keys узла node_del
-    int key_count = 0;
-    while(node_del->keys[key_count] != key_to_del) key_count++;
+    int key_pos = 0;
+    while(node_del->keys[key_pos] != key_to_del) key_pos++;
     
     if(node_del->leaf == true) { // если узел листовой
-        node_del->del_from_leaf(key_count);
+        node_del->del_from_leaf(key_pos);
         return true;
     } else { // если узел "внутренний"
-        node_del->del_from_nonleaf(key_count);
+        node_del->del_from_nonleaf(key_pos);
         return true;
     }
 }

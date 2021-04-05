@@ -1,5 +1,20 @@
 #include "B_tree.h"
-
+B_Tree::B_Tree(int t) {
+    root = nullptr;
+    this->t = t;
+}
+void B_Tree::Print() {
+    if (root != nullptr) {
+        root->traverse();
+    }
+}
+B_Node* B_Tree::search(int k) {
+    if(root == nullptr) {
+        return nullptr;
+    } else {
+        return root->search(k);
+    }
+}
 B_Node::B_Node(int t, bool leaf) {
     this->t = t;
     this->leaf = leaf;

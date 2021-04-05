@@ -22,35 +22,23 @@ public:
     B_Node *search(int key);
     void insert_smart(int key);
     void split_Child(int i, B_Node *old_child);
-    void del_from_leaf(int key_count);
-    void del_from_nonleaf(int key_count);
-    B_Node* get_succ(int key_count);
-    B_Node* get_pred(int key_count);
+    void del_from_leaf(int key_pos);
+    void del_from_nonleaf(int key_pos);
+    B_Node* get_succ(int key_pos);
+    B_Node* get_pred(int key_pos);
     void borrow_from_left(int node_pos);
     void borrow_from_right(int node_pos);
-    void merge(int node_pos); // with left sibling
+    void merge_succ_pred(B_Node* succ, B_Node* pred, int node_pos, int key_pos);
+    void merge_right_sibl(int node_pos); // merge node with right sibl
 };
 
 class B_Tree {
     B_Node *root;
     int t;
 public:
-    B_Tree(int t) {
-        root = nullptr;
-        this->t = t;
-    }
-    void Print() {
-        if (root != nullptr) {
-            root->traverse();
-        }
-    }
-    B_Node* search(int k) {
-        if(root == nullptr) {
-            return nullptr;
-        } else {
-            return root->search(k);
-        }
-    }
+    B_Tree(int t);
+    void Print();
+    B_Node* search(int k);
     void insert(int key);
     bool del(int key_to_del);
 };
