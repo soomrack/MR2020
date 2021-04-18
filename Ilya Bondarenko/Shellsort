@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+
+void Shell(int array[], int size_of_array) //сортировка Шелла
+{
+	int distance = size_of_array;
+	distance = distance / 2;
+	int counter_1 = 0;
+
+	while (distance > 0) // пока дистанция больше или равна 1
+	{
+		for (counter_1 = 0; counter_1 < size_of_array - distance; counter_1++) // число пар 
+		{
+			while (array[counter_1] > array[counter_1 + distance])
+			{
+				int temporary_variable = array[counter_1];
+				array[counter_1] = array[counter_1 + distance];
+				array[counter_1 + distance] = temporary_variable;
+			}
+		}
+		distance = distance - 1 ;
+	}
+}
+//главная функция
+void main()
+{
+	setlocale(LC_ALL, "Rus");
+
+	// задаем исходный массив
+	int array[20] = { 1, 21, 3, 69, 85, 4, 45, 2, 9, 5, 110, 250, 700, 100, 5 , 52, 99, 100, 94, 7 };
+	cout << " Исходный массив:  1, 21, 3, 69, 85, 4, 45, 2, 9, 5, 110, 250, 700, 100, 5 , 52, 99, 100, 94, 7 " << endl;
+
+	// приступаем к сортировке 
+	Shell(array, 20);
+
+	// вывод результата
+	cout << " Сортированный массив: " << endl;
+	for (int counter_2 = 0; counter_2 < 20; counter_2++)
+	{
+		cout << array[counter_2] << endl;
+	}
+}
