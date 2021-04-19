@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/Local/University-Github/6th-Sem-All/CPP/Aho-Korasik/Aho_Corasick.h
+string
+-
+vector
+D:/Local/University-Github/6th-Sem-All/CPP/Aho-Korasik/vector
+map
+-
+
+D:/Local/University-Github/6th-Sem-All/CPP/Aho-Korasik/main.cpp
+iostream
+-
+Aho_Corasick.h
+D:/Local/University-Github/6th-Sem-All/CPP/Aho-Korasik/Aho_Corasick.h
+ctime
+-
+fstream
+-
+
