@@ -5,7 +5,7 @@
 // Ukkonen's algorithm
 static volatile int arrLength = 0;
 
-char input[10000] = {"123124"};
+char input[10000] = {"1231245123412"};
 
 class Node {
 public:
@@ -52,8 +52,6 @@ Node::Node(int start, int end) {
 
 
 Node::~Node() {
-    delete children[127];
-    delete suffixLink;
 }
 
 Tree::Tree() {
@@ -76,7 +74,7 @@ void Tree:: split(Node* temp) {
     Node *parent = new Node(start,start+activeLength-1);
     current->children[input[start]] = parent;
     parent->children[input[temp->start]] = temp;
-    parent->children[input[counter]] = new Node (counter, arrLength);
+    parent->children[input[counter]] = new Node (counter, arrLength+1);
     remainder --;
     activeLength --;
     if (lastSplit != nullptr)
@@ -93,7 +91,7 @@ void Tree:: split(Node* temp) {
 }
 
 void Tree::add(Node* temp) {
-    if (counter == arrLength+2)
+    if ((counter == arrLength+2) && (remainder == 0))
         return;
     if (isCntInc == false) {
         if (activeLength == 0){
@@ -115,6 +113,7 @@ void Tree::add(Node* temp) {
                 remainder ++;
                 activeLength ++;
                 counter ++;
+                lastSplit = nullptr;
                 return add(current->children[input[counter-1]]);
             }
         }
@@ -130,6 +129,14 @@ void Tree::add(Node* temp) {
             if (input[child->start+activeLength]!=input[counter]){
                 split(child);
                 return add(current);
+            }
+            else {
+                isCntInc = true;
+                remainder ++;
+                activeLength ++;
+                counter ++;
+                lastSplit = nullptr;
+                return add(child);
             }
         }
     }
@@ -148,7 +155,7 @@ void Tree::add(Node* temp) {
             counter ++;
             remainder ++;
             activeLength++;
-            return add(current->children[input[counter]]);
+            return add(current->children[input[counter-1]]);
         }
 
         if (input[index] == input[counter]){
