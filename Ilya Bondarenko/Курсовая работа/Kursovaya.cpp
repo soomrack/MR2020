@@ -18,9 +18,7 @@ void shell_sort(int array[], const int size_of_array) //сортировка Ш�
 			// сравниваем элементы в паре, при необходимости - меняем местами
 			if (array[position] > array[position + distance[iteration]])
 			{
-				int temporary_variable = array[position];
-				array[position] = array[position + distance[iteration]];
-				array[position + distance[iteration]] = temporary_variable;
+				std::swap(array[position], array[position + distance[iteration]]);
 			}
 		}
 		iteration--;
