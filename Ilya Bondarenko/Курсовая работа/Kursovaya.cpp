@@ -2,18 +2,18 @@
 
 using namespace std;
 
-void shell_sort(int array[], const int size_of_array) //сортировка Шелла
+void shell_sort(int array[],  int size_of_array) //сортировка Шелла
 {
 	// дистанция выбрана согласно последовательности Пратта
-	int distance[33] = {486, 432, 384, 324, 288, 256, 243, 216, 192, 162,
-			    144, 128, 108, 96, 81, 72, 64, 54, 48, 36, 32, 
-			    27, 24, 18, 16, 12, 9, 8, 6, 4, 3, 2, 1 };
-	int iteration = 0;
+	int distance[33] = { 1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24, 27, 32, 
+						36, 48, 54, 64, 72, 81, 96, 108, 128, 144, 162,
+						192, 216, 243, 256, 288, 324, 384, 432, 486 };
+	int iteration = 8;
 	int position = 0;
 	// в зависимости от номера итерации у нас берется разная дистанция
-	while (iteration < 7) 
+	while (iteration > 0)
 	{
-		for (position = 0; position < size_of_array - distance[iteration]; position++) 
+		for (position = 0; position < size_of_array - distance[iteration]; position++)
 		{
 			// сравниваем элементы в паре, при необходимости - меняем местами
 			if (array[position] > array[position + distance[iteration]])
@@ -23,9 +23,10 @@ void shell_sort(int array[], const int size_of_array) //сортировка Ш�
 				array[position + distance[iteration]] = temporary_variable;
 			}
 		}
-		iteration ++;
+		iteration--;
 	}
 }
+
 //главная функция
 void main()
 {
