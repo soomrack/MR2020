@@ -2,10 +2,12 @@
 
 using namespace std;
 
-void shell_sort(int array[], int size_of_array) //сортировка Шелла
+void shell_sort(int array[], const int size_of_array) //сортировка Шелла
 {
 	// дистанция выбрана согласно последовательности Пратта
-	int distance[7] = { 9, 8, 6, 4, 3, 2, 1 };
+	int distance[33] = {486, 432, 384, 324, 288, 256, 243, 216, 192, 162,
+			    144, 128, 108, 96, 81, 72, 64, 54, 48, 36, 32, 
+			    27, 24, 18, 16, 12, 9, 8, 6, 4, 3, 2, 1 };
 	int iteration = 0;
 	int position = 0;
 	// в зависимости от номера итерации у нас берется разная дистанция
