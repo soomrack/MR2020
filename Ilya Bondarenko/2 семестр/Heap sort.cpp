@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 using namespace std;
 
-void heapify(int array[], static int size_of_array, int reference_value)
+void heapify(int array[], const int size_of_array, int reference_value)
 {
     int largest = reference_value;
     int left_value = 2 * reference_value + 1;
@@ -24,7 +24,7 @@ void heapify(int array[], static int size_of_array, int reference_value)
 }
 
 // Основная функция, выполняющая пирамидальную сортировку
-void heap_sort(int array[], static int size_of_array)
+void heap_sort(int array[], const int size_of_array)
 {
     for (int reference_value = size_of_array / 2 - 1; reference_value >= 0; reference_value--)
     {
