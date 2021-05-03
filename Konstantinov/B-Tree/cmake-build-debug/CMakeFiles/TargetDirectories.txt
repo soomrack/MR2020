@@ -1,0 +1,3 @@
+/media/alex/HDD/University/6th-sem/CPP/B-Tree/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/media/alex/HDD/University/6th-sem/CPP/B-Tree/cmake-build-debug/CMakeFiles/edit_cache.dir
+/media/alex/HDD/University/6th-sem/CPP/B-Tree/cmake-build-debug/CMakeFiles/B_Tree.dir

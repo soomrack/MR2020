@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/media/alex/HDD/University/6th-sem/CPP/B-Tree/b-tree.cpp
+cstring
+-
+b-tree.h
+/media/alex/HDD/University/6th-sem/CPP/B-Tree/b-tree.h
+
+/media/alex/HDD/University/6th-sem/CPP/B-Tree/b-tree.h
+string
+-
+
