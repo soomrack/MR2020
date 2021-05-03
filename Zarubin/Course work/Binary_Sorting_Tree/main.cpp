@@ -6,14 +6,12 @@
 
 using namespace std;
 
-// узел бинарного дерева
 struct BinaryTreeNode
 {
-    shared_ptr<BinaryTreeNode> left, right; // левое и правое поддерево
-    int key; // ключ
+    shared_ptr<BinaryTreeNode> left, right;
+    int key;
 };
 
-// класс, представляющий бинарное дерево
 class BinaryTree
 {
 public:
@@ -25,21 +23,17 @@ public:
 private:
 
     void visit_recursive(const shared_ptr<BinaryTreeNode> cur_node, const Visitor visitor);
-    shared_ptr<BinaryTreeNode> node_recursive; //корень для рекурсивной вставки
-    shared_ptr<BinaryTreeNode> m_root; // корень дерева
+    shared_ptr<BinaryTreeNode> node_recursive;
+    shared_ptr<BinaryTreeNode> m_root;
     void insert_recursive(const shared_ptr<BinaryTreeNode> cur_node, const shared_ptr<BinaryTreeNode> node_to_insert);
 
 };
 
-// рекурсивная процедура вставки ключа
-// cur_node - текущий узел дерева, с которым сравнивается вставляемый узел
-// node_to_insert - вставляемый узел
+// cur_node и node_to_insert не могут быть nullptr
 void BinaryTree::insert_recursive(const shared_ptr<BinaryTreeNode> cur_node, const shared_ptr<BinaryTreeNode> node_to_insert)
 {
-    // сравнение
     if(node_to_insert->key < cur_node->key)
     {
-        // вставка в левое поддерево
         if(cur_node->left == nullptr)
         {
             cur_node->left = node_to_insert;
@@ -49,7 +43,6 @@ void BinaryTree::insert_recursive(const shared_ptr<BinaryTreeNode> cur_node, con
     }
     else
     {
-        // вставка в правое поддерево
         if(cur_node->right == nullptr)
         {
             cur_node->right = node_to_insert;
@@ -74,18 +67,15 @@ void BinaryTree::insert(int key)
     insert_recursive(m_root, node_to_insert);
 }
 
-// рекурсивная процедура обхода дерева
-// cur_node - посещаемый в данный момент узел
+// узлы посещаем в порядке: левое поддерево -> текущий элемент -> правое поддерево
+// cur_node не может быть nullptr
 void BinaryTree::visit_recursive(const shared_ptr<BinaryTreeNode> cur_node, const Visitor visitor)
 {
-    // сначала посещаем левое поддерево
     if(cur_node->left != nullptr)
         visit_recursive(cur_node->left, visitor);
 
-    // посещаем текущий элемент
     visitor(cur_node->key);
 
-    // посещаем правое поддерево
     if(cur_node->right != nullptr)
         visit_recursive(cur_node->right, visitor);
 }
@@ -100,13 +90,11 @@ void BinaryTree::visit(const Visitor& visitor)
 int main()
 {
     BinaryTree tree;
-    // добавление элементов в дерево
     vector<int> data_to_sort = {0, -1, 2, -3, 4, -5, 6, -7, 8, -9};
     for(int value : data_to_sort)
     {
         tree.insert(value);
     }
-    // обход дерева
     tree.visit([](int visited_key)
                {
                    cout<<visited_key<<" ";
