@@ -1,9 +1,12 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
 const int t=2;
+
 struct BNode {
     int keys[2*t];
+    std::string data[2*t];
     BNode *children[2*t+1];
     BNode *parent;
     int count; //количество ключей
@@ -14,12 +17,12 @@ struct BNode {
 class Tree {
 private:
     BNode *root;
-    int x;
-    void insert_to_node(int key, BNode *node);
+    void insert_to_node(int key, BNode *node, std::string data);
     void sort(BNode *node);
     void restruct(BNode *node);
     void deletenode(BNode *node);
     bool searchKey(int key, BNode *node);
+    std::string getNodeData(BNode *currentNode, int key);
     void remove(int key, BNode *node);
     void removeFromNode(int key, BNode *node);
     void removeLeaf(int key, BNode *node);
@@ -28,18 +31,15 @@ private:
     void repair(BNode *node);
 
 public:
-    Tree(int x);
+    Tree();
     ~Tree();
-    void insert(int key);
+    void insert(int key, std::string data);
     bool search(int key);
+    std::string find(int key);
     void remove(int key);
 };
 
-Tree::Tree(int x)
-{
-    this->root = nullptr;
-    this->x = x;
-}
+Tree::Tree() { root=nullptr; }
 
 Tree::~Tree(){ if(root!=nullptr) deletenode(root); }
 
@@ -55,32 +55,42 @@ void Tree::deletenode(BNode *node){
     }
 }
 
-void Tree::insert_to_node(int key, BNode *node){
+void Tree::insert_to_node(int key, BNode *node, std::string data){
     node->keys[node->count]=key;
+    node->data[node->count]=data;
     node->count=node->count+1;
     sort(node);
 }
 
 void Tree::sort(BNode *node) {
     int m;
+    std::string n;
     for (int i=0; i<(2*t-1); i++){
         for (int j=i+1; j<=(2*t-1); j++){
             if ((node->keys[i]!=0) && (node->keys[j]!=0)){
                 if ((node->keys[i]) > (node->keys[j])){
                     m=node->keys[i];
+                    n=node->data[i];
                     node->keys[i]=node->keys[j];
+                    node->data[i]=node->data[j];
                     node->keys[j]=m;
+                    node->data[j]=n;
                 }
             } else break;
         }
     }
 }
 
-void Tree::insert(int key){
+void Tree::insert(int key, std::string data){
     if (root==nullptr) {
         BNode *newRoot = new BNode;
         newRoot->keys[0]=key;
-        for(int j=1; j<=(2*t-1); j++) newRoot->keys[j]=0;
+        newRoot->data[0]=data;
+        for(int j=1; j<=(2*t-1); j++)
+        {
+            newRoot->keys[j]=0;
+            newRoot->data[j]="";
+        }
         for (int i=0; i<=(2*t); i++) newRoot->children[i]=nullptr;
         newRoot->count=1;
         newRoot->countSons=0;
@@ -103,7 +113,7 @@ void Tree::insert(int key){
                 } else break;
             }
         }
-        insert_to_node(key, ptr);
+        insert_to_node(key, ptr, data);
 
         while (ptr->count==2*t){
             if (ptr==root){
@@ -123,8 +133,16 @@ void Tree::restruct(BNode *node){
     //первый сын
     BNode *child1 = new BNode;
     int j;
-    for (j=0; j<=t-2; j++) child1->keys[j]=node->keys[j];
-    for (j=t-1; j<=(2*t-1); j++) child1->keys[j]=0;
+    for (j=0; j<=t-2; j++)
+    {
+        child1->keys[j]=node->keys[j];
+        child1->data[j]=node->data[j];
+    }
+    for (j=t-1; j<=(2*t-1); j++)
+    {
+        child1->keys[j]=0;
+        child1->data[j]="";
+    }
     child1->count=t-1; //количество ключей в узле
     if(node->countSons!=0){
         for (int i=0; i<=(t-1); i++){
@@ -142,8 +160,16 @@ void Tree::restruct(BNode *node){
 
     //второй сын
     BNode *child2 = new BNode;
-    for (int j=0; j<=(t-1); j++) child2->keys[j]=node->keys[j+t];
-    for (j=t; j<=(2*t-1); j++) child2->keys[j]=0;
+    for (int j=0; j<=(t-1); j++)
+    {
+        child2->keys[j]=node->keys[j+t];
+        child2->data[j]=node->data[j+t];
+    }
+    for (j=t; j<=(2*t-1); j++)
+    {
+        child2->keys[j]=0;
+        child2->data[j]="";
+    }
     child2->count=t; //количество ключей в узле
     if(node->countSons!=0) {
         for (int i=0; i<=(t); i++){
@@ -162,7 +188,12 @@ void Tree::restruct(BNode *node){
     //родитель
     if (node->parent==nullptr){ //если родителя нет, то это корень
         node->keys[0]=node->keys[t-1];
-        for(int j=1; j<=(2*t-1); j++) node->keys[j]=0;
+        node->data[0]=node->data[t-1];
+        for(int j=1; j<=(2*t-1); j++)
+        {
+            node->keys[j]=0;
+            node->data[j]="";
+        }
         node->children[0]=child1;
         node->children[1]=child2;
         for(int i=2; i<=(2*t); i++) node->children[i]=nullptr;
@@ -173,7 +204,7 @@ void Tree::restruct(BNode *node){
         child1->parent=node;
         child2->parent=node;
     } else {
-        insert_to_node(node->keys[t-1], node->parent);
+        insert_to_node(node->keys[t-1], node->parent, node->data[t-1]);
         for (int i=0; i<=(2*t); i++){
             if (node->parent->children[i]==node) node->parent->children[i]=nullptr;
         }
@@ -194,6 +225,13 @@ void Tree::restruct(BNode *node){
 
 bool Tree::search(int key){
     return searchKey(key, this->root);
+}
+
+std::string Tree::find(int key){
+    if (!searchKey(key, this->root))
+        return "Node will not find";
+    std::string data = getNodeData(root, key);
+    return data;
 }
 
 bool Tree::searchKey(int key, BNode *node){
@@ -218,14 +256,36 @@ bool Tree::searchKey(int key, BNode *node){
     } else return false;
 }
 
+std::string Tree::getNodeData(BNode *currentNode, int key){
+    if (currentNode->leaf==false){
+        int i;
+        for (i=0; i<=(2*t-1); i++){
+            if (currentNode->keys[i]!=0) {
+                if(key==currentNode->keys[i]) return currentNode->data[i];
+                if ((key<currentNode->keys[i])){
+                    return getNodeData(currentNode->children[i], key);
+                    break;
+                }
+            } else break;
+        }
+        return getNodeData(currentNode->children[i], key);
+    } else {
+        for(int j=0; j<=(2*t-1); j++)
+            if (key==currentNode->keys[j]) return currentNode->data[j];
+        return "Node will not find";
+    }
+}
+
 void Tree::removeFromNode(int key, BNode *node){
     for (int i=0; i<node->count; i++){
         if (node->keys[i]==key){
             for (int j=i; j<node->count; j++) {
                 node->keys[j]=node->keys[j+1];
+                node->data[j]=node->data[j+1];
                 node->children[j]=node->children[j+1];
             }
             node->keys[node->count-1]=0;
+            node->data[node->count-1]="";
             node->children[node->count-1]=node->children[node->count];
             node->children[node->count]=nullptr;
             break;
@@ -238,6 +298,7 @@ void Tree::lconnect(BNode *node, BNode *othernode){
     if (node==nullptr) return;
     for (int i=0; i<=(othernode->count-1); i++){
         node->keys[node->count]=othernode->keys[i];
+        node->data[node->count]=othernode->data[i];
         node->children[node->count]=othernode->children[i];
         node->count=node->count+1;
     }
@@ -253,6 +314,7 @@ void Tree::rconnect(BNode *node, BNode *othernode){
     if (node==nullptr) return;
     for (int i=0; i<=(othernode->count-1); i++){
         node->keys[node->count]=othernode->keys[i];
+        node->data[node->count]=othernode->data[i];
         node->children[node->count+1]=othernode->children[i+1];
         node->count=node->count+1;
     }
@@ -286,7 +348,7 @@ void Tree::repair(BNode *node){
     }
     //если ptr-первый ребенок (самый левый)
     if (positionSon==0){
-        insert_to_node(parent->keys[positionSon], ptr);
+        insert_to_node(parent->keys[positionSon], ptr, parent->data[positionSon]);
         lconnect(ptr, parent->children[positionSon+1]);
         parent->children[positionSon+1]=ptr;
         parent->children[positionSon]=nullptr;
@@ -306,7 +368,7 @@ void Tree::repair(BNode *node){
     } else {
         //если ptr-последний ребенок (самый правый)
         if (positionSon==parent->count){
-            insert_to_node(parent->keys[positionSon-1], parent->children[positionSon-1]);
+            insert_to_node(parent->keys[positionSon-1], parent->children[positionSon-1], parent->data[positionSon-1]);
             lconnect(parent->children[positionSon-1], ptr);
             parent->children[positionSon]=parent->children[positionSon-1];
             parent->children[positionSon-1]=nullptr;
@@ -325,7 +387,7 @@ void Tree::repair(BNode *node){
             } else
             if (parent->count<=(t-2)) repair(parent);
         } else { //если ptr имеет братьев справа и слева
-            insert_to_node(parent->keys[positionSon], ptr);
+            insert_to_node(parent->keys[positionSon], ptr, parent->data[positionSon]);
             lconnect(ptr, parent->children[positionSon+1]);
             parent->children[positionSon+1]=ptr;
             parent->children[positionSon]=nullptr;
@@ -342,6 +404,163 @@ void Tree::repair(BNode *node){
                 }
             } else
             if (parent->count<=(t-2)) repair(parent);
+        }
+    }
+}
+
+void Tree::removeLeaf(int key, BNode *node){
+    if ((node==root)&&(node->count==1)){
+        removeFromNode(key, node);
+        root->children[0]=nullptr;
+        delete root;
+        root=nullptr;
+        return;
+    }
+    if (node==root) {
+        removeFromNode(key, node);
+        return;
+    }
+    if (node->count>(t-1)) {
+        removeFromNode(key, node);
+        return;
+    }
+    BNode *ptr=node;
+    int k1;
+    int k2;
+    std::string n1;
+    std::string n2;
+    int position;
+    int positionSon;
+    int i;
+    for (int i=0; i<=node->count-1; i++){
+        if (key==node->keys[i]) {
+            position=i; //позиция ключа в узле
+            break;
+        }
+    }
+    BNode *parent=ptr->parent;
+    for (int j=0; j<=parent->count; j++){
+        if (parent->children[j]==ptr){
+            positionSon=j; //позиция узла по отношению к родителю
+            break;
+        }
+    }
+    //если ptr-первый ребенок (самый левый)
+    if (positionSon==0){
+        if (parent->children[positionSon+1]->count>(t-1)){ //если у правого брата больше, чем t-1 ключей
+            k1=parent->children[positionSon+1]->keys[0]; //k1 - минимальный ключ правого брата
+            k2=parent->keys[positionSon]; //k2 - ключ родителя, больше, чем удаляемый, и меньше, чем k1
+            n1=parent->children[positionSon+1]->data[0];
+            n2=parent->data[positionSon];
+            insert_to_node(k2, ptr, n2);
+            removeFromNode(key, ptr);
+            parent->keys[positionSon]=k1; //меняем местами k1 и k2
+            parent->data[positionSon]=n1;
+            removeFromNode(k1, parent->children[positionSon+1]); //удаляем k1 из правого брата
+        } else { //если у правого <u>единственного</u> брата не больше t-1 ключей
+            removeFromNode(key, ptr);
+            if (ptr->count<=(t-2)) repair(ptr);
+        }
+    } else {
+        //если ptr-последний ребенок (самый правый)
+        if (positionSon==parent->count){
+            //если у левого брата больше, чем t-1 ключей
+            if (parent->children[positionSon-1]->count>(t-1)){
+                BNode *temp=parent->children[positionSon-1];
+                k1=temp->keys[temp->count-1]; //k1 - максимальный ключ левого брата
+                k2=parent->keys[positionSon-1]; //k2 - ключ родителя, меньше, чем удаляемый и больше, чем k1
+                n1=temp->data[temp->count-1];
+                n2=parent->data[positionSon-1];
+                insert_to_node(k2, ptr, n2);
+                removeFromNode(key, ptr);
+                parent->keys[positionSon-1]=k1;
+                parent->data[positionSon-1]=n1;
+                removeFromNode(k1, temp);
+            } else { //если у <u>единственного</u> левого брата не больше t-1 ключей
+                removeFromNode(key, ptr);
+                if (ptr->count<=(t-2)) repair(ptr);
+            }
+        } else { //если ptr имеет братьев справа и слева
+            //если у правого брата больше, чем t-1 ключей
+            if (parent->children[positionSon+1]->count>(t-1)){
+                k1=parent->children[positionSon+1]->keys[0]; //k1 - минимальный ключ правого брата
+                k2=parent->keys[positionSon]; //k2 - ключ родителя, больше, чем удаляемый и меньше, чем k1
+                n1=parent->children[positionSon+1]->data[0];
+                n2=parent->data[positionSon];
+                insert_to_node(k2, ptr, n2);
+                removeFromNode(key, ptr);
+                parent->keys[positionSon]=k1; //меняем местами k1 и k2
+                parent->data[positionSon]=n1;
+                removeFromNode(k1, parent->children[positionSon+1]); //удаляем k1 из правого брата
+            } else {
+                //если у левого брата больше, чем t-1 ключей
+                if (parent->children[positionSon-1]->count>(t-1)){
+                    BNode *temp=parent->children[positionSon-1];
+                    k1=temp->keys[temp->count-1]; //k1 - максимальный ключ левого брата
+                    k2=parent->keys[positionSon-1]; //k2 - ключ родителя, меньше, чем удаляемый и больше, чем k1
+                    n1=temp->data[temp->count-1];
+                    n2=parent->data[positionSon-1];
+                    insert_to_node(k2, ptr, n2);
+                    removeFromNode(key, ptr);
+                    parent->keys[positionSon-1]=k1;
+                    parent->data[positionSon-1]=n1;
+                    removeFromNode(k1, temp);
+                } else { //если у обоих братьев не больше t-1 ключей
+                    removeFromNode(key, ptr);
+                    if (ptr->count<=(t-2)) repair(ptr);
+                }
+            }
+        }
+    }
+}
+
+void Tree::remove(int key, BNode *node){
+    BNode *ptr=node;
+    int position; //номер ключа
+    int i;
+    for (int i=0; i<=node->count-1; i++){
+        if (key==node->keys[i]) {
+            position=i;
+            break;
+        }
+    }
+    int positionSon; //номер сына по отношению к родителю
+    if (ptr->parent!=nullptr){
+        for(int i=0; i<=ptr->parent->count; i++){
+            if (ptr->children[i]==ptr){
+                positionSon==i;
+                break;
+            }
+        }
+    }
+    //находим наименьший ключ правого поддерева
+    ptr=ptr->children[position+1];
+    int newkey=ptr->keys[0];
+    std::string newdata=ptr->data[0];
+    while (ptr->leaf==false) ptr=ptr->children[0];
+    //если ключей в найденном листе не больше 1 - ищем наибольший ключ в левом поддереве
+    //иначе - просто заменяем key на новый ключ, удаляем новый ключ из листа
+    if (ptr->count>(t-1)) {
+        newkey=ptr->keys[0];
+        newdata=ptr->data[0];
+        removeFromNode(newkey, ptr);
+        node->keys[position]=newkey;
+        node->data[position]=newdata;
+    } else {
+        ptr=node;
+        //ищем наибольший ключ в левом поддереве
+        ptr=ptr->children[position];
+        newkey=ptr->keys[ptr->count-1];
+        newdata=ptr->data[ptr->count-1];
+        while (ptr->leaf==false) ptr=ptr->children[ptr->count];
+        newkey=ptr->keys[ptr->count-1];
+        newdata=ptr->data[ptr->count-1];
+        node->keys[position]=newkey;
+        node->data[position]=newdata;
+        if (ptr->count>(t-1)) removeFromNode(newkey, ptr);
+        else {
+            //если ключей не больше, чем t-1 - перестраиваем
+            removeLeaf(newkey, ptr);
         }
     }
 }
@@ -383,28 +602,20 @@ void Tree::remove(int key){
 }
 
 int main() {
-    Tree tree = Tree(1);
-    tree.insert(95);
-    tree.insert(55);
-    tree.insert(89);
-    tree.insert(60);
-    tree.insert(78);
-    tree.insert(15);
+    std::cout << "Start" << std::endl;
+    Tree tree;
+    tree.insert(12, "12");
+    tree.insert(8, "8");
+    tree.insert(-4, "-4");
+    tree.insert(99, "99");
+    tree.insert(10, "10");
+    tree.insert(5, "5");
 
-    int key = 78;
-    if (tree.search(key))
-        cout<<key<<" is found"<<endl;
-    else
-        cout<<key<<" is not Found"<<endl;
+    std::cout<<tree.find(12)<<std::endl;
+    std::cout<<tree.search(8)<<std::endl;
+    std::cout<<tree.find(-4)<<std::endl;
+    tree.remove(99);
+    std::cout<<tree.find(99)<<std::endl;
 
-    tree.remove(15);
-
-    key = 15;
-    if (tree.search(key))
-        cout<<key<<" is found"<<endl;
-    else
-        cout<<key<<" is not Found"<<endl;
-
-
-    return 0;
+    std::cout << "The end." << std::endl;
 }
