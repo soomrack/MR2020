@@ -76,7 +76,7 @@ double calculate_H(int row, int col, coordinates dest) {
     return H;
 }
 void trace_path(cell cellDetails[][COL], coordinates dest) {
-    printf("\nThe Path is ");
+    cout << "\nThe Path is ";
     int row = dest.first;
     int col = dest.second;
     int temp_row = 0;
@@ -86,34 +86,34 @@ void trace_path(cell cellDetails[][COL], coordinates dest) {
     while (!(cellDetails[row][col].get_parent_i() == row
              && cellDetails[row][col].get_parent_j() == col)) {
         p = make_pair(row, col);
-        printf("(%d,%d) <- ", p.first + 1, p.second + 1);
+        cout << "(" << p.first + 1 << "," << p.second + 1 << ") <- ";
         temp_row = cellDetails[row][col].get_parent_i();
         temp_col = cellDetails[row][col].get_parent_j();
         row = temp_row;
         col = temp_col;
     }
     p = make_pair(row, col);
-    printf("(%d,%d)", p.first + 1, p.second + 1);
+    cout << "(" << p.first + 1 << "," << p.second + 1 << ")";
 }
 
 //******* Search algorithm *******//
 void aStarSearch(int grid[][COL], coordinates src, coordinates dest) {
     // Check some stuff
     if (!is_valid(src.first, src.second)) {
-        printf("Source is invalid\n");
+        cout << "Source is invalid\n";
         return;
     }
     if (!is_valid(dest.first, dest.second)) {
-        printf("Destination is invalid\n");
+        cout << "Destination is invalid\n";
         return;
     }
     if (!is_unblocked(grid, src.first, src.second)
         || !is_unblocked(grid, dest.first, dest.second)) {
-        printf("Source or the destination is blocked\n");
+        cout << "Source or the destination is blocked\n";
         return;
     }
     if (is_destination(src.first, src.second, dest)) {
-        printf("We are already at the destination\n");
+        cout << "We are already at the destination\n";
         return;
     }
     
@@ -131,8 +131,9 @@ void aStarSearch(int grid[][COL], coordinates src, coordinates dest) {
     cells_grid[x][y].set_parents(x, y);
     // Put the starting cell on the open list
     open_list.insert(make_pair(0.0, make_pair(x, y)));
-    
+    int a = 0;
     while (!open_list.empty()) {
+        a++;
         // take vertex - the smallest F-value
         pPair cur_point = *open_list.begin();
         open_list.erase(open_list.begin());
@@ -160,7 +161,8 @@ void aStarSearch(int grid[][COL], coordinates src, coordinates dest) {
                 }
                 if (is_destination(x + x_step, y + y_step, dest)) {
                     cells_grid[x + x_step][y + y_step].set_parents(x, y);
-                    printf("The destination cell is found\n");
+                    cout << "The destination cell is found\n";
+                    cout << a << endl;
                     trace_path(cells_grid, dest);
                     return;
                 }
@@ -183,7 +185,7 @@ void aStarSearch(int grid[][COL], coordinates src, coordinates dest) {
             }
         }
     }
-    printf("Failed to find the Destination Cell\n");
+    cout << "Failed to find the Destination Cell\n";
 }
 
 int main() {
