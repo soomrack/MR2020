@@ -10,17 +10,17 @@ struct node {
 	node* right; // указатель на правый узел того же предка
 	int key; // ключ
 	int degree; // Степень узла
-	char mark; // Black or white mark of the node
+	char mark; // Отметка узла
 	char c; // Флаг для помощи в функции поиска узла
 };
  
 struct node* mini = NULL; //Создание указателя на мин значение
 int size = 0; //Объявить целое число для количества узлов в куче
  
-void insertion(int val) //Функция для вставки числа в кучу
+static void insertion(int val) //Функция для вставки числа в кучу
 {
-	struct node* new_node = (struct node*)malloc(sizeof(struct node));
-	new_node->key = val;
+	struct node* new_node = (struct node*)malloc(sizeof(struct node)); // создаем новый узел 
+	new_node->key = val; // инициализируем ключ нового узла
 	new_node->parent = NULL;
 	new_node->child = NULL;
 	new_node->left = new_node;
@@ -35,10 +35,10 @@ void insertion(int val) //Функция для вставки числа в к�
 	} else {
 		mini = new_node;
 	}
-	size++;
+	size++; // не забываем увеличить переменную size 
 }
  
-void Fibonnaci_link(struct node* ptr2, struct node* ptr1) //настройка связи между родителем и дочерним узл.
+static void Fibonnaci_link(struct node* ptr2, struct node* ptr1) //настройка связи между родителем и дочерним узл.
 {
 	(ptr2->left)->right = ptr2->right;
 	(ptr2->right)->left = ptr2->left;
@@ -58,7 +58,7 @@ void Fibonnaci_link(struct node* ptr2, struct node* ptr1) //настройка �
 	ptr1->degree++;
 }
 
-void Consolidate() //Объединение кучи
+static void Consolidate() //Объединение кучи
 {
 	int temp1;
 	float temp2 = (log(size)) / (log(2));
@@ -114,7 +114,7 @@ void Consolidate() //Объединение кучи
 	}
 }
  
-void Extract_min() //Функция для извлечения минимального узла в куче
+static void Extract_min() //Функция для извлечения минимального узла в куче
 {
 	if (mini == NULL)
 		cout << "The heap is empty" << endl;
@@ -150,7 +150,7 @@ void Extract_min() //Функция для извлечения минималь
 	}
 }
 
-void Cut(struct node* found, struct node* temp)
+static void Cut(struct node* found, struct node* temp)
 {
 	if (found == found->right)
 		temp->child = NULL;
@@ -169,7 +169,7 @@ void Cut(struct node* found, struct node* temp)
 	found->mark = 'B';
 }
 
-void Cascase_cut(struct node* temp)
+static void Cascase_cut(struct node* temp)
 {
 	node* ptr5 = temp->parent;
 	if (ptr5 != NULL) {
@@ -182,7 +182,7 @@ void Cascase_cut(struct node* temp)
 	}
 }
 
-void Decrease_key(struct node* found, int val)
+static void Decrease_key(struct node* found, int val)
 {
 	if (mini == NULL)
 		cout << "The Heap is Empty" << endl;
@@ -198,7 +198,7 @@ void Decrease_key(struct node* found, int val)
 		mini = found;
 }
 
-void Find(struct node* mini, int old_val, int val)
+static void Find(struct node* mini, int old_val, int val)
 {
 	struct node* found = NULL;
 	node* temp5 = mini;
@@ -220,7 +220,7 @@ void Find(struct node* mini, int old_val, int val)
 	found = found_ptr;
 }
 
-void Deletion(int val)
+static void Deletion(int val)
 {
 	if (mini == NULL)
 		cout << "The heap is empty" << endl;
@@ -231,7 +231,7 @@ void Deletion(int val)
 	}
 }
 
-void display(struct node* mini) //Показывает всю кучу
+static void display(struct node* mini) //Показывает всю кучу
 {
 	node* ptr = mini;
 	if (ptr == NULL)
@@ -271,7 +271,7 @@ int interview(void) {
 			break;
 		
 		case 2:
-			find_min(mini);
+			find_min(mini);Ы
 			break;
 
 		case 3:
