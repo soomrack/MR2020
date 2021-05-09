@@ -271,7 +271,7 @@ int interview(void) {
 			break;
 		
 		case 2:
-			find_min(mini);Ы
+			find_min(mini);
 			break;
 
 		case 3:
