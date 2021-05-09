@@ -10,6 +10,7 @@ struct node {
 	node* right; // указатель на правый узел того же предка
 	int key; // ключ
 	int degree; // Степень узла
+	char mark; // Black or white mark of the node
 	char c; // Флаг для помощи в функции поиска узла
 };
  
@@ -146,6 +147,87 @@ void Extract_min() //Функция для извлечения минималь
 			Consolidate();
 		}
 		size--;
+	}
+}
+
+void Cut(struct node* found, struct node* temp)
+{
+	if (found == found->right)
+		temp->child = NULL;
+	(found->left)->right = found->right;
+	(found->right)->left = found->left;
+	if (found == temp->child)
+		temp->child = found->right;
+	temp->degree = temp->degree - 1;
+	found->right = found;
+	found->left = found;
+	(mini->left)->right = found;
+	found->right = mini;
+	found->left = mini->left;
+	mini->left = found;
+	found->parent = NULL;
+	found->mark = 'B';
+}
+
+void Cascase_cut(struct node* temp)
+{
+	node* ptr5 = temp->parent;
+	if (ptr5 != NULL) {
+		if (temp->mark == 'W') {
+			temp->mark = 'B';
+		} else {
+			Cut(temp, ptr5);
+			Cascase_cut(ptr5);
+		}
+	}
+}
+
+void Decrease_key(struct node* found, int val)
+{
+	if (mini == NULL)
+		cout << "The Heap is Empty" << endl;
+	if (found == NULL)
+		cout << "Node not found in the Heap" << endl;
+	found->key = val;
+	struct node* temp = found->parent;
+	if (temp != NULL && found->key < temp->key) {
+		Cut(found, temp);
+		Cascase_cut(temp);
+	}
+	if (found->key < mini->key)
+		mini = found;
+}
+
+void Find(struct node* mini, int old_val, int val)
+{
+	struct node* found = NULL;
+	node* temp5 = mini;
+	temp5->c = 'Y';
+	node* found_ptr = NULL;
+	if (temp5->key == old_val) {
+		found_ptr = temp5;
+		temp5->c = 'N';
+		found = found_ptr;
+		Decrease_key(found, val);
+	}
+	if (found_ptr == NULL) {
+		if (temp5->child != NULL)
+			Find(temp5->child, old_val, val);
+		if ((temp5->right)->c != 'Y')
+			Find(temp5->right, old_val, val);
+	}
+	temp5->c = 'N';
+	found = found_ptr;
+}
+
+void Deletion(int val)
+{
+	if (mini == NULL)
+		cout << "The heap is empty" << endl;
+	else {
+		Find(mini, val, 0); // Уменьшение значения узла до 0
+		Extract_min(); // Вызов функции Extract_min для удаления узла минимального значения, равного 0
+		cout << "Key Deleted" << endl;
 	}
 }
 
