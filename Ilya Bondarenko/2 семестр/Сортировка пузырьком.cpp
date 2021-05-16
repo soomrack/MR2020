@@ -2,7 +2,7 @@
 using namespace std;
 
 void bubble_sort(int array[], const int size_of_array)
-bubblesort {
+{
 	for (int array_walk = 0; array_walk < size_of_array - 1; array_walk++)
 	{
 		for (int pairwise_comparison = size_of_array - 1; pairwise_comparison > array_walk; pairwise_comparison--)
