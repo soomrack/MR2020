@@ -86,7 +86,8 @@ void RBTree::swapData(Node* delNode, Node* successor) {
     successor->data = temp;
 }
 
-void RBTree::leftRotate(Node* node, Node* root) {
+// Левое вращение - меняет положение узлов
+void RBTree::leftRotate(Node* node) {
     Node *pivot = node->right;  // Правый ребёнок node встанет на место node
     Node* parent = node->parent;
 
@@ -110,7 +111,8 @@ void RBTree::leftRotate(Node* node, Node* root) {
     }
 }
 
-void RBTree::rightRotate(Node* node, Node* root) {
+// Правое вращение - меняет положение узлов
+void RBTree::rightRotate(Node* node) {
     Node *pivot = node->left;  // Левый ребёнок node встанет на место node
     Node* parent = node->parent;
 
@@ -135,38 +137,38 @@ void RBTree::rightRotate(Node* node, Node* root) {
 }
 
 // Подфункция функции fixDoubleBlack
-void RBTree::fixSiblingHasRedChild(Node* sibling, Node* root) {
+void RBTree::fixSiblingHasRedChild(Node* sibling) {
     Node* parent = sibling->parent;
     if (sibling->left != nullptr and sibling->left->color == RED) {
         if (isLeft(sibling)) {
             // left left
             sibling->left->color = sibling->color;
             sibling->color = parent->color;
-            rightRotate(parent, root);
+            rightRotate(parent);
         } else {
             // right left
             sibling->left->color = parent->color;
-            rightRotate(sibling, root);
-            leftRotate(parent, root);
+            rightRotate(sibling);
+            leftRotate(parent);
         }
     } else {
         if (isLeft(sibling)) {
             // left right
             sibling->right->color = parent->color;
-            leftRotate(sibling, root);
-            rightRotate(parent, root);
+            leftRotate(sibling);
+            rightRotate(parent);
         } else {
             // right right
             sibling->right->color = sibling->color;
             sibling->color = parent->color;
-            leftRotate(parent, root);
+            leftRotate(parent);
         }
     }
     parent->color = BLACK;
 }
 
 // Функция перестраивающая дерево при "двойном чёрном"
-void RBTree::fixDoubleBlack(Node *BBNode, Node* root) {
+void RBTree::fixDoubleBlack(Node *BBNode) {
     // Если достигли корня - задача выполнена
     if (BBNode == root) {
         return;
@@ -177,7 +179,7 @@ void RBTree::fixDoubleBlack(Node *BBNode, Node* root) {
 
     // Если нет брата, "двойной чёрный" перемещается на родителя
     if (sibling == nullptr) {
-        fixDoubleBlack(parent, root);
+        fixDoubleBlack(parent);
         return;
     }
 
@@ -186,26 +188,26 @@ void RBTree::fixDoubleBlack(Node *BBNode, Node* root) {
         parent->color = RED;
         sibling->color = BLACK;
         if (isLeft(sibling)) {
-            rightRotate(parent, root);
+            rightRotate(parent);
         } else {
-            leftRotate(parent, root);
+            leftRotate(parent);
         }
-        fixDoubleBlack(BBNode, root);
+        fixDoubleBlack(BBNode);
     } else {    // sibling - чёрный
         if (checkDoubleBlack(sibling->left, sibling->right)) {  // Оба потомка sibling чёрные
             sibling->color = RED;
             if (parent->color == BLACK)
-                fixDoubleBlack(parent, root);
+                fixDoubleBlack(parent);
             else
                 parent->color = BLACK;
         } else {  // У sibling есть красные потомки
-            fixSiblingHasRedChild(sibling, root);
+            fixSiblingHasRedChild(sibling);
         }
     }
 }
 
 // Функция удаления листа
-void RBTree::deleteLeaf(Node* delNode, Node* root) {
+void RBTree::deleteLeaf(Node* delNode) {
     Node* parent = delNode->parent;
     Node* successor = searchSuccessor(delNode);  // Находим узел, который займёт место delNode
     bool isDoubleBlack = checkDoubleBlack(delNode, successor);
@@ -214,7 +216,7 @@ void RBTree::deleteLeaf(Node* delNode, Node* root) {
         root = nullptr;
     } else {
         if (isDoubleBlack) {      // Если delNode - чёрный
-            fixDoubleBlack(delNode, root);
+            fixDoubleBlack(delNode);
         } else {                  // Если delNode - красный
             searchSibling(delNode)->color = RED;
         }
@@ -230,7 +232,7 @@ void RBTree::deleteLeaf(Node* delNode, Node* root) {
 }
 
 // Функция удаления узла с одним потомком
-void RBTree::deleteNodeWithOneChild(Node* delNode, Node* root) {
+void RBTree::deleteNodeWithOneChild(Node* delNode) {
     Node* parent = delNode->parent;
     Node* successor = searchSuccessor(delNode);  // Находим узел, который займёт место delNode
     bool isDoubleBlack = checkDoubleBlack(delNode, successor);
@@ -252,7 +254,7 @@ void RBTree::deleteNodeWithOneChild(Node* delNode, Node* root) {
         delete delNode;
 
         if (isDoubleBlack) {  // delNode и successor чёрные
-            fixDoubleBlack(successor, root);
+            fixDoubleBlack(successor);
         } else {              // Или delNode, или successor красный
             // Делаем новый узел чёрным
             successor->color = BLACK;
@@ -260,16 +262,56 @@ void RBTree::deleteNodeWithOneChild(Node* delNode, Node* root) {
     }
 }
 
+// Ищет узел по заданному ключу
+Node* RBTree::search(int key) {
+    Node *temp = RBTree::root;
+    while (temp != nullptr) {
+        if (key < temp->key) {  // Если искомое меньше найденного
+            if (temp->left == nullptr) {  // Если нет левого потомка,
+                break;                    // temp - ближайший по знач ключа
+            } else {
+                temp = temp->left;        // проверяем левого потомка найденного узла
+            }
+        } else if (key == temp->key) {  //Значения равны - нашли нужный ключ
+            break;
+        } else {  // Если искомое больше найденного
+            if (temp->right == nullptr) {  // Если нет правого потомка,
+                break;                     // temp - ближайший по знач ключа
+            } else {
+                temp = temp->right;  // проверяем правого потомка найденного узла
+            }
+        }
+    }
+    return temp;
+}
+
 // Удаляет переданный узел
 void RBTree::deleteNode(Node *delNode) {
     Node* successor = searchSuccessor(delNode);  // Находим узел, который займёт место delNode
 
     if (successor == nullptr) {  // Если delNode - лист
-        deleteLeaf(delNode, this->root);
+        deleteLeaf(delNode);
     } else if (delNode->left == nullptr or delNode->right == nullptr) {  // Если у delNode один потомок
-        deleteNodeWithOneChild(delNode, this->root);
+        deleteNodeWithOneChild(delNode);
     } else {  // Если у delNode два потомка
         swapData(delNode, successor);
         deleteNode(successor);
     }
 }
+
+void RBTree::del(int key) {
+    if (RBTree::root == nullptr) {  // Деревое пустое, нечего удалять
+        return;
+    }
+
+    // Ищем узел с таким же или ближайшим ключом
+    Node *node = search(key);
+    if (node->key != key) {
+        std::cout << "Нет узлов с значением: " << key << std::endl;
+        return;
+    }
+
+    // Передаём узел в функцию удаления узла
+    deleteNode(node);
+}
+

@@ -16,21 +16,24 @@ public:
 };
 
 class RBTree {
+public:
     Node *root;
 private:
-    static bool isLeft(Node* node);  // Является ли узел левым ребёнокм своего родителя
-    static bool checkDoubleBlack(Node* node1, Node* node2);  // Функция проверяет условие "двойного чёрного"
-    static Node* searchSuccessor(Node* node);  // Функция поиска узла, который займёт место удаляемого
-    static Node* searchSibling(Node* node);  // Функция находит брата узла
-    static void swapData(Node* delNode, Node* successor);  // Функция переставляет местами данные
-    static void leftRotate(Node* node, Node* root);
-    static void rightRotate(Node* node, Node* root);
-    static void fixDoubleBlack(Node* node, Node* root);  // Функция перестраивающая дерево при "двойном чёрном"
-    static void fixSiblingHasRedChild(Node* sibling, Node* root);  // Подфункция функции fixDoubleBlack
-    static void deleteLeaf(Node* delNode, Node* root);  // Функция удаления листа
-    static void deleteNodeWithOneChild(Node* delNode, Node* root);  // Функция удаления узла с одним потомком
+    bool isLeft(Node* node);  // Является ли узел левым ребёнокм своего родителя
+    bool checkDoubleBlack(Node* node1, Node* node2);  // Функция проверяет условие "двойного чёрного"
+    Node* searchSuccessor(Node* node);  // Функция поиска узла, который займёт место удаляемого
+    Node* searchSibling(Node* node);  // Функция находит брата узла
+    void swapData(Node* node1, Node* node2);  // Функция переставляет местами данные
+    void leftRotate(Node* node);  // Левое вращение - меняет положение узлов
+    void rightRotate(Node* node);  // Правое вращение - меняет положение узлов
+    void fixDoubleBlack(Node* node);  // Функция перестраивающая дерево при "двойном чёрном"
+    void fixSiblingHasRedChild(Node* sibling);  // Подфункция функции fixDoubleBlack для случая SiblingIsBlack
+    void deleteLeaf(Node* delNode);   // Функция удаления листа
+    void deleteNodeWithOneChild(Node* delNode);  // Функция удаления узла с одним потомком
 public:
-    void deleteNode(Node* node);  // Удаляет переданный узел
+    void deleteNode(Node* node);  // Удаление заданного узла
+    void del(int key);  // Удаления узла по ключу
+    Node* search(int key);  // Поиск узла по ключу
 public:
     RBTree();
     ~RBTree();
