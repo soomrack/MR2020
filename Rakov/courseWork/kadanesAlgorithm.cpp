@@ -6,11 +6,11 @@ using namespace std;
 #define RANGE_OF_VALUES 10000
 
 int kadanes(int array[],int length) {
-    int highestMax = 0;
-    int currentElementMax = 0;
+    int highestMax = 0; // max subarray sum
+    int currentElementMax = 0; // local max sum
 
     for(int i = 0; i < length; i++) {
-        currentElementMax =max(array[i],currentElementMax + array[i]) ;
+        currentElementMax = max(array[i],currentElementMax + array[i]);
         highestMax = max(highestMax,currentElementMax); 
     }
 
@@ -26,10 +26,10 @@ int main() {
             arr[i] = rand() % RANGE_OF_VALUES - RANGE_OF_VALUES/2;
         }
 
-        auto start = chrono::steady_clock::now();
-        cout << "The Maximum Sum is: "<<kadanes(arr,elementsQuantity[k]) << endl;
-        auto end = chrono::steady_clock::now();
-        auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+        auto start = chrono::steady_clock::now(); // "timer" started
+        cout << "The Maximum Sum is: "<<kadanes(arr, elementsQuantity[k]) << endl;
+        auto end = chrono::steady_clock::now(); // "timer" stopped
+        auto duration = chrono::duration_cast<chrono::microseconds>(end - start); // calculating an algorithm work duration
         cout << "Duration is " << duration.count() << " ms"<< endl;   
     }
     
