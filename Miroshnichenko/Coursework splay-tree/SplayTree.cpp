@@ -95,29 +95,29 @@ bool zig(Node* current) {
     rotate_left(current->parent);
 }
 
-void splay(Node* v) {
-  while (v->parent != nullptr) {
-    Node* g = v->parent->parent;
-    if (g == nullptr)
-      zig(v->parent);
-    if (g->left == v->parent) {
-      if (v->parent->left == v) {
-        rotate_right(v->parent);
-        rotate_right(g);
+void splay(Node* current) {
+  while (current->parent != nullptr) {
+    Node* grandp = current->parent->parent;
+    if (grandp == nullptr)
+      zig(current->parent);
+    if (grandp->left == current->parent) {
+      if (current->parent->left == current) {
+        rotate_right(current->parent);
+        rotate_right(grandp);
       }
       else {
-        rotate_left(v->parent);
-        rotate_right(g);
+        rotate_left(current->parent);
+        rotate_right(grandp);
       }
     }
     else {
-      if (v->parent->left == v) {
-        rotate_right(v->parent);
-        rotate_left(g);
+      if (current->parent->left == current) {
+        rotate_right(current->parent);
+        rotate_left(grandp);
       }
       else {
-        rotate_left(v->parent);
-        rotate_left(g);
+        rotate_left(current->parent);
+        rotate_left(grandp);
       }
     }
   }
@@ -146,9 +146,7 @@ std::string Tree::find(const int key) {
 bool Tree::add(const int key, const std::string data) {
   Node* current = root;
   while (true) {
-    if (key == current->key) return false;
     if (key > current->key) {
-
       if (current->left == nullptr) {
         current->left->key = key;
         current->left->data = data;
@@ -168,7 +166,6 @@ bool Tree::add(const int key, const std::string data) {
     }
     splay(current);
   }
-  return true;
 }
 
 bool Tree::del(const int key) {
