@@ -23,7 +23,7 @@ int main()
     int size = 7;
     InsertionSort(size, array);
     for (int i = 0; i < 7; i++) {
-        std::cout << array[i] << ' ';
+        std::cout << array[i] << std::endl;
     }
     return 0;
 
