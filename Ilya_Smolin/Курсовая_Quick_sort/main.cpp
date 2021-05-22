@@ -2,6 +2,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <iostream>
+#include <algorithm>
+
+using namespace std;
 
 void sort( int32_t * arr, uint32_t size )
 {
@@ -19,9 +22,7 @@ void sort( int32_t * arr, uint32_t size )
                 right--;
             if (left <= right)
             {
-                int temp = arr[left];
-                arr[left] = arr[right];
-                arr[right] = temp;
+                swap(arr[left], arr[right]);
                 left++;
                 right--;
             }
@@ -44,7 +45,7 @@ int main()
     }
     auto begin = std::chrono::steady_clock::now();
     sort(ar, sizeof(ar)/sizeof(int32_t));
-    auto end = std::chrono::steady_clock::now();
-    auto elapsed_ms = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+    auto end = chrono::steady_clock::now();
+    auto elapsed_ms = chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
     std::cout << "The time: " << elapsed_ms.count() << " ns\n";
 }
