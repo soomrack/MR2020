@@ -1,6 +1,7 @@
 #include <iostream>
 
 const int ERROR_CODE = 666;
+using namespace std;
 
 class Node {
 public:
@@ -15,9 +16,9 @@ class Queue {
 public:
     int pop();
     void push(const int value);
+    void print();
     Queue();
     ~Queue();
-    bool isEmpty();
 private:
     Node *first;
     Node *last;
@@ -38,44 +39,48 @@ Queue::Queue()
 void Queue::push(const int value)
 {
     Node *new_node = new Node(value);
-    if (first == nullptr)
+    if (last == nullptr)
     {
         first = new_node;
         last = new_node;
         return;
     }
-    if (first == last)
-    {
-        first->prev = new_node;
-    }
-    last->prev = new_node;
-    last = new_node;
+    first->prev = new_node;
+    first = new_node;
+    return;
 }
 
 int Queue::pop()
 {
-    if (isEmpty()) { return ERROR_CODE; }
-    int temp = first->data;
-    Node *previous = first;
-    first = first->prev;
-    delete previous;
-    return temp;
+    if (last == nullptr)  return ERROR_CODE;
+    int answer = last->data;
+    Node *node_to_pop = last;
+    last = last->prev;
+    delete node_to_pop;
+    return answer;
 }
 
-bool Queue::isEmpty()
-{
-    if (first == nullptr)
-        return true;
-    return false;
-}
 
 Queue::~Queue()
 {
-    while (first)
+    while (last)
     {
-        Node *temp = first;
-        first = first->prev;
-        delete temp;
+        pop();
+    }
+}
+
+void Queue::print()
+{
+    Node *pointer = last;
+    if (pointer == nullptr)
+    {
+        cout<< "queue is empty" <<endl;
+        return;
+    }
+    while (pointer)
+    {
+        cout<<pointer->data<<endl;
+        pointer = pointer->prev;
     }
 }
 
@@ -85,9 +90,13 @@ int main()
     debug.push(12);
     debug.push(13);
     debug.push(14);
+    debug.print();
     debug.pop();
     debug.pop();
+    debug.pop();
+    debug.print();
     debug.push(15);
     debug.push(12);
     debug.pop();
+    debug.print();
 }
