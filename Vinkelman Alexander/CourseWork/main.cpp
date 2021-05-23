@@ -3,6 +3,7 @@
 #include <vector>
 #include <iterator>
 #include <stdlib.h>
+#include <ctime>
 
 using namespace std;
 
@@ -24,6 +25,9 @@ int main() {
     cin >> b;
     cout << "Amount of numbers ";
     cin >> Amount;
+
+    // Начало отсчёта времени работы
+    unsigned int start_time = clock();
 
     // Создание массива
     Mass massive(1);
@@ -68,5 +72,9 @@ int main() {
         cout << *index << endl;
     }
 
+    unsigned int end_time = clock();   // Конец отсчёта времени работы
+    // Вычисление конечного времени работы
+    unsigned int search_time = end_time - start_time;
+    cout << "Run time = " << search_time << endl;
     return 0;
 }
