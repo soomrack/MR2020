@@ -1,3 +1,6 @@
+#include <vector>
+#include <iostream>
+#include <cstring>
 typedef std::vector<unsigned int> uiVector;
 
 class node
