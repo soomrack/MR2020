@@ -109,7 +109,6 @@ void BTree::deleteData(int key)
 {
     BNode* node_that_lost_key = search(key, root);
     //Самый простой случай удаления: лист с достаточным количеством ключей
-    //При необходимости попробую реализовать более сложные случаи
     if (node_that_lost_key->leaf && node_that_lost_key->numberOfKeys >= t) 
     {
         int index_of_key = node_that_lost_key->findKey(key);
@@ -174,6 +173,7 @@ void BNode::insertNonFull(int key)
 
 int main() 
 {
+
     BTree Tree;
     Tree.addData(50);
     Tree.addData(35);
@@ -182,11 +182,9 @@ int main()
     Tree.addData(43);
     Tree.addData(15);
     Tree.addData(34);
-    Tree.traverse(Tree.root);
-    std::cout << std::endl;
-
-
     Tree.addData(44);
     Tree.addData(8);
+    Tree.addData(1);
+
     Tree.traverse(Tree.root);
 }
